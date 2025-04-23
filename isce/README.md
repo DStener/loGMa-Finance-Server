@@ -7,3 +7,14 @@
 - Сообщения о начальном старте сервиса и его внешнем API 
   (для корректного отображения страницы 404)
 - Интерфейс непрямого взаимодействия с БД
+
+### Структура
+* **Microservie.h** - основной класс для наследования.
+  Реализует привязку маршрутов
+* **HttpFramework.h** - обёртка над [Boost.Beast](https://www.boost.org/doc/libs/master/libs/beast/doc/html/index.html).
+  Реализует основной функционал Http запросов
+* **Interaction.h** - обёртка над [Boost.Asio](https://www.boost.org/doc/libs/master/doc/html/boost_asio.html).
+  Реализует основной функционал взаимодействия между микросервиами
+  по средствам TCP сообщений
+* **DataBase.h** - обёртка над libpq (PostgreSQL)
+* **DTO.h** - Позволяет работать со стуктурами как с DTO.

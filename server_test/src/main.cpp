@@ -8,3 +8,6 @@ class Test : isce::Microservice<Test> {
 		METHOD_LIST_END
 };
 
+int main() {
+
+}
