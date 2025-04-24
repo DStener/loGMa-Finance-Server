@@ -1,8 +1,10 @@
-#ifndef ISCE_MICROSERVICE_H
-#define ISCE_MICROSERVICE_H
+#ifndef ISCE_MICROSERVICE_H_
+#define ISCE_MICROSERVICE_H_
+
+#include <functional>
 
 #include <isce/HttpFramework.h>
-#include <functional>
+
 
 #define METHOD_LIST_BEGIN                                                 \
   static void init() {
@@ -13,6 +15,11 @@
   }
 
 namespace isce {
+/**
+ * @brief The reflection base class template for Microservice
+ *
+ * @tparam T the type of the implementation class
+ */
 template <typename T>
 class Microservice {
   protected:
@@ -55,4 +62,4 @@ template <typename T>
 typename Microservice<T>::methodRegistrator 
   Microservice<T>::registrator_;
 } // namespace isce
-#endif
+#endif // ISCE_MICROSERVICE_H_

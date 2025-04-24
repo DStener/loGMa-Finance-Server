@@ -1,9 +1,9 @@
-#ifndef ISCE_DTO_H
-#define ISCE_DTO_H
+#ifndef ISCE_DTO_H_
+#define ISCE_DTO_H_
 
 namespace isce {
 class DTO {
 
 };
 } // namespae isce
-#endif
+#endif ISCE_DTO_H_

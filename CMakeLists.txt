@@ -1,4 +1,4 @@
 ﻿cmake_minimum_required(VERSION 3.24)
 project(loGMa-Server CXX)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/server_test)
+add_subdirectory(${CMAKE_SOURCE_DIR}/server_hello)

@@ -1,5 +1,5 @@
-#ifndef ISCE_DATABASE_H
-#define ISCE_DATABASE_H
+#ifndef ISCE_DATABASE_H_
+#define ISCE_DATABASE_H_
 
 namespace isce {
 class DataBase {
@@ -38,4 +38,4 @@ class DataBase {
 };
 using DB = DataBase;
 } // namespace isce
-#endif
+#endif // ISCE_DATABASE_H_
