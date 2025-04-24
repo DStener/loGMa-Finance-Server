@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ISCE_DATABASE_H
+#define ISCE_DATABASE_H
 
 namespace isce {
 class DataBase {
@@ -37,3 +38,4 @@ class DataBase {
 };
 using DB = DataBase;
 } // namespace isce
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ISCE_HTTP_FRAMEWORK_H
+#define ISCE_HTTP_FRAMEWORK_H
 
 #include <isce/Configure.h>
 
@@ -29,8 +30,8 @@ namespace net		=	boost::asio;
 using request_t = http::request<http::string_body>;
 using response_t = http::response<http::string_body>;
 
-typedef std::function<void(response_t&&)> callback_t;
-typedef boost::function<void (const request_t&, callback_t&&)> func_t;
+typedef std::function<void (response_t&&)> callback_t;
+typedef std::function<void (const request_t&, callback_t&&)> func_t;
 
 
 using route_t = std::tuple<func_t, std::string_view, http::verb>;
@@ -56,7 +57,6 @@ class HttpFramework {
       ioc.run();
 		}
 
-  
     static void registerMethod(
         func_t &&func, 
         std::string_view target,
@@ -165,3 +165,4 @@ class HttpFramework {
     }
 };
 } // namespace isce
+#endif

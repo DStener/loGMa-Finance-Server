@@ -4,6 +4,8 @@ project(server_test CXX)
 # Include ISCE system
 include(${CMAKE_SOURCE_DIR}/isce/isce.cmake)
 
+set(BOOST_ALL_NO_LIB 1)
+
 file(GLOB SRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 add_executable(${PROJECT_NAME} ${SRC_FILE})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/config.h.in config.h @ONLY)

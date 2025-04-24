@@ -1,6 +1,7 @@
-#pragma once
+#ifndef ISCE_CONFIGURE_H
+#define ISCE_CONFIGURE_H
 
-#include <boost/json/src.hpp>
+#include <boost/json.hpp>
 
 #include <string>
 #include <filesystem>
@@ -11,7 +12,7 @@ namespace json = boost::json;
 
 namespace isce {
 namespace Configure {
-	static json::object config;
+	inline static json::object config;
 
 	static bool loadConfigFile(fs::path path) {
 		// Check, that path is exist
@@ -36,3 +37,4 @@ namespace Configure {
 namespace Config = Configure;
 using namespace Configure;
 } // namespace isce
+#endif
