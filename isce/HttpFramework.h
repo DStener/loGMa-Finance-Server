@@ -176,7 +176,7 @@ class HttpFramework {
               std::make_tuple(std::move(body)),
               std::make_tuple(http::status::ok, req.version()) };
           file_resp.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-          file_resp.set(http::field::content_type, "text/html");
+          file_resp.set(http::field::content_type, "application/octet-stream");
           file_resp.content_length(size);
           file_resp.keep_alive(req.keep_alive());
 
