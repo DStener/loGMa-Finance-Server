@@ -4,6 +4,7 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 
 #include <boost/json.hpp>
 
