@@ -11,9 +11,9 @@ using namespace isce;
 int main() {
 	isce::Config::loadFile(CONFIG_PATH);
 	isce::HttpFramework::run();
-	auto database = new DataBase();
+	auto db = isce::DB::get();
 
-	database->Insert("users", "name, age", "'Dima', 25");
+	
 
 
 	

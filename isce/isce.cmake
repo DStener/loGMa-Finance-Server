@@ -5,7 +5,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Boost COMPONENTS json REQUIRED)
 find_package(PostgreSQL REQUIRED)
 
-find_package(PostgreSQL REQUIRED)
 
 
 set(ISCE_LIBRARY ${Boost_LIBRARIES};PostgreSQL::PostgreSQL)

@@ -74,7 +74,7 @@ namespace isce {
 			PQclear(res);
 
 		}
-
+		
 		
 		void Insert(const std::string& table, const std::string& parameters, const std::string& values) {
 			std::string query = "INSERT INTO " + table + " " + '(' + parameters + ')' + "VALUES" + '(' + values + ')' + ";";
