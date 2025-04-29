@@ -10,6 +10,7 @@
 
 namespace isce {
 	class DataBase {
+	private:
 		PGconn* conn;
 	public:
 		DataBase() {

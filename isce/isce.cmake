@@ -6,8 +6,6 @@ find_package(Boost COMPONENTS json REQUIRED)
 find_package(PostgreSQL REQUIRED)
 
 
-
-
 set(ISCE_LIBRARY ${Boost_LIBRARIES};PostgreSQL::PostgreSQL)
 set(ISCE_INCLUDE ${CMAKE_SOURCE_DIR};${Boost_INCLUDE_DIR};${PostgreSQL_INCLUDE_DIRS})
 
