@@ -18,11 +18,9 @@ namespace posix_time = boost::posix_time;
 using namespace isce;
 
 int main() {
-	// UserTest test{};
-	// test.test = "best";
-
-	// isce::Config::loadFile(CONFIG_PATH);
-	// isce::HttpFramework::run();
+	isce::__service_name__ = PROJECT_NAME;
+	isce::Config::loadFile(CONFIG_PATH);
+	isce::HttpFramework::run();
 
 	// test.test
 

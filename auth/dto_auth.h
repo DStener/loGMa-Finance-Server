@@ -15,6 +15,13 @@ struct User {
 };
 BOOST_FUSION_ADAPT_STRUCT(User, username, email, password, birthday)
 
+struct Token {
+  __sql__ id_user SERIAL REFERENCES(User);
+  __sql__ token VARCHAR NOTNULL;
+  __sql__ time TIMESTAMP NOTNULL;
+};
+BOOST_FUSION_ADAPT_STRUCT(Token, id_user, token, time)
+
 
 
 struct Login {

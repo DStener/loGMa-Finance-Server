@@ -1,5 +1,4 @@
-#ifndef ISCE_HTTP_FRAMEWORK_H_
-#define ISCE_HTTP_FRAMEWORK_H_
+#pragma once
 
 #include <algorithm>
 #include <cstdlib>
@@ -194,6 +193,8 @@ class HttpFramework {
         message.emplace(http::message_generator(std::move(resp)));
       };
 
+      std::cout << "\t\tCALL" << std::endl;
+
       // Call function
       func.value()(req, std::move(callback));
       if (!message.has_value()) { break; }
@@ -218,4 +219,3 @@ class HttpFramework {
   }
 };
 } // namespace isce
-#endif ISCE_HTTP_FRAMEWORK_H_

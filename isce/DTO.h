@@ -1,14 +1,11 @@
 #pragma once
 
-#include <boost/algorithm/string/join.hpp>
-#include <boost/date_time/posix_time/time_formatters.hpp>
-#include <boost/date_time/posix_time/time_parsers.hpp>
-#include <boost/json/object.hpp>
-#include <boost/json/parse_into.hpp>
 #include <format>
 #include <string>
 #include <string_view>
 #include <utility>
+
+#include <libpq-fe.h>
 
 #include <boost/json.hpp>
 #include <boost/fusion/adapted.hpp>
@@ -17,6 +14,11 @@
 #include <boost/core/type_name.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/date_time/posix_time/time_formatters.hpp>
+#include <boost/date_time/posix_time/time_parsers.hpp>
+#include <boost/json/object.hpp>
+#include <boost/json/parse_into.hpp>
 
 #include <isce/HttpFramework.h>
 #include <isce/sqlAttrib.h>
@@ -24,6 +26,11 @@
 
 namespace fs = std::filesystem;
 namespace json = boost::json;
+
+template <typename T>
+using DTORow = std::pair<id_t,T>;
+template <typename T>
+using ResponseVec = std::vector<DTORow<T>>;
 
 namespace isce {
 class DTO {
@@ -36,14 +43,13 @@ class DTO {
   }
 
   template <typename T>
-  static constexpr std::string_view getName() {
+  static constexpr std::string getName() {
     return boost::core::type_name<T>();
   }
 
   template <typename T>
   static T fromJson(const json::object& json) {
     T t{};
-
     DTO::for_each(t, [&](std::string_view name, auto& field) {
         using type_dec = std::remove_cvref_t<decltype(field)>;
 
@@ -65,7 +71,7 @@ class DTO {
           } else if constexpr (std::is_same_v<type_dec, SQL_TEXT>) {
             field = static_cast<SQL_TEXT>(it->value().as_string());
           } else if constexpr (std::is_same_v<type_dec, SQL_TIMESTAMP>) {
-            field = posix_time::from_iso_extended_string(it->value().as_string().c_str());
+            field = posix_time::time_from_string(it->value().as_string().data());
           } else {
             field = it->value().as_string().c_str();
           }
@@ -96,7 +102,7 @@ class DTO {
       } else if constexpr (std::is_same_v<type_dec, SQL_TEXT>) {
         json[name] = static_cast<SQL_TEXT>(field);
       } else if constexpr (std::is_same_v<type_dec, SQL_TIMESTAMP>) {
-        json[name] = posix_time::to_iso_extended_string(field);
+        json[name] = posix_time::to_simple_string(field);
       } else {
         json[name] = std::to_string(field);
       }
@@ -121,6 +127,111 @@ class DTO {
     return T{};
   }
 
+  template <typename T>
+  static ResponseVec<T> fromSQL(PGresult* res) {
+    if(res == nullptr) { return {}; }
+
+    ResponseVec<T> vec{};
+    int rows = PQntuples(res); 
+		int cols = PQnfields(res);
+
+    for(int i = 0; i < rows; ++i) {
+      T t;
+      
+      DTO::for_each(t, [&](std::string_view name, auto& field) {
+        int index = PQfnumber(res, name.data());
+        if(index == -1) { return; } // if not found
+
+        const auto value = PQgetvalue(res, i, index);
+
+        if (std::holds_alternative<SQL_INTEGER>(field.value)) {
+          field = std::stoi(value);
+        } else if (std::holds_alternative<SQL_SERIAL>(field.value)) {
+          field = static_cast<SQL_SERIAL>(std::stol(value));
+        } else if (std::holds_alternative<SQL_REAL>(field.value)) {
+          field = std::stof(value);
+        } else if (std::holds_alternative<SQL_BIGINT>(field.value)) {
+          field = std::stol(value);
+        } else if (std::holds_alternative<SQL_BIGSERIAL>(field.value)) {
+          field = std::stoul(value);
+        } else if (std::holds_alternative<SQL_VARCHAR>(field.value)) {
+          field = std::string(value);
+        } else if (std::holds_alternative<SQL_TEXT>(field.value)) {
+          field = std::string(value);
+        } else if (std::holds_alternative<SQL_TIMESTAMP>(field.value)) {
+          field = posix_time::time_from_string(value);
+        }
+      });
+
+      vec.push_back(std::make_pair(i, std::move(t)));
+    }
+    return vec;
+  }
+
+  template <typename T>
+  static std::string sqlInsert(T& t) {
+    std::vector<std::string> fields;
+    std::vector<std::string> unique_fields;
+    std::vector<std::string> values;
+
+    DTO::for_each(t, [&](std::string_view name, auto& field) {
+      fields.push_back(name.data());
+
+      if (field.hasConstraint(SQL_UNIQUE)){
+        unique_fields.push_back(name.data());
+      }
+
+      if (std::holds_alternative<SQL_INTEGER>(field.value)) {
+        auto value = std::get<SQL_INTEGER>(field.value);
+        values.push_back(std::to_string(value));
+      } else if (std::holds_alternative<SQL_SERIAL>(field.value)) {
+        auto value = std::get<SQL_SERIAL>(field.value);
+        values.push_back(std::to_string(value));
+      } else if (std::holds_alternative<SQL_REAL>(field.value)) {
+        auto value = std::get<SQL_REAL>(field.value);
+        values.push_back(std::to_string(value));
+      } else if (std::holds_alternative<SQL_BIGINT>(field.value)) {
+        auto value = std::get<SQL_BIGINT>(field.value);
+        values.push_back(std::to_string(value));
+      } else if (std::holds_alternative<SQL_BIGSERIAL>(field.value)) {
+        auto value = std::get<SQL_BIGSERIAL>(field.value);
+        values.push_back(std::to_string(value));
+      } else if (std::holds_alternative<SQL_VARCHAR>(field.value)) {
+        auto value = std::get<SQL_VARCHAR>(field.value);
+        values.push_back(std::format("'{}'", value));
+      } else if (std::holds_alternative<SQL_TEXT>(field.value)) {
+        auto value = std::get<SQL_TEXT>(field.value);
+        values.push_back(std::format("'{}'", value));
+      } else if (std::holds_alternative<SQL_TIMESTAMP>(field.value)) {
+        auto value = std::get<SQL_TIMESTAMP>(field.value);
+        values.push_back(std::format("'{}'", posix_time::to_simple_string(value)));
+      }
+    });
+
+    if (!unique_fields.empty()) {
+      // std::cout << "REJFKLEKLFBJLEBFJEJEGF" << std::endl;
+      // return std::format("INSERT INTO \"{}\"({}) VALUES({}) "
+      //                  "ON CONFLICT({}) DO NOTHING "
+      //                  "RETURNING id;",
+      //                  DTO::getName<T>(), 
+      //                  boost::join(fields, ", "),
+      //                  boost::join(values, ", "),
+      //                  boost::join(unique_fields, ", "));
+
+      return std::format("INSERT INTO \"{0}\"({1}) VALUES({2}) "
+                         "ON CONFLICT ON CONSTRAINT \"{0}_pkey\" DO NOTHING "
+                         "RETURNING id;",
+                         DTO::getName<T>(), 
+                         boost::join(fields, ", "),
+                         boost::join(values, ", "));
+    }
+
+    return std::format("INSERT INTO \"{0}\"({1}) VALUES({2}) "
+                       "RETURNING id;",
+                       DTO::getName<T>(), 
+                       boost::join(fields, ", "),
+                       boost::join(values, ", "));
+  }
 
   template <typename T>
   static std::string sqlCreateTable(){
@@ -161,7 +272,7 @@ class DTO {
       }
       if (field.hasConstraint(SQL_REFERENCES)){
         auto constr = field.getConstraint(SQL_REFERENCES);
-        field_construct.push_back(std::format("REFERENCES {} (id)", constr.value));
+        field_construct.push_back(std::format("REFERENCES \"{}\" (id)", constr.value));
       }
       if (field.hasConstraint(SQL_DEFAULT)){
         auto constr = field.getConstraint(SQL_DEFAULT);
@@ -175,7 +286,7 @@ class DTO {
       fields.push_back(boost::join(field_construct," "));
     });
 
-    return std::format("CREATE TABLE {}"
+    return std::format("CREATE TABLE IF NOT EXISTS \"{}\""
                        "(" 
                          "id SERIAL PRIMARY KEY,"
                          "{}" 
@@ -185,11 +296,6 @@ class DTO {
   }
 
  private:
-
-
-
-
-
   template <typename T, typename Func, std::size_t... I>
   static constexpr void FOREACH(T& t, Func f, std::index_sequence<I...>) {
       (
