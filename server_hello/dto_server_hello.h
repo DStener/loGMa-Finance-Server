@@ -1,4 +1,5 @@
 #pragma once
+
 #include <boost/date_time/posix_time/ptime.hpp>
 #define SQL_STRUCT_DECLARING
 

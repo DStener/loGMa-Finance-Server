@@ -13,7 +13,16 @@ struct User {
   __sql__ password VARCHAR NOTNULL;
   __sql__ birthday TIMESTAMP NOTNULL;
 };
-BOOST_FUSION_ADAPT_STRUCT(User, username, email, password, birthday)
+BOOST_FUSION_ADAPT_STRUCT(::User, username, email, password, birthday)
+
+
+struct Token {
+  __sql__ id_user SERIAL REFERENCES(User);
+  __sql__ token VARCHAR NOTNULL;
+  __sql__ time TIMESTAMP NOTNULL;
+};
+BOOST_FUSION_ADAPT_STRUCT(::Token, id_user, token, time)
+
 
 
 
@@ -21,7 +30,7 @@ struct Login {
   std::string        username;
   std::string        password;
 };
-BOOST_FUSION_ADAPT_STRUCT(Login, username, password)
+BOOST_FUSION_ADAPT_STRUCT(::Login, username, password)
 
 struct Register {
   std::string        username;
@@ -30,7 +39,7 @@ struct Register {
   std::string        c_password;
   posix_time::ptime  birthday;
 };
-BOOST_FUSION_ADAPT_STRUCT(Register, username, email, password, c_password,
+BOOST_FUSION_ADAPT_STRUCT(::Register, username, email, password, c_password,
                           birthday)
 
 

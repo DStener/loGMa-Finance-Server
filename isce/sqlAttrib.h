@@ -113,6 +113,16 @@ class __sql__ {
 
 
   template <sql_type T>
+  constexpr __sql__ operator= (const __sql__& t) {
+    value = t.value;
+    return *this;
+  }
+  template <sql_type T>
+  constexpr __sql__ operator= (__sql__&& t) {
+    value = std::move(t.value);
+    return *this;
+  }
+  template <sql_type T>
   constexpr __sql__ operator= (const T& t) {
     value = t;
     return *this;
@@ -122,6 +132,7 @@ class __sql__ {
     value = std::move(t);
     return *this;
   }
+  
 
   constexpr __sql__ operator+ (__sql_constraint__ c) {
     constraints.push_back(c);

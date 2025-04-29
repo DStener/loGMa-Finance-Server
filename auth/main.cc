@@ -6,21 +6,20 @@
 #include <isce/Configure.h>
 #include <isce/HttpFramework.h>
 #include <isce/DataBase.h>
+#include <isce/Microservice.h>
 
 #include "config.h"
 #include "dto_auth.h"
 
+
 using namespace isce;
 
 int main() {
-	DB::get()->Create<::User>();
-
+	isce::__service_name__ = PROJECT_NAME;
 	isce::Config::loadFile(CONFIG_PATH);
+
+	DB::get()->Create<::User>();
+	DB::get()->Create<::Token>();
+
 	isce::HttpFramework::run();
-
-	// test.test
-
-	// auto database = new DataBase();
-
-	// database->Insert("users", "name, age", "'Dima', 25");
 }

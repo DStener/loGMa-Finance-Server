@@ -18,8 +18,18 @@ namespace posix_time = boost::posix_time;
 using namespace isce;
 
 int main() {
+	isce::__service_name__ = PROJECT_NAME;
 	isce::Config::loadFile(CONFIG_PATH);
 	isce::HttpFramework::run();
+
+	// test.test
+
+	// auto database = new DataBase();
+
+	// database->Insert("users", "name, age", "'Dima', 25");
+
+	// posix_time::ptime;
+
 	// posix_time::ptime t (posix_time::microsec_clock::local_time());
 	// std::cout << posix_time::to_simple_string(t) << std::endl;
 

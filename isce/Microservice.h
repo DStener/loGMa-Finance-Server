@@ -1,9 +1,11 @@
-#ifndef ISCE_MICROSERVICE_H_
-#define ISCE_MICROSERVICE_H_
+#pragma once
 
 #include <functional>
 
+#include <boost/core/type_name.hpp>
+
 #include <isce/HttpFramework.h>
+#include <string_view>
 
 
 #define METHOD_LIST_BEGIN                                                 \
@@ -15,6 +17,8 @@
   }
 
 namespace isce {
+static std::string __service_name__;
+
 /**
  * @brief The reflection base class template for Microservice
  *
@@ -22,44 +26,41 @@ namespace isce {
  */
 template <typename T>
 class Microservice {
-  protected:
+ protected:
+  template <typename FUNCTION>
+  static void registerMethod(
+      FUNCTION&& func,
+      std::string_view target,
+      http::verb&& method) {
 
-    template <typename FUNCTION>
-    static void registerMethod(
-        FUNCTION&& func,
-        std::string_view target,
-        http::verb&& method) {
+    static T t;
+    func_t wrapper = std::bind(std::forward<FUNCTION>(func), &t, std::placeholders::_1, std::placeholders::_2);
 
-      static T t;
-      func_t wrapper = std::bind(std::forward<FUNCTION>(func), &t, std::placeholders::_1, std::placeholders::_2);
+    isce::HttpFramework::registerMethod(
+        std::move(wrapper),
+        target,
+        std::move(method)
+    );
+  }
 
-      isce::HttpFramework::registerMethod(
-          std::move(wrapper),
-          target,
-          std::move(method)
-      );
-    }
+ private:
+  class methodRegistrator {
+    public:
+      methodRegistrator() {   
+        //instance = new this();  
+        T::init(); 
+      }
+  };
 
-  private:
-    class methodRegistrator {
-      public:
-        methodRegistrator() {   
-          //instance = new this();  
-          T::init(); 
-        }
-    };
+  // use static value to register controller method in framework before
+  // main();  
+  //inline static T& instance = new T();
+  static methodRegistrator registrator_;
 
-    // use static value to register controller method in framework before
-    // main();  
-    //inline static T& instance = new T();
-    static methodRegistrator registrator_;
-
-    // Necessary to trick the compiler
-    virtual void *touch() { return &registrator_; }
+  // Necessary to trick the compiler
+  virtual void *touch() { return &registrator_; }
 };
-
 template <typename T>
 typename Microservice<T>::methodRegistrator 
   Microservice<T>::registrator_;
 } // namespace isce
-#endif // ISCE_MICROSERVICE_H_
