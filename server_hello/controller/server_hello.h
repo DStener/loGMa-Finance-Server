@@ -2,6 +2,7 @@
 #define SERVER_HELLO_H_
 
 #include <isce/Microservice.h>
+
 #include "config.h"
 
 class ServerHello : isce::Microservice<ServerHello> {

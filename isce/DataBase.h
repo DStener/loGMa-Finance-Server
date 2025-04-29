@@ -1,7 +1,11 @@
 #ifndef ISCE_DATABASE_H_
 #define ISCE_DATABASE_H_
+
+#include <iostream>
+
 #include <libpq-fe.h>
 
+#include <isce/DTO.h>
 
 
 namespace isce {
@@ -35,16 +39,28 @@ namespace isce {
 			return instance;
 		}
 
+		template <typename T>
+		void Create() {
+			std::string query = DTO::sqlCreateTable<T>();
+			PGresult* res = PQexec(conn, query.c_str());
+
+			if (!conn && PQresultStatus(res) != PGRES_COMMAND_OK) {
+				std::cerr << "PosgreSQL ERROR: " << PQerrorMessage(conn) << std::endl;
+			}
+
+			PQclear(res);
+		}
+
 		void Select(const std::string& column, const std::string& table) {
 			std::string query = "SELECT " + column + " FROM " + table + ";";
 			PGresult* res = PQexec(conn, query.c_str());
 
-			if (!conn || PQresultStatus(res) != PGRES_TUPLES_OK) {
+			if (!conn && PQresultStatus(res) != PGRES_TUPLES_OK) {
 				std::cerr << "Select failed" << PQerrorMessage(conn) << std::endl;
 			}
 			else {
-				int rows = PQntuples(res); // строки
-				int cols = PQnfields(res); // столбцы
+				int rows = PQntuples(res); 
+				int cols = PQnfields(res);
 
 				for (int i = 0; i < rows; ++i) {
 					for (int j = 0; j < cols; ++j) {
@@ -64,7 +80,7 @@ namespace isce {
 			std::string query = "DELETE FROM " + table + " WHERE " + condition + ';';
 			PGresult* res = PQexec(conn, query.c_str());
 
-			if (!conn || PQresultStatus(res) != PGRES_COMMAND_OK) {
+			if (!conn && PQresultStatus(res) != PGRES_COMMAND_OK) {
 				std::cerr << "deleted failed: " << PQerrorMessage(conn) << std::endl;
 			}
 			else {
@@ -80,7 +96,7 @@ namespace isce {
 			std::string query = "INSERT INTO " + table + " " + '(' + parameters + ')' + "VALUES" + '(' + values + ')' + ";";
 			PGresult* res = PQexec(conn, query.c_str());
 
-			if (!conn || PQresultStatus(res) != PGRES_COMMAND_OK) {
+			if (!conn && PQresultStatus(res) != PGRES_COMMAND_OK) {
 				std::cerr << "Insert failed: " << PQerrorMessage(conn) << std::endl;
 			}
 
@@ -91,7 +107,7 @@ namespace isce {
 		void Update(const std::string& table, const std::string& parameters, const std::string& condition) {
 			std::string query = "UPDATE " + table + " SET " + parameters + " WHERE " + condition;
 			PGresult* res = PQexec(conn, query.c_str());
-			if (!conn || PQresultStatus(res) != PGRES_COMMAND_OK) {
+			if (!conn && PQresultStatus(res) != PGRES_COMMAND_OK) {
 				std::cerr << "Updated failed" << PQerrorMessage(conn) << std::endl;
 			}
 			else {
