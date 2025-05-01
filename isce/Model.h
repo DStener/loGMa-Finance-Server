@@ -1,15 +1,14 @@
 #pragma once
+#include <iostream>
 #include <string>
 #include <unordered_map>
 #include <libpq-fe.h>
-
 
 class Model {
 
 public:
   Model(std::string table) : tableName(std::move(table)) {
     conn = PQconnectdb("host=localhost dbname=*** user=*** password=***");
-
     if (PQstatus(conn) != CONNECTION_OK) {
       std::cerr << "Connected error: " << PQerrorMessage(conn) << std::endl;
     }
