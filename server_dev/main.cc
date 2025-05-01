@@ -9,17 +9,23 @@
 #include <isce/Microservice.h>
 
 #include "config.h"
-#include "dto_auth.h"
 
 
 using namespace isce;
 
-int main() {
-	isce::__service_name__ = PROJECT_NAME;
-	isce::Config::loadFile(CONFIG_PATH);
+void route_up();
 
-	DB::get()->Create<::User>();
-	DB::get()->Create<::Token>();
+
+int main() {
+
+
+	route_up();
+
+	// isce::__service_name__ = PROJECT_NAME;
+	// isce::Config::loadFile(CONFIG_PATH);
+
+	// DB::get()->Create<::User>();
+	// DB::get()->Create<::Token>();
 
 	isce::HttpFramework::run();
 }
