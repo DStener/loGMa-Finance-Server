@@ -16,3 +16,5 @@ public:
 	// Declaring methods
 	void Register(const request_t& req, callback_t&& callback);
 };
+
+

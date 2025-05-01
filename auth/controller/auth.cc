@@ -17,6 +17,7 @@ void Auth::Register(const request_t& req, callback_t&& callback) {
 	
 	response_t response(http::status::ok, req.version());
 	response.body() = "Hello!";
+	
 
 	callback(std::move(response));
 }

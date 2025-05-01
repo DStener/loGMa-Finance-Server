@@ -8,7 +8,7 @@ set(BOOST_ALL_NO_LIB 1)
 
 file(GLOB CONTROLLERS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/controller/*.cc)
 file(GLOB SYSTEM_SRC ${CMAKE_CURRENT_SOURCE_DIR}/systems/*.cc)
-add_executable(${PROJECT_NAME} main.cc ${CONTROLLERS_SRC} ${SYSTEM_SRC})
+add_executable(${PROJECT_NAME} main.cc ${CONTROLLERS_SRC} ${SYSTEM_SRC} )
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.inc config.h @ONLY)
 
 

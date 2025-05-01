@@ -11,7 +11,7 @@
 #define METHOD_LIST_BEGIN                                                 \
   static void init() {
 #define METHOD_ADD(func, pattern, method)                                  \
-    registerMethod(&func, pattern, method);  
+    registerMethod(&func, pattern, method); 
 #define METHOD_LIST_END                                                   \
     return;                                                               \
   }

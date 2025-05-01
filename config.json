@@ -5,7 +5,7 @@
 
     "database": {
         "host": "localhost",
-        "dbname": "__auto__",
+        "dbname": "logma",
         "user": "postgres",
         "password": "2207"
     }

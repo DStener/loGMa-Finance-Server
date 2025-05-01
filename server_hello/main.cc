@@ -12,15 +12,26 @@
 #include "dto_server_hello.h"
 #include "boost/date_time/posix_time/posix_time.hpp" 
 
+#include "isce/route.h"
+#include "auth/controller/auth.h"
+
+
 // https://www.boost.org/doc/libs/master/doc/html/date_time.html
 namespace posix_time = boost::posix_time;
 
 using namespace isce;
 
 int main() {
+
+	setlocale(LC_ALL, "ru");
+
 	isce::__service_name__ = PROJECT_NAME;
 	isce::Config::loadFile(CONFIG_PATH);
 	isce::HttpFramework::run();
+
+	isce::Route<Auth>::get('/', Register);
+
+
 
 	// test.test
 
