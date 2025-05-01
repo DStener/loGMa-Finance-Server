@@ -10,7 +10,6 @@
 
 #include "config.h"
 
-
 using namespace isce;
 
 void route_up();
@@ -18,11 +17,13 @@ void route_up();
 
 int main() {
 
-
+	
 	route_up();
-
+	
 	// isce::__service_name__ = PROJECT_NAME;
 	// isce::Config::loadFile(CONFIG_PATH);
+	
+
 
 	// DB::get()->Create<::User>();
 	// DB::get()->Create<::Token>();

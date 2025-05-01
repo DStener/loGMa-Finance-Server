@@ -1,32 +1,36 @@
 #include "auth.h"
+#include "isce/Model.h"
+#include "isce/Response.h"
 
-response_t Auth::registration(request_t&& request) {
 
-	return response_t();
+
+http::response<http::string_body> Auth::registration(request_t&& request) {
+	
+	return response_t::Json("Data"); 
 }
 
-response_t Auth::login(request_t&& request) {
+http::response<http::string_body> Auth::login(request_t&& request) {
 
-	return response_t();
+	return response_t::Json("Data");
 }
 
-response_t Auth::login2fa(request_t&& request) {
+http::response<http::string_body> Auth::login2fa(request_t&& request) {
 
-	return response_t();
+	return response_t::Json("Data");
 }
 
-response_t Auth::me(request_t&& request) {
-	return response_t();
+http::response<http::string_body> Auth::me(request_t&& request) {
+	return response_t::Json("Data");
 }
 
-response_t Auth::out(request_t&& request) {
-	return response_t();
+http::response<http::string_body> Auth::out(request_t&& request) {
+	return response_t::Json("Data");
 }
 
-response_t Auth::tokens(request_t&& request) {
-	return response_t();
+http::response<http::string_body> Auth::tokens(request_t&& request) {
+	return response_t::Json("Data");;
 }
 
-response_t Auth::out_all(request_t&& request) {
-	return response_t();
+http::response<http::string_body> Auth::out_all(request_t&& request) {
+	return response_t::Json("Data");
 }
