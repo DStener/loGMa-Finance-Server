@@ -11,7 +11,7 @@
 #define METHOD_LIST_BEGIN                                                 \
   static void init() {
 #define METHOD_ADD(func, pattern, method)                                  \
-    registerMethod(&func, pattern, method); 
+    registerMethod(&func, pattern, method);  
 #define METHOD_LIST_END                                                   \
     return;                                                               \
   }
@@ -34,7 +34,7 @@ class Microservice {
       http::verb&& method) {
 
     static T t;
-    func_t wrapper = std::bind(std::forward<FUNCTION>(func), &t, std::placeholders::_1, std::placeholders::_2);
+    // func_t wrapper = std::bind(std::forward<FUNCTION>(func), &t, std::placeholders::_1, std::placeholders::_2);
 
     // isce::HttpFramework::registerMethod(
     //     std::move(wrapper),

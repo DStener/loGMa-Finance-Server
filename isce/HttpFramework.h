@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _ISCE_HTTP_FRAMEWORK_
+#define _ISCE_HTTP_FRAMEWORK_
 
 #include <algorithm>
 #include <cstdlib>
@@ -19,23 +20,33 @@
 #include <boost/config.hpp>
 #include <boost/function.hpp>
 
+
 #include <isce/Configure.h>
+#include <isce/Response.h>
+#include <isce/Request.h>
+
 
 
 namespace beast	=	boost::beast;
 namespace http	=	beast::http;
 namespace net		=	boost::asio;
   
-using request_t = http::request<http::string_body>;
-using response_t = http::response<http::string_body>;
+// using request_t = http::request<http::string_body>;
+// using response_t = http::response<http::string_body>;
 
-typedef std::function<void (response_t&&)> callback_t;
-typedef std::function<void (const request_t&, callback_t&&)> func_t;
+// typedef std::function<isce::response_t (isce::request_t&&)> func_t;
 
-using route_t = std::tuple<func_t, std::string_view, http::verb>;
+
+
 
 
 namespace isce {
+class RouteObjet;
+
+  using func_t = std::function<response_t (request_t&&)>;
+  using callback_t = std::function<response_t (request_t&&)>;
+  using route_t = std::tuple<func_t, std::string_view, http::verb>;
+
 class HttpFramework {
  public:
   /**
@@ -62,35 +73,40 @@ class HttpFramework {
     ioc.run();
 	}
 
-  static void registerMethod(
-      func_t &&func, 
-      std::string_view target,
-      http::verb &&method) {
 
-    route_t route = std::make_tuple(
-        std::move(func),
-        target,
-        std::move(method));
-
+  static void addRoute(std::shared_ptr<RouteObjet> route) {
     routes.push_back(std::move(route));
   }
 
+  // static void registerMethod(
+  //     func_t&& func, 
+  //     std::string&& target,
+  //     http::verb&& method) {
+
+  //   route_t route = std::make_tuple(
+  //       std::move(func),
+  //       target,
+  //       std::move(method));
+
+  //   routes.push_back(std::move(route));
+  // }
+
  private:
-  inline static std::vector<route_t> routes = {};
+  inline static std::vector<std::shared_ptr<RouteObjet>> routes = {};
 
-  static std::optional<func_t> getRouteFunc(
-      std::string_view target,
-      http::verb &&method) {
+  // static std::optional<func_t> getRouteFunc(
+  //     std::string_view target,
+  //     http::verb &&method) {
 
-    auto route_it = std::find_if(routes.begin(), routes.end(), [&](const route_t& route) {
-                                    return std::get<1>(route) == target &&
-                                          std::get<2>(route) == method;
-                                  });
+  //   // auto route_it = std::find_if(routes.begin(), routes.end(), [&](const route_t& route) {
+  //   //                                 return std::get<1>(route) == target &&
+  //   //                                       std::get<2>(route) == method;
+  //   //                               });
 
-    if (route_it == routes.end()) { return {}; }
+  //   // if (route_it == routes.end()) { return {}; }
 
-    return std::get<0>(*route_it);
-  }
+  //   // return std::get<0>(*route_it);
+  // }
 
 
   // Accepts incoming connections and launches the sessions
@@ -128,76 +144,76 @@ class HttpFramework {
       co_await http::async_read(stream, buffer, req);
 
       // Get route function
-      auto func = getRouteFunc(req.target(), req.method());
-      if (!func.has_value()) { break; }
+      // auto func = getRouteFunc(req.target(), req.method());
+      // if (!func.has_value()) { break; }
 
       std::optional<http::message_generator> message;
       std::optional<std::string_view> path;
 
 
-      // Callback lambda-function
-      callback_t callback = [&](response_t&& resp) {
+      // // Callback lambda-function
+      // callback_t callback = [&](response_t&& resp) {
 
-        // Set MIME value, if is not set;
-        if (resp.find(http::field::content_type) == resp.end()) {
-          resp.set(http::field::content_type, "text/html");
-        }
+      //   // Set MIME value, if is not set;
+      //   if (resp.find(http::field::content_type) == resp.end()) {
+      //     resp.set(http::field::content_type, "text/html");
+      //   }
 
-        // If request is file
-        if (resp.find("FILE") != resp.end()) {
+      //   // If request is file
+      //   if (resp.find("FILE") != resp.end()) {
 
-          beast::error_code ec;
-          http::file_body::value_type body;
+      //     beast::error_code ec;
+      //     http::file_body::value_type body;
 
-          std::string file { resp.at("FILE") };
+      //     std::string file { resp.at("FILE") };
 
-          body.open(file.c_str(), beast::file_mode::read, ec);
+      //     body.open(file.c_str(), beast::file_mode::read, ec);
 
-          // Handle the case where the file doesn't exist
-          if (ec == beast::errc::no_such_file_or_directory) { 
-            std::cout << "NO FILE" << std::endl;
-            return; 
-          }
-            //return not_found(req.target());
+      //     // Handle the case where the file doesn't exist
+      //     if (ec == beast::errc::no_such_file_or_directory) { 
+      //       std::cout << "NO FILE" << std::endl;
+      //       return; 
+      //     }
+      //       //return not_found(req.target());
 
-          // Handle an unknown error
-          if (ec) { 
-            std::cout << file << "ERROR" << ec << std::endl;
-            return; 
-          }
-            //return server_error(ec.message());
+      //     // Handle an unknown error
+      //     if (ec) { 
+      //       std::cout << file << "ERROR" << ec << std::endl;
+      //       return; 
+      //     }
+      //       //return server_error(ec.message());
 
-          // Cache the size since we need it after the move
-          auto const size = body.size();
+      //     // Cache the size since we need it after the move
+      //     auto const size = body.size();
 
-          http::response<http::file_body> file_resp{
-              std::piecewise_construct,
-              std::make_tuple(std::move(body)),
-              std::make_tuple(http::status::ok, req.version()) };
-          file_resp.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-          file_resp.set(http::field::content_type, "application/octet-stream");
-          file_resp.content_length(size);
-          file_resp.keep_alive(req.keep_alive());
+      //     http::response<http::file_body> file_resp{
+      //         std::piecewise_construct,
+      //         std::make_tuple(std::move(body)),
+      //         std::make_tuple(http::status::ok, req.version()) };
+      //     file_resp.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+      //     file_resp.set(http::field::content_type, "application/octet-stream");
+      //     file_resp.content_length(size);
+      //     file_resp.keep_alive(req.keep_alive());
 
-          message.emplace(http::message_generator(std::move(file_resp)));
-          return;
+      //     message.emplace(http::message_generator(std::move(file_resp)));
+      //     return;
 
-          //return res;
-          //std::cout << resp.at("FILE") << std::endl;
-          //path.emplace(resp.at("FILE"));
-        }
+      //     //return res;
+      //     //std::cout << resp.at("FILE") << std::endl;
+      //     //path.emplace(resp.at("FILE"));
+      //   }
 
-        resp.keep_alive(req.keep_alive());
-        resp.prepare_payload();
+      //   resp.keep_alive(req.keep_alive());
+      //   resp.prepare_payload();
 
-        message.emplace(http::message_generator(std::move(resp)));
-      };
+      //   message.emplace(http::message_generator(std::move(resp)));
+      // };
 
       std::cout << "\t\tCALL" << std::endl;
 
       // Call function
-      func.value()(req, std::move(callback));
-      if (!message.has_value()) { break; }
+      // func.value()(req, std::move(callback));
+      // if (!message.has_value()) { break; }
 
       // Determine if we should close the connection
       bool keep_alive = message.value().keep_alive();
@@ -219,3 +235,4 @@ class HttpFramework {
   }
 };
 } // namespace isce
+#endif

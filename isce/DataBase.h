@@ -12,7 +12,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <libpq-fe.h>
 
-#include <isce/DTO.h>
+#include <isce/__DTO.h> 
 #include <isce/Configure.h>
 #include <isce/Microservice.h>
 
