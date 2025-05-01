@@ -42,7 +42,7 @@ namespace isce {
     }
 
     template <typename FUNCTION>
-    static void delete(std::string target, FUNCTION&& func) {
+    static void del(std::string target, FUNCTION&& func) {
       static T t;
       func_t wrapper = std::bind(std::forward<FUNCTION>(func), &t, std::placeholders::_1, std::placeholders::_2);
 
