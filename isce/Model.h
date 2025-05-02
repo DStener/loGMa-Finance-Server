@@ -7,43 +7,56 @@
 class Model {
 
 public:
-  Model(std::string table) : tableName(table) {
-    conn = PQconnectdb("host=localhost dbname=*** user=*** password=***");
+  Model() {
+    conn = PQconnectdb("host=localhost dbname=logma user=postgres password=2207");
+
     if (PQstatus(conn) != CONNECTION_OK) {
       std::cerr << "Connected error: " << PQerrorMessage(conn) << std::endl;
     }
 
   }
 
-  template<typename T>
-  static void create(std::string table_name, std::string parameters) {
-    std::string query = "CREATE TABLE " + table_name + "(" + "id serial primary key " + parameters + ");";
-    std::unique_ptr<PGresult> result = PQexec(conn, query.c_str());
-
-    if (PQresultStatus != PGRES_TUPLES_OK) {
-      std::cerr << "cretae table filid " << PQerrorMessage(conn) << std::endl;
-    }
-
-  }
-  
-  static void update() {
-  
-  }
-
-  static void delete_() {
-  
-  }
-
-
   ~Model() {
     if (conn) {
       PQfinish(conn);
     }
-    conn = nullptr;
   }
 
-protected:
-  std::string tableName;
+
+  void create(std::string table_name, std::string parameters) {
+    std::string query = "CREATE TABLE " + table_name + "(" + "id serial primary key, " + parameters + ");";
+    PGresult* res = PQexec(conn, query.c_str());
+
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+      std::cerr << "created error" << PQerrorMessage(conn) << std::endl;
+    }
+
+    PQclear(res);
+
+  }
+
+  void update(std::string table_name, std::string new_value, std::string condition) {
+    std::string query = "UPDATE " + table_name + " SET " + new_value + " WHERE " + condition + ";";
+    PGresult* res = PQexec(conn, query.c_str());
+
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+      std::cerr << "updated error" << PQerrorMessage(conn) << std::endl;
+    }
+
+    PQclear(res);
+
+  }
+
+  static void delete_(std::string table_name) {
+    
+  }
+
+  static void findOrfail() {
+    //
+  }
+
+private:
   PGconn* conn;
+
 
 };
