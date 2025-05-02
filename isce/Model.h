@@ -7,7 +7,7 @@
 class Model {
 
 public:
-  Model(std::string table) : tableName(std::move(table)) {
+  Model(std::string table) : tableName(table) {
     conn = PQconnectdb("host=localhost dbname=*** user=*** password=***");
     if (PQstatus(conn) != CONNECTION_OK) {
       std::cerr << "Connected error: " << PQerrorMessage(conn) << std::endl;
@@ -15,32 +15,23 @@ public:
 
   }
 
-  virtual std::unordered_map<std::string, std::string>find(int id) {
-    std::string query = "SELECT * FROM " + tableName + " WHERE id=" + std::to_string(id) + ";";
-    PGresult* res = PQexec(conn, query.c_str());
+  template<typename T>
+  static void create(std::string table_name, std::string parameters) {
+    std::string query = "CREATE TABLE " + table_name + "(" + "id serial primary key " + parameters + ");";
+    std::unique_ptr<PGresult> result = PQexec(conn, query.c_str());
 
-    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-      std::string error = PQerrorMessage(conn);
-      PQclear(res);
-      throw std::runtime_error("SQL error" + error);
+    if (PQresultStatus != PGRES_TUPLES_OK) {
+      std::cerr << "cretae table filid " << PQerrorMessage(conn) << std::endl;
     }
 
+  }
+  
+  static void update() {
+  
+  }
 
-    if (PQntuples(res) == 0) {
-      PQclear(res);
-      return {};
-    }
-
-    std::unordered_map<std::string, std::string> result;
-    int cols = PQnfields(res);
-
-    for (int i = 0; i < cols; ++i) {
-      result[PQfname(res, i)] = PQgetvalue(res, 0, i);
-    }
-
-    PQclear(res);
-    return result;
-
+  static void delete_() {
+  
   }
 
 

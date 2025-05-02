@@ -2,38 +2,58 @@
 #include <boost/beast/http.hpp>
 #include <boost/json.hpp>
 #include <memory>
+#include <utility>
+
+
 namespace http = boost::beast::http;
 namespace json = boost::json;
 
 
 namespace isce {
-  class Response{
-  
+  class Response : public std::enable_shared_from_this<Response> {
   public:
-    static std::shared_ptr<Response> Json(const std::string& data) {
+    Response() = default;
+    ~Response() = default;
 
-      http::response<http::string_body> result;
 
-      if (data.size() < 1) {
-        result.result(http::status::bad_request);
-        return std::make_shared<Response>(result);
-      }
+    auto json(const json::value& data) {
 
+      result.result(http::status::ok); 
+      result.body() = serialize(data); 
+
+      return shared_from_this();
+    }
+
+    auto json(std::string_view&& data) {
       json::value json_data = {
         {"message", data}
       };
 
+      result.result(http::status::ok);
+      result.body() = serialize(json_data);
 
-      result.result(http::status::ok); 
-      result.body() = serialize(json_data); 
-
-      return std::make_shared<Response>(result);;
+      return shared_from_this();
     }
 
+    auto not_found() {
+      result.result(http::status::not_found);
+      return shared_from_this();
+    }
 
+    auto make() {
+      return result;
+    }
+
+    auto set_status(http::status&& status) {
+      result.result(std::move(status));
+      
+      return shared_from_this();
+    }
+
+  private:
+    http::response<http::string_body> result;
   };
-using response_t = Response;
-
+using response_t = std::shared_ptr<Response>;
 
 
 } // namespace isce
