@@ -8,7 +8,7 @@ class Model {
 
 public:
   Model() {
-    conn = PQconnectdb("host=localhost dbname=logma user=postgres password=2207");
+    conn = PQconnectdb("host=localhost dbname=*** user=*** password=***");
 
     if (PQstatus(conn) != CONNECTION_OK) {
       std::cerr << "Connected error: " << PQerrorMessage(conn) << std::endl;
@@ -48,7 +48,7 @@ public:
   }
 
   static void delete_(std::string table_name) {
-    
+    //
   }
 
   static void findOrfail() {
