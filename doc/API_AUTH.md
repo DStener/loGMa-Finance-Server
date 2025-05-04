@@ -54,7 +54,7 @@
     ```
 
 ### `GET /api/auth/me`
-> Получение инофрмации о себе  
+> Получение информации о себе  
 - Input: 
   ```js
   NONE
@@ -142,7 +142,7 @@
       "message": string
     }
 
-### `POST /api/auth/session`
+### `GET /api/auth/sessions`
   > Список всех активных сессий пользователя
 - Input: 
   ```js
