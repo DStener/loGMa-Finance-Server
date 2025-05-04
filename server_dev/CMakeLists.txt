@@ -12,6 +12,7 @@ file(GLOB DIRECT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 add_executable(${PROJECT_NAME} ${DIRECT_SRC} ${CONTROLLERS_SRC} ${SYSTEM_SRC})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.inc config.h @ONLY)
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/isce CMAKE_CURRENT_BINARY_DIR)
 
 target_include_directories(${PROJECT_NAME}
                            PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
@@ -20,4 +21,4 @@ target_include_directories(${PROJECT_NAME}
                                   ${CMAKE_CURRENT_SOURCE_DIR}/systems
                                   ${ISCE_INCLUDE})
 
-target_link_libraries(${PROJECT_NAME} ${ISCE_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${ISCE_LIBRARY} isce)

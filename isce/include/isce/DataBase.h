@@ -149,11 +149,11 @@ class DataBase {
 
 
 	static std::string get_name() {
-		auto config = Config::getDBConfig();
-		if(!config.has_value()) { return {}; }
+		auto conf = config()->getDBConfig();
+		if(!conf.has_value()) { return {}; }
 
-		const auto it = config->find("dbname");
-		if(it == config->end()) { return {}; }
+		const auto it = conf->find("dbname");
+		if(it == conf->end()) { return {}; }
 
 		if(it->value() != "__auto__") { return it->value().as_string().c_str(); }
 
@@ -161,11 +161,11 @@ class DataBase {
 	}
 
 	static std::string get_connect_info(bool is_empty_connect = false) {
-		auto config = Config::getDBConfig();
-		if(!config.has_value()) { return {}; }
+		auto conf = config()->getDBConfig();
+		if(!conf.has_value()) { return {}; }
 
 		std::vector<std::string> conninfo;
-		for(const auto& row : *config) {
+		for(const auto& row : *conf) {
 			std::string_view key = row.key().data();
 			std::string_view value = row.value().as_string().c_str();
 

@@ -7,18 +7,16 @@
 #include <isce/HttpFramework.h>
 #include <isce/DataBase.h>
 #include <isce/Microservice.h>
+#include <isce/Utils.h>
+
+#include <isce/Route.h>
 
 #include "config.h"
 
 using namespace isce;
 
-void route_up();
-
-
 int main() {
-
-	
-	route_up();
+	Route::up();
 	
 	// isce::__service_name__ = PROJECT_NAME;
 	// isce::Config::loadFile(CONFIG_PATH);

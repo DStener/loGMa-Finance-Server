@@ -22,8 +22,8 @@
 
 
 #include <isce/Configure.h>
-#include <isce/Response.h>
-#include <isce/Request.h>
+#include "Response.h"
+#include "Request.h"
 
 
 

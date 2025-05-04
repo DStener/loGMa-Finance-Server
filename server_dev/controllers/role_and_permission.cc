@@ -4,17 +4,17 @@
 
 response_t RoleAndPermission::get_permisison_role(request_t&& request) {
 
-	return Response().json("Data");
+	return response()->json("Data");
 }
 
 response_t RoleAndPermission::add_permission_role(request_t&& request) {
 
-	return Response().json("Data");
+	return response()->json("Data");
 }
 
 response_t RoleAndPermission::remove_permission_role(request_t&& request) {
 
-	return Response().json("Data");
+	return response()->json("Data");
 }
 
 // response_t UserAndRole::remove_user_role(request_t&& request) {

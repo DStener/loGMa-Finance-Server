@@ -10,10 +10,10 @@
 
 using namespace isce;
 
-void route_up() {
-  //Route::prefix("api/ref/policy")->middleware({})->group({
+void Route::up() {
+  Route::prefix("api/ref/policy")->middleware({})->group({
   //  // Controller "Role"
-  //  Route::get("/role", Role::get_list),
+    Route::get("/role", Role::get_list)
   //  Route::get("/role/{id}", Role::get),
   //  Route::post("/role", Role::create),
   //  Route::put("/role/{id}", Role::update),
@@ -29,7 +29,7 @@ void route_up() {
   //  Route::delete_("/permissions/{id}", Permission::delete_),
   //  Route::delete_("/permissions/{id}/soft", Permission::soft_delete),
   //  Route::post("/permissions/{id}/restore", Permission::restore),
-  //});
+  });
 
   //Route::prefix("api/ref")->middleware({})->group({
   //  // Controller "UserAndRole"
