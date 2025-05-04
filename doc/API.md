@@ -2,14 +2,15 @@
 
 ## Auth service
 
-| Method | Path                     | Description | Input | Output |
-|:-------|:-------------------------|:-----------:|:-----:|-------:|
-| POST   | /api/auth/login          | -           |       |        |
-| POST   | /api/auth/register       | -           |       |        |
-| GET    | /api/auth/me             | -           |       |        |
-| POST   | /api/auth/out            | -           |       |        |
-| POST   | /api/auth/out_all        | -           |       |        |
-| GET    | /api/auth/tokens         | -           |       |        |
+| Method | Path                                                                 | Description                                | Specification                                                             |
+|:-------|:---------------------------------------------------------------------|:-------------------------------------------|:-------------------------------------------------------------------------:|
+| POST   | /api/auth/login                                                      | Авторизация пользователя                   | [Подробнее](API_AUTH.md#post-apiauthlogin)                                |  
+| POST   | /api/auth/register                                                   | Регистрация нового пользователя            | [Подробнее](API_AUTH.md#post-apiauthregister)                             | 
+| GET    | /api/auth/me                                                         | Получение информации о себе                | [Подробнее](API_AUTH.md#get-apiauthme)                                    |
+| POST   | /api/auth/out                                                        | Выход из текущей сессии                    | [Подробнее](API_AUTH.md#post-apiauthout)                                  |
+| POST   | /api/auth/out/`{id_session}`                                         | Выход из сесси с индексом `id_session`     | [Подробнее](API_AUTH.md#post-apiauthoutid_session)                        |
+| POST   | /api/auth/out_all                                                    | Выход из всех сессий                       | [Подробнее](API_AUTH.md#post-apiauthout_all)                              | 
+| GET    | /api/auth/sessions                                                    | Список всех активных сессий пользователя   | [Подробнее](API_AUTH.md#get-apiauthsessions)                               |
 
 ## File service
 
