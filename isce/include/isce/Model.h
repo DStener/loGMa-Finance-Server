@@ -36,7 +36,7 @@ public:
   }
 
   void update(std::string table_name, std::string new_value, std::string condition) {
-    std::string query = "UPDATE " + table_name + " SET " + new_value + " WHERE " + condition + ";";
+    std::string query = "UPDATE " + table_name + " SET " + new_value + " WHERE id =" +  condition + ";";
     PGresult* res = PQexec(conn, query.c_str());
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
@@ -47,12 +47,54 @@ public:
 
   }
 
-  static void delete_(std::string table_name) {
-    //
+  void delete_(std::string table_name, std::string condition) {
+    std::string query = "DELETE FROM " + table_name + " WHERE id =" + condition + ';';
+    PGresult* res = PQexec(conn, query.c_str());
+
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+      std::cerr << "deleted error" << PQerrorMessage(conn) << std::endl;
+    }
+
+    PQclear(res);
+
   }
 
-  static void findOrfail() {
-    //
+  void find(std::string table_name, int id) {
+    std::string query = "SELECT * FROM " + table_name + " WHERE id = " + std::to_string(id) + ";";
+    PGresult* res = PQexec(conn, query.c_str());
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK || PQntuples(res) == 0) {
+      PQclear(res);
+      std::cerr << "user not found" << PQerrorMessage(conn) << std::endl;
+
+      PQclear(res);
+    }
+
+    int fields = PQnfields(res);
+    for (int i = 0; i < fields; ++i) {
+      std::cout << PQfname(res, i) << ": " << PQgetvalue(res, 0, i) << std::endl;
+    }
+
+    PQclear(res);
+
+  
+  }
+
+  void findOrfail(std::string table_name, int id) {
+    std::string query = "SELECT * FROM " + table_name + " WHERE id = " + std::to_string(id) + ";";
+    PGresult* res = PQexec(conn, query.c_str());
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK || PQntuples(res) == 0) {
+      PQclear(res);
+      throw std::runtime_error("user not found");
+    }
+
+    int fields = PQnfields(res);
+    for (int i = 0; i < fields; ++i) {
+      std::cout << PQfname(res, i) << ": " << PQgetvalue(res, 0, i) << std::endl;
+    }
+
+    PQclear(res);
   }
 
 private:
