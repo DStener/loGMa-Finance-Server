@@ -1,6 +1,16 @@
-#include <isce/Route.h>
+#include "Route.h"
 
 using namespace isce;
+
+
+RouteObjet::RouteObjet(route_t route) {
+  _uri = route->_uri;
+  _callback = route->_callback;
+  _prefix = route->_prefix;
+  _methods.insert_range(route->_methods);
+  _middlewares.append_range(route->_middlewares);
+  vars.append_range(route->vars);
+}
 
 __object_ptr__ RouteObjet::get(uri_t&& uri, callback_t&& callback) {
   _methods.clear();
@@ -71,18 +81,6 @@ __object_ptr__ RouteObjet::any(uri_t&& uri, callback_t&& callback) {
   return shared_from_this();
 }
 
-
-__object_ptr__ RouteObjet::match(methods_t&& methods, uri_t&& uri, callback_t&& callback) {
-  _methods.clear();
-
-  _uri = std::move(uri);
-  _callback = std::move(callback);
-  _methods.insert_range(methods);
-
-  return shared_from_this();
-}
-
-
 __object_ptr__ RouteObjet::prefix(prefix_t&& pref) {
   _prefix = std::move(pref);
   return shared_from_this();
@@ -93,3 +91,96 @@ __object_ptr__ RouteObjet::middleware(middlewares_t&& middlewares) {
   return shared_from_this();
 }
 
+response_t RouteObjet::call(request_t request) {
+  return _callback(request);
+}
+
+bool RouteObjet::is_match(uri_t uri, http::verb method) {
+
+  if (_methods.find(method) == _methods.end()) { return false; }
+
+  std::vector<var_t> _temp_vars;
+  vars.clear();
+  
+
+  // Make path 
+  bool has_first_slash = _prefix.starts_with('/');
+  bool has_center_slash = _prefix.ends_with('/') ||
+                          _uri.starts_with('/');
+
+  std::string path = std::format("{0}{2}{1}{3}",
+                                 ((has_first_slash) ? "" : "/"),
+                                 ((has_center_slash) ? "" : "/"),
+                                 _prefix, _uri);
+
+  // position
+  size_t uri_start = 0;
+  size_t path_start = 0;
+  size_t offset = path.find('{');
+    
+  bool flag = true;
+
+  if (offset == uri_t::npos) {
+    if (!uri.starts_with(path)) { return false; }
+    return uri.find('/', path.size()) == uri_t::npos;
+  }
+
+  // Check uri border 
+  if (uri_start + offset >= uri.size()) {
+    return false;
+  }
+
+  std::cout << "------------------------------------" << std::endl;
+  for(;;) {
+
+    //std::cout << "===" << std::endl;
+
+    const auto uri_pos = uri.begin() + uri_start;
+    const auto path_pos = path.begin() + path_start;
+
+    uri_t uri_part(uri_pos, uri_pos + offset);
+    uri_t path_part(path_pos, path_pos + offset);
+      
+
+    // Compare strings and set flag
+    flag &= uri_part.starts_with(path_part);
+      
+
+    // Calculate next step
+    size_t offset_old = offset;
+
+    uri_start = uri.find('/', uri_start + offset);
+    path_start = path.find('/', path_start + offset);
+    offset = path.find('{', path_start) - path_start;
+
+    // Check border 
+    const bool uri_npos = (uri_start == uri_t::npos);
+    const bool path_npos = (path_start == uri_t::npos);
+
+    const bool uri_within = (uri_start + offset < uri.size());
+    const bool path_within = (path_start + offset < path.size());
+
+
+    if ((!uri_npos && !path_npos) || path.ends_with('}')) {
+      const auto uri_end = ((uri_npos) ? uri.end() : uri.begin() + uri_start);
+      const auto path_end = ((path_npos) ? path.end() : path.begin() + path_start);
+      std::cout <<
+        std::string(path_pos + offset_old, path_end) << ": " <<
+        std::string(uri_pos + offset_old, uri_end) << std::endl;
+    }
+
+    // End check 
+    if (uri_npos && path_npos) {
+      break;
+    }
+      
+    // If the check has not been completed
+    if ((uri_npos != path_npos) || !uri_within || !path_within) {
+      return false;
+    }
+
+    
+  }
+  return flag;
+  
+}

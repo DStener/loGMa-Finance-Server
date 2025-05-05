@@ -13,9 +13,6 @@
 #include <libpq-fe.h>
 
 #include <isce/__DTO.h> 
-#include <isce/Configure.h>
-#include <isce/Microservice.h>
-
 
 #define DB_CHECK_ERROR(condition) 																		 \
 	if(condition) {																											 \
@@ -149,36 +146,39 @@ class DataBase {
 
 
 	static std::string get_name() {
-		auto conf = config()->getDBConfig();
+		/*auto conf = config()->getDBConfig();
 		if(!conf.has_value()) { return {}; }
 
 		const auto it = conf->find("dbname");
 		if(it == conf->end()) { return {}; }
 
-		if(it->value() != "__auto__") { return it->value().as_string().c_str(); }
+		if(it->value() != "__auto__") { return it->value().as_string().c_str(); }*/
 
-		return std::format("db_{}", boost::to_lower_copy(isce::__service_name__));
+		return "";
+		//return std::format("db_{}", boost::to_lower_copy(isce::__service_name__));
 	}
 
 	static std::string get_connect_info(bool is_empty_connect = false) {
-		auto conf = config()->getDBConfig();
-		if(!conf.has_value()) { return {}; }
+		//auto conf = config()->getDBConfig();
+		//if(!conf.has_value()) { return {}; }
 
-		std::vector<std::string> conninfo;
-		for(const auto& row : *conf) {
-			std::string_view key = row.key().data();
-			std::string_view value = row.value().as_string().c_str();
+		//std::vector<std::string> conninfo;
+		//for(const auto& row : *conf) {
+		//	std::string_view key = row.key().data();
+		//	std::string_view value = row.value().as_string().c_str();
 
-			if(is_empty_connect && key == "dbname") { 
-				value = "template1";
-			} else if (key == "dbname" && value == "__auto__") {
-				value = std::format("db_{}", boost::to_lower_copy(isce::__service_name__));
-			}
-			
-			conninfo.push_back(std::format("{}={}", key, value));
-		}
+		//	if(is_empty_connect && key == "dbname") { 
+		//		value = "template1";
+		//	} else if (key == "dbname" && value == "__auto__") {
+		//		//value = std::format("db_{}", boost::to_lower_copy(isce::__service_name__));
+		//		value = "";
+		//	}
+		//	
+		//	conninfo.push_back(std::format("{}={}", key, value));
+		//}
 
-		return boost::join(conninfo, " ");
+		//return boost::join(conninfo, " ");
+		return "";
 	}
 };
 using DB = DataBase;

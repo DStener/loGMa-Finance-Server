@@ -11,10 +11,14 @@
 using namespace isce;
 
 void Route::up() {
+
+  //app
+
   Route::prefix("api/ref/policy")->middleware({})->group({
   //  // Controller "Role"
-    Route::get("/role", Role::get_list)
-  //  Route::get("/role/{id}", Role::get),
+    Route::get("/role", Role::get_list),  
+    /*Route::get("/role/{id}", Role::get),*/
+    Route::get("/role/{id}/test/{id2}/best/{id3}", Role::get),
   //  Route::post("/role", Role::create),
   //  Route::put("/role/{id}", Role::update),
   //  Route::delete_("/role/{id}", Role::delete_),

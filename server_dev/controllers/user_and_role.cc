@@ -2,22 +2,22 @@
 #include "isce/Response.h"
 
 
-response_t UserAndRole::get_users(request_t&& request) {
+response_t UserAndRole::get_users(request_t request) {
 
 	return response()->json("Data");
 }
 
-response_t UserAndRole::get_user_role(request_t&& request) {
+response_t UserAndRole::get_user_role(request_t request) {
 
 	return response()->json("Data");
 }
 
-response_t UserAndRole::add_user_role(request_t&& request) {
+response_t UserAndRole::add_user_role(request_t request) {
 
 	return response()->json("Data");
 }
 
-response_t UserAndRole::remove_user_role(request_t&& request) {
+response_t UserAndRole::remove_user_role(request_t request) {
 
 	return response()->json("Data");
 }

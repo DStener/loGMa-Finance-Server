@@ -20,7 +20,6 @@
 #include <boost/json/object.hpp>
 #include <boost/json/parse_into.hpp>
 
-#include <isce/HttpFramework.h>
 #include <isce/sqlAttrib.h>
 #include <vector>
 
@@ -111,21 +110,21 @@ class DTO {
     return json;
   }
 
-  template <typename T>
-  static T fromRequest(const request_t& req) {
+  //template <typename T>
+  //static T fromRequest(const request_t& req) {
 
-    // const auto it = req.find(http::field::content_type);
+  //  // const auto it = req.find(http::field::content_type);
 
-    // // If not found content_type return empty struct
-    // if(it == req.end()) { return T{}; }
+  //  // // If not found content_type return empty struct
+  //  // if(it == req.end()) { return T{}; }
 
-    // const std::string_view body = req.body().c_str();
+  //  // const std::string_view body = req.body().c_str();
 
-    // if(it->value().starts_with("application/json")) {
-    //   return DTO::fromJson<T>(json::parse(body).as_object());
-    // }
-    return T{};
-  }
+  //  // if(it->value().starts_with("application/json")) {
+  //  //   return DTO::fromJson<T>(json::parse(body).as_object());
+  //  // }
+  //  return T{};
+  //}
 
   template <typename T>
   static ResponseVec<T> fromSQL(PGresult* res) {

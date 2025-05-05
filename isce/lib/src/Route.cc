@@ -1,4 +1,6 @@
-#include <isce/Route.h>
+#include "Route.h"
+#include <isce/Framework.h>
+
 
 using namespace isce;
 
@@ -6,7 +8,7 @@ __object_ptr__ Route::get(uri_t&& uri, callback_t&& callback) {
   auto pRoute = std::make_shared<RouteObjet>();
 
   pRoute->get(std::move(uri), std::move(callback));
-  HttpFramework::addRoute(pRoute);
+  app()->add(pRoute);
 
   return pRoute;
 }
@@ -15,7 +17,7 @@ __object_ptr__ Route::post(uri_t&& uri, callback_t&& callback) {
   auto pRoute = std::make_shared<RouteObjet>();
 
   pRoute->post(std::move(uri), std::move(callback));
-  HttpFramework::addRoute(pRoute);
+  app()->add(pRoute);
 
   return pRoute;
 }
@@ -24,7 +26,7 @@ __object_ptr__ Route::put(uri_t&& uri, callback_t&& callback) {
   auto pRoute = std::make_shared<RouteObjet>();
 
   pRoute->put(std::move(uri), std::move(callback));
-  HttpFramework::addRoute(pRoute);
+  app()->add(pRoute);
 
   return pRoute;
 }
@@ -33,7 +35,7 @@ __object_ptr__ Route::patch(uri_t&& uri, callback_t&& callback) {
   auto pRoute = std::make_shared<RouteObjet>();
 
   pRoute->patch(std::move(uri), std::move(callback));
-  HttpFramework::addRoute(pRoute);
+  app()->add(pRoute);
 
   return pRoute;
 }
@@ -42,7 +44,7 @@ __object_ptr__ Route::delete_(uri_t&& uri, callback_t&& callback) {
   auto pRoute = std::make_shared<RouteObjet>();
 
   pRoute->delete_(std::move(uri), std::move(callback));
-  HttpFramework::addRoute(pRoute);
+  app()->add(pRoute);
 
   return pRoute;
 }
@@ -51,7 +53,7 @@ __object_ptr__ Route::options(uri_t&& uri, callback_t&& callback) {
   auto pRoute = std::make_shared<RouteObjet>();
 
   pRoute->options(std::move(uri), std::move(callback));
-  HttpFramework::addRoute(pRoute);
+  app()->add(pRoute);
 
   return pRoute;
 }
@@ -60,16 +62,7 @@ __object_ptr__ Route::any(uri_t&& uri, callback_t&& callback) {
   auto pRoute = std::make_shared<RouteObjet>();
 
   pRoute->any(std::move(uri), std::move(callback));
-  HttpFramework::addRoute(pRoute);
-
-  return pRoute;
-}
-
-__object_ptr__ Route::match(methods_t&& methods, uri_t&& uri, callback_t&& callback) {
-  auto pRoute = std::make_shared<RouteObjet>();
-
-  pRoute->match(std::move(methods), std::move(uri), std::move(callback));
-  HttpFramework::addRoute(pRoute);
+  app()->add(pRoute);
 
   return pRoute;
 }

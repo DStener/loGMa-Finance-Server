@@ -3,28 +3,21 @@
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <iostream>
 
-#include <isce/Configure.h>
-#include <isce/HttpFramework.h>
 #include <isce/DataBase.h>
-#include <isce/Microservice.h>
 #include <isce/Utils.h>
 
 #include <isce/Route.h>
+
+#include <isce/Framework.h>
 
 #include "config.h"
 
 using namespace isce;
 
 int main() {
-	Route::up();
-	
-	// isce::__service_name__ = PROJECT_NAME;
-	// isce::Config::loadFile(CONFIG_PATH);
-	
 
+	app()->config(CONFIG_PATH);
+	app()->run();
 
-	// DB::get()->Create<::User>();
-	// DB::get()->Create<::Token>();
-
-	isce::HttpFramework::run();
+	return 0;
 }
