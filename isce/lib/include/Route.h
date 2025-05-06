@@ -54,10 +54,14 @@ namespace Route {
 
 class RouteObjet : public std::enable_shared_from_this<RouteObjet> {
  public:
+  std::vector<var_t> vars;
+
   RouteObjet() = default;
   RouteObjet(callback_t&& callback) : _callback(std::move(callback)) {}
   RouteObjet(route_t route);
   ~RouteObjet() = default;
+
+  
   
 
   __object_ptr__ get(uri_t&& uri, callback_t&& callback);
@@ -81,7 +85,7 @@ class RouteObjet : public std::enable_shared_from_this<RouteObjet> {
   prefix_t _prefix;
   methods_t _methods;
   middlewares_t _middlewares;
-  std::vector<var_t> vars;
+  
 
   //std::pair<std::string, std::string>("", "");
   

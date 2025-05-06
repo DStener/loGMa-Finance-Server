@@ -4,6 +4,8 @@
 #include <boost/beast/http.hpp>
 
 #include <memory>
+#include <string>
+#include <vector>
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -15,18 +17,22 @@ class Request {
  public:
   using boost_t = http::request<http::string_body>;
   using ptr_t = std::shared_ptr<Request>;
+  using var_t = std::pair<std::string, std::string>;
 
   Request() = default;
   ~Request() = default;
-  Request(Request::boost_t&& request) : _request(std::move(request)) {};
+  Request(Request::boost_t&& request, std::vector<var_t> vars) 
+    : _request(std::move(request)), _vars(std::move(vars)) {};
 
-  void input(std::string& data);
+  std::string input(std::string_view&& data);
   void shutdown();
   bool is_shutdown();
   unsigned version();
  private:
    bool _is_shutdown = false;
    Request::boost_t _request;
+   std::vector<var_t> _vars;
+
 };
 using request_t = std::shared_ptr<Request>;
 request_t request();

@@ -27,8 +27,7 @@ route_t Framework::get_route(uri_t&& uri, http::verb&& method) {
   });
   if (it == _routes.end()) { return _bad_request; }
 
-  // Return copy 
-  return route_t(new RouteObjet(*it));
+  return *it;
 }
 
 
@@ -67,10 +66,17 @@ net::awaitable<void> Framework::server_do_session(beast::tcp_stream stream)
     //const bool keep_alive = boost_request.keep_alive();
     const bool keep_alive = false;
     
-    // Finde the route and get copy
     route_t route = get_route(boost_request.target(), boost_request.method());
 
-    Request::ptr_t request(new Request(std::move(boost_request)));
+    ////////////////
+    /*for (const auto& var : route->vars) {
+      std::cout << "------------------------------------" << std::endl;
+    }*/
+
+    ////////////////
+
+
+    Request::ptr_t request(new Request(std::move(boost_request), route->vars));
     Response::ptr_t response = route->call(request);
 
     if (request->is_shutdown()) { break; }

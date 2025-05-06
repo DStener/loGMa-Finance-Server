@@ -128,7 +128,7 @@ bool RouteObjet::is_match(uri_t uri, http::verb method) {
     return false;
   }
 
-  std::cout << "------------------------------------" << std::endl;
+  //std::cout << "------------------------------------" << std::endl;
   for(;;) {
 
     //std::cout << "===" << std::endl;
@@ -158,13 +158,20 @@ bool RouteObjet::is_match(uri_t uri, http::verb method) {
     const bool uri_within = (uri_start + offset < uri.size());
     const bool path_within = (path_start + offset < path.size());
 
-
+    // Add regex var to vector
     if ((!uri_npos && !path_npos) || path.ends_with('}')) {
-      const auto uri_end = ((uri_npos) ? uri.end() : uri.begin() + uri_start);
-      const auto path_end = ((path_npos) ? path.end() : path.begin() + path_start);
+      auto uri_end = ((uri_npos) ? uri.end() : uri.begin() + uri_start);
+      auto path_end = ((path_npos) ? path.end() : path.begin() + path_start);
 
-      vars.push_back(std::make_pair(std::string(path_pos + offset_old, path_end),
-                     std::string(uri_pos + offset_old, uri_end)));
+      std::string field(path_pos + offset_old + 1, path_end - 1);
+      std::string value(uri_pos + offset_old, uri_end);
+
+      // If has parametr in path like "?test=true...", then delete 
+      if (uri_end == uri.end() && value.find('?') != std::string_view::npos) {
+        value = std::string(value.begin(), value.begin() + value.find('?'));
+      }
+
+      vars.push_back(std::make_pair(field, value));
     }
 
     // End check 

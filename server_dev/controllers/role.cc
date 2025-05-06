@@ -4,14 +4,10 @@
 
 response_t Role::get(request_t request) {
 	
-	std::cout << "This CALL" << std::endl;
-
 	return response()->json("Data");
 }
 
 response_t Role::get_list(request_t request) {
-
-	std::cout << "BEST CALL" << std::endl;
 
 	return response()->json("Data");
 }
