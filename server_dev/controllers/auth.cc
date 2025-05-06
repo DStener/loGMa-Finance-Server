@@ -6,7 +6,6 @@
 
 response_t Auth::registration(request_t request) {
 
-
 	return response()->json("Data");
 }
 

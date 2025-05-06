@@ -99,9 +99,7 @@ bool RouteObjet::is_match(uri_t uri, http::verb method) {
 
   if (_methods.find(method) == _methods.end()) { return false; }
 
-  std::vector<var_t> _temp_vars;
   vars.clear();
-  
 
   // Make path 
   bool has_first_slash = _prefix.starts_with('/');
@@ -164,9 +162,9 @@ bool RouteObjet::is_match(uri_t uri, http::verb method) {
     if ((!uri_npos && !path_npos) || path.ends_with('}')) {
       const auto uri_end = ((uri_npos) ? uri.end() : uri.begin() + uri_start);
       const auto path_end = ((path_npos) ? path.end() : path.begin() + path_start);
-      std::cout <<
-        std::string(path_pos + offset_old, path_end) << ": " <<
-        std::string(uri_pos + offset_old, uri_end) << std::endl;
+
+      vars.push_back(std::make_pair(std::string(path_pos + offset_old, path_end),
+                     std::string(uri_pos + offset_old, uri_end)));
     }
 
     // End check 

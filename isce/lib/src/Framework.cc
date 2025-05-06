@@ -30,7 +30,7 @@ framework_t Framework::add(route_t route) {
 framework_t Framework::config(path_t path) {
 	// Check, that path is exist
 	if (!std::filesystem::exists(path)) { 
-		return shared_from_this();
+		throw std::runtime_error("[!] FILE NOT EXISTS");
 	}
 
 	// Open config file

@@ -16,3 +16,7 @@ void Request::shutdown() {
 bool Request::is_shutdown() {
   return _is_shutdown;
 }
+
+unsigned Request::version() {
+  return _request.version();
+}

@@ -62,100 +62,23 @@ net::awaitable<void> Framework::server_do_session(beast::tcp_stream stream)
     stream.expires_after(std::chrono::seconds(30));
 
     // Read a request
-    http::request<http::string_body> req;
-    co_await http::async_read(stream, buffer, req);
+    Request::boost_t boost_request;
+    co_await http::async_read(stream, buffer, boost_request);
+    //const bool keep_alive = boost_request.keep_alive();
+    const bool keep_alive = false;
+    
+    // Finde the route and get copy
+    route_t route = get_route(boost_request.target(), boost_request.method());
 
-    request_t request = std::make_shared<Request>();
-    response_t response;
-
-    route_t route = get_route(req.target(), req.method());
-    response = route->call(request);
+    Request::ptr_t request(new Request(std::move(boost_request)));
+    Response::ptr_t response = route->call(request);
 
     if (request->is_shutdown()) { break; }
 
-    std::optional<http::message_generator> message;
-    std::optional<std::string_view> path;
+    http::message_generator message = response->make(keep_alive);
+    co_await beast::async_write(stream, std::move(message));
 
-    
-
-
-    // // Callback lambda-function
-    // callback_t callback = [&](response_t&& resp) {
-
-    //   // Set MIME value, if is not set;
-    //   if (resp.find(http::field::content_type) == resp.end()) {
-    //     resp.set(http::field::content_type, "text/html");
-    //   }
-
-    //   // If request is file
-    //   if (resp.find("FILE") != resp.end()) {
-
-    //     beast::error_code ec;
-    //     http::file_body::value_type body;
-
-    //     std::string file { resp.at("FILE") };
-
-    //     body.open(file.c_str(), beast::file_mode::read, ec);
-
-    //     // Handle the case where the file doesn't exist
-    //     if (ec == beast::errc::no_such_file_or_directory) { 
-    //       std::cout << "NO FILE" << std::endl;
-    //       return; 
-    //     }
-    //       //return not_found(req.target());
-
-    //     // Handle an unknown error
-    //     if (ec) { 
-    //       std::cout << file << "ERROR" << ec << std::endl;
-    //       return; 
-    //     }
-    //       //return server_error(ec.message());
-
-    //     // Cache the size since we need it after the move
-    //     auto const size = body.size();
-
-    //     http::response<http::file_body> file_resp{
-    //         std::piecewise_construct,
-    //         std::make_tuple(std::move(body)),
-    //         std::make_tuple(http::status::ok, req.version()) };
-    //     file_resp.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-    //     file_resp.set(http::field::content_type, "application/octet-stream");
-    //     file_resp.content_length(size);
-    //     file_resp.keep_alive(req.keep_alive());
-
-    //     message.emplace(http::message_generator(std::move(file_resp)));
-    //     return;
-
-    //     //return res;
-    //     //std::cout << resp.at("FILE") << std::endl;
-    //     //path.emplace(resp.at("FILE"));
-    //   }
-
-    //   resp.keep_alive(req.keep_alive());
-    //   resp.prepare_payload();
-
-    //   message.emplace(http::message_generator(std::move(resp)));
-    // };
-
-    std::cout << "\t\tCALL" << std::endl;
-
-    // Call function
-    // func.value()(req, std::move(callback));
-    // if (!message.has_value()) { break; }
-
-    // Determine if we should close the connection
-    bool keep_alive = message.value().keep_alive();
-
-    // Standard response
-    co_await beast::async_write(stream, std::move(message.value()));
-
-
-    if (!keep_alive)
-    {
-      // This means we should close the connection, usually because
-      // the response indicated the "Connection: close" semantic.
-      break;
-    }
+    if (!keep_alive){ break; }
   }
     
   // Send a TCP shutdown

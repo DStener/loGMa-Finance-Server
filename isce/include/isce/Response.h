@@ -3,54 +3,54 @@
 #include <boost/json.hpp>
 #include <memory>
 #include <utility>
+#include <filesystem>
+#include <string_view>
+#include <iostream>
+#include <type_traits>
+
+#include <boost/json.hpp>
+#include <boost/asio/awaitable.hpp>
+#include <boost/asio/co_spawn.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/http.hpp>
+#include <boost/beast/version.hpp>
+#include <boost/config.hpp>
+#include <boost/function.hpp>
 
 
 namespace http = boost::beast::http;
 namespace json = boost::json;
 
+namespace beast = boost::beast;
+namespace http = beast::http;
+namespace net = boost::asio;
+namespace json = boost::json;
 
 namespace isce {
 class Response : public std::enable_shared_from_this<Response> {
 public:
+  using ptr_t = std::shared_ptr<Response>;
+  using file_body_t = http::response<http::file_body>;
+  using string_body_t = http::response<http::string_body>;
+  using boost_variant_t = std::variant<string_body_t, file_body_t>;
+
   ~Response() = default;
 
+  Response::ptr_t json(const json::value& data);
+  Response::ptr_t json(std::string_view&& data);
 
-  auto json(const json::value& data) {
+  Response::ptr_t file(std::string_view path);
 
-    result.result(http::status::ok); 
-    result.body() = serialize(data); 
+  Response::ptr_t not_found(std::string_view&& target);
 
-    return shared_from_this();
-  }
+  Response::ptr_t set_status(http::status&& status);
 
-  auto json(std::string_view&& data) {
-    json::value json_data = {
-      {"message", data}
-    };
-
-    result.result(http::status::ok);
-    result.body() = serialize(json_data);
-
-    return shared_from_this();
-  }
-
-  auto not_found() {
-    result.result(http::status::not_found);
-    return shared_from_this();
-  }
-
-  auto make() {
-    return result;
-  }
-
-  auto set_status(http::status&& status) {
-    result.result(std::move(status));
-      
-    return shared_from_this();
-  }
+  http::message_generator make(bool keep_alive);
 
 private:
-  http::response<http::string_body> result;
+  Response::boost_variant_t _response;
 
   Response() = default;
 
