@@ -9,7 +9,7 @@ set(BOOST_ALL_NO_LIB 1)
 file(GLOB CONTROLLERS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/controllers/*.cc)
 file(GLOB SYSTEM_SRC ${CMAKE_CURRENT_SOURCE_DIR}/systems/*.cc)
 file(GLOB DIRECT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
-add_executable(${PROJECT_NAME} ${DIRECT_SRC} ${CONTROLLERS_SRC} ${SYSTEM_SRC})
+add_executable(${PROJECT_NAME} ${DIRECT_SRC} ${CONTROLLERS_SRC} ${SYSTEM_SRC}   "migration/Schema.h")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.inc config.h @ONLY)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/isce CMAKE_CURRENT_BINARY_DIR)

@@ -4,12 +4,16 @@
 #include <unordered_map>
 #include <libpq-fe.h>
 
+
+
 class Model {
 
 public:
+  static PGconn* connection;
+
   Model() {
     conn = PQconnectdb("host=localhost dbname=*** user=*** password=***");
-
+    connection = conn;
     if (PQstatus(conn) != CONNECTION_OK) {
       std::cerr << "Connected error: " << PQerrorMessage(conn) << std::endl;
     }
@@ -96,6 +100,7 @@ public:
 
     PQclear(res);
   }
+  
 
 private:
   PGconn* conn;
