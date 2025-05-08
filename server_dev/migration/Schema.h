@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 
+
 // example
 /*
   Schema::create('users',{
@@ -15,10 +16,14 @@
 */
 
 class Schema {
-  static void create(std::string table_name,const std::vector<std::string> columns ) {
-    
-    std::string sql = "CREATE TABLE " + table_name + " (id SERIAL PRIMARY KEY";
+public:
 
+  static void create(std::string_view&& table_name, std::vector<std::string> columns ) {
+    
+    std::string sql = std::format("CREATE TABLE {} (id SERIAL PRIMARY KEY",
+                                  table_name);
+
+    //std::string sql = "CREATE TABLE " + table_name + " (id SERIAL PRIMARY KEY";
     for (const auto& i : columns) {
       sql += ", " + i;
 

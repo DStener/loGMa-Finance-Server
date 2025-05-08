@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "server_dev/CMAKE_CURRENT_BINARY_DIR",
+		"source" : "isce"
+	}
+}

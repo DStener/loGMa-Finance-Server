@@ -9,7 +9,11 @@ set(BOOST_ALL_NO_LIB 1)
 file(GLOB CONTROLLERS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/controllers/*.cc)
 file(GLOB SYSTEM_SRC ${CMAKE_CURRENT_SOURCE_DIR}/systems/*.cc)
 file(GLOB DIRECT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
-add_executable(${PROJECT_NAME} ${DIRECT_SRC} ${CONTROLLERS_SRC} ${SYSTEM_SRC}   "migration/Schema.h")
+file(GLOB MIGRATION_SRC ${CMAKE_CURRENT_SOURCE_DIR}/migration/*.cc)
+file(GLOB SEEDER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/seeders/*.cc)
+file(GLOB DTO_SRC ${CMAKE_CURRENT_SOURCE_DIR}/dto/*.cc)
+add_executable(${PROJECT_NAME} ${DIRECT_SRC} ${CONTROLLERS_SRC} 
+                               ${SYSTEM_SRC} ${MIGRATION_SRC} ${SEEDER_SRC} ${DTO_SRC})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.inc config.h @ONLY)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/isce CMAKE_CURRENT_BINARY_DIR)
@@ -17,6 +21,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/isce CMAKE_CURRENT_BINARY_DIR)
 target_include_directories(${PROJECT_NAME}
                            PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
                                   ${CMAKE_CURRENT_SOURCE_DIR}
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/migration
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/seeders
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/dto
                                   ${CMAKE_CURRENT_SOURCE_DIR}/controllers
                                   ${CMAKE_CURRENT_SOURCE_DIR}/systems
                                   ${ISCE_INCLUDE})
