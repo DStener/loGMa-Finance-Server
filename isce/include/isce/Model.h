@@ -5,7 +5,7 @@
 #include <libpq-fe.h>
 #include <vector>
 
-
+PGconn* Model::connection = nullptr;
 class Model {
 
 public:
@@ -132,3 +132,5 @@ private:
 
 
 };
+
+PGconn* Model::connection = nullptr;
