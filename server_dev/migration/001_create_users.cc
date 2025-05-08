@@ -3,7 +3,7 @@
 
 
 
-// "name varchar(255), email varchar(255), age integer"
+
 class Migration {
   // be careful, id is already exist
 

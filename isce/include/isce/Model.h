@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <libpq-fe.h>
-
+#include <vector>
 
 
 class Model {
@@ -26,9 +26,34 @@ public:
     }
   }
 
+  // UPDATED <<< create how to create on laravel/php 
+  void create(std::string table_name, std::vector<std::string>columns,std::vector<std::string>parameters) {
+    
+    if (columns.size() != parameters.size()) {
+      std::cerr << "Error number of columns and parameters must match" << std::endl;
+    }
+    
+    std::string query = std::format("INSERT INTO {} (", table_name);
 
-  void create(std::string table_name, std::string parameters) {
-    std::string query = "CREATE TABLE " + table_name + "(" + "id serial primary key, " + parameters + ");";
+    
+    for (size_t i = 0; i < columns.size(); ++i) {
+      query += columns[i];
+      if (i != columns.size() - 1) {
+        query += ", ";
+      }
+    }
+
+    query += ") VALUES (";
+    
+    for (size_t i = 0; i < parameters.size(); ++i) {
+      query += "'" + parameters[i] + "'";
+      if (i != parameters.size() - 1) {
+        query += ", ";
+      }
+    }
+
+    query += ");";
+
     PGresult* res = PQexec(conn, query.c_str());
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {

@@ -20,10 +20,9 @@ public:
 
   static void create(std::string_view&& table_name, std::vector<std::string> columns ) {
     
-    std::string sql = std::format("CREATE TABLE {} (id SERIAL PRIMARY KEY",
+    std::string sql = std::format("CREATE TABLE IF NOT EXISTS {} (id SERIAL PRIMARY KEY",
                                   table_name);
 
-    //std::string sql = "CREATE TABLE " + table_name + " (id SERIAL PRIMARY KEY";
     for (const auto& i : columns) {
       sql += ", " + i;
 
@@ -37,5 +36,6 @@ public:
     }
 
   }
+
 
 };

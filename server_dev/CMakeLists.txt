@@ -13,7 +13,7 @@ file(GLOB MIGRATION_SRC ${CMAKE_CURRENT_SOURCE_DIR}/migration/*.cc)
 file(GLOB SEEDER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/seeders/*.cc)
 file(GLOB DTO_SRC ${CMAKE_CURRENT_SOURCE_DIR}/dto/*.cc)
 add_executable(${PROJECT_NAME} ${DIRECT_SRC} ${CONTROLLERS_SRC} 
-                               ${SYSTEM_SRC} ${MIGRATION_SRC} ${SEEDER_SRC} ${DTO_SRC})
+                               ${SYSTEM_SRC} ${MIGRATION_SRC} ${SEEDER_SRC} ${DTO_SRC} "Models/Role.h")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.inc config.h @ONLY)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/isce CMAKE_CURRENT_BINARY_DIR)
