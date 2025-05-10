@@ -1,8 +1,0 @@
-C:/Users/Lero4ka/Desktop/C++ STL/loGMa-Finance-Server/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Lero4ka/Desktop/C++ STL/loGMa-Finance-Server/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-C:/Users/Lero4ka/Desktop/C++ STL/loGMa-Finance-Server/cmake-build-debug/server_dev/CMakeFiles/server_dev.dir
-C:/Users/Lero4ka/Desktop/C++ STL/loGMa-Finance-Server/cmake-build-debug/server_dev/CMakeFiles/edit_cache.dir
-C:/Users/Lero4ka/Desktop/C++ STL/loGMa-Finance-Server/cmake-build-debug/server_dev/CMakeFiles/rebuild_cache.dir
-C:/Users/Lero4ka/Desktop/C++ STL/loGMa-Finance-Server/cmake-build-debug/server_dev/CMAKE_CURRENT_BINARY_DIR/CMakeFiles/isce.dir
-C:/Users/Lero4ka/Desktop/C++ STL/loGMa-Finance-Server/cmake-build-debug/server_dev/CMAKE_CURRENT_BINARY_DIR/CMakeFiles/edit_cache.dir
-C:/Users/Lero4ka/Desktop/C++ STL/loGMa-Finance-Server/cmake-build-debug/server_dev/CMAKE_CURRENT_BINARY_DIR/CMakeFiles/rebuild_cache.dir

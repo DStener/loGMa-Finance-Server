@@ -5,11 +5,9 @@
 #include <libpq-fe.h>
 #include <vector>
 
-PGconn* Model::connection = nullptr;
 class Model {
-
 public:
-  static PGconn* connection;
+  static inline PGconn* connection;
 
   Model() {
     conn = PQconnectdb("host=localhost dbname=*** user=*** password=***");
@@ -132,5 +130,3 @@ private:
 
 
 };
-
-PGconn* Model::connection = nullptr;
