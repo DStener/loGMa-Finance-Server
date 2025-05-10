@@ -6,6 +6,7 @@
 class Role_seeder {
 public:
   void run() {
+    // test
     role.create("users", { "title", "description", "code" }, { "admin", "admin role", "admin" });
     
     
