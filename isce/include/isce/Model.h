@@ -33,11 +33,11 @@ public:
 
   }
 
-  // UPDATED <<< create how to create on laravel/php 
   size_t create(std::string table_name, std::vector<std::string>columns, std::vector<std::string>parameters) {
 
     if (columns.size() != parameters.size()) {
       std::cerr << "Error number of columns and parameters must match" << std::endl;
+      return;
     }
 
     std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",
@@ -61,8 +61,8 @@ public:
 
   }
 
-  void update(std::string table_name, std::string new_value, std::string condition) { // chenge
-    std::string query = "UPDATE " + table_name + " SET " + new_value + " WHERE id =" + condition + ";";
+  void update(std::string table_name, std::string new_value, std::string condition) { 
+    std::string query = "UPDATE " + table_name + " SET " + new_value + " WHERE " + condition + ";";
     PGresult* res = PQexec(connection, query.c_str());
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
@@ -74,7 +74,7 @@ public:
   }
 
   void delete_(std::string table_name, std::string condition) {
-    std::string query = "DELETE FROM " + table_name + " WHERE id =" + condition + ';'; // chenge
+    std::string query = "DELETE FROM " + table_name + " WHERE " + condition + ';'; 
     PGresult* res = PQexec(connection, query.c_str());
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
@@ -88,8 +88,6 @@ public:
   response_vec_t find(std::string table_name, std::string condition) {
     std::string query = "SELECT * FROM " + table_name + " WHERE " + condition + ";";
     PGresult* res = PQexec(connection, query.c_str());
-    
-    std::cout << query << std::endl;
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
       std::cout << PQerrorMessage(Model::get_connection()) << std::endl;
@@ -97,7 +95,7 @@ public:
       throw std::runtime_error("user not found");
     }
     
-    response_vec_t vec{};
+    response_vec_t vec;
 
 
     int rows = PQntuples(res);
@@ -105,7 +103,7 @@ public:
 
     for (size_t i = 0; i < rows; i++)
     {
-      row_t row; // concret string 
+      row_t row; 
       for (size_t j = 0; j < cols; j++)
       {
         auto value = PQgetvalue(res, i, j);
