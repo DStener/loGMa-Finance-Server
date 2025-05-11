@@ -5,8 +5,6 @@ class Migration {
   
 public:
 
-  virtual void up();
-
 
 
 

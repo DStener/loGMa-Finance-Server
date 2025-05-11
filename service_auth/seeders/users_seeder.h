@@ -5,7 +5,12 @@
 
 
 class UserSeeder : public Seeder{
-  void run() override {
+public:
+
+  static void run() {
+    
+    Model::init_connection();
+
     std::string query = R"(
     INSERT INTO users (login,name,surname,patronymic,birthday,password) VALUES
     ('ivanov123', 'Ivan', 'Ivanov', 'Ivanovich', '1990-05-15', '123'),
@@ -16,7 +21,7 @@ class UserSeeder : public Seeder{
     )";
 
 
-    PGresult* res = PQexec(Model::connection, query.c_str());
+    PGresult* res = PQexec(Model::get_connection(), query.c_str());
 
   }
 

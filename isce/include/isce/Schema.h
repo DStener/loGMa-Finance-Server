@@ -5,31 +5,34 @@
 #include <libpq-fe.h>
 
 #include <isce/Model.h>
-#include <isce/DataBase.h>
+
 
 
 class Schema {
 public:
-  void up();
+  static void create(std::string_view table_name, const std::vector<std::string>& columns) {
+    Model::init_connection();  
 
-  static void create(std::string_view&& table_name, std::vector<std::string> columns ) {
-    
-    std::string sql = std::format("CREATE TABLE IF NOT EXISTS {} (id SERIAL PRIMARY KEY",
-                                  table_name);
 
-    for (const auto& i : columns) {
-      sql += ", " + i;
-
+    std::string sql = std::format("CREATE TABLE IF NOT EXISTS {} (id SERIAL PRIMARY KEY", table_name);
+    for (const auto& column : columns) {
+      sql += ", " + column;
     }
     sql += ");";
 
-    PGresult* res = PQexec(Model::connection, sql.c_str());
+    
+    PGresult* res = PQexec(Model::get_connection(), sql.c_str());
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-      std::cerr << "error" << PQerrorMessage(Model::connection) << std::endl;
+      std::cerr << "Error creating table: " << PQerrorMessage(Model::get_connection()) << std::endl;
     }
+    else {
+      std::cout << "Table " << table_name << " created successfully.\n";
+    }
+    
 
+    PQclear(res);
+
+   
   }
-
-
 };

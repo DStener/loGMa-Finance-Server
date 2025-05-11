@@ -12,7 +12,8 @@ response_t Auth::registration(request_t request) {
 		               request->input("patronymic"),
 		               request->input("birthday"),
 		               request->input("password") };
-
+	
+	
 	user->create("users", { "login", "name", "surname", "patronymic", "birthday", "password" },
 		{ reg.login, reg.name, reg.surname, reg.patronymic, reg.birthday, reg.password });
 
@@ -30,12 +31,24 @@ response_t Auth::login(request_t request) {
 
 	if (user->where_("users", "login", login.login) ){
 		if (user->where_("users", "password", login.password)) {
-			return response()->json("Data"); // token or next page
+			auto temp = user->find("users", std::format("login = '{}' AND password = '{}'", login.login, login.password));
+
+			for (const auto& row : temp)
+			{
+				std::cout << std::endl;
+				for (const auto& value : row)
+				{
+					std::cout << value.first << ":" << value.second << ' ';
+				}
+			}
+
+			return response()->json("so cool"); // token or next page
+
 		}
 	}
 	
 	
-	return response()->json("Data");
+	return response()->json("error");
 	
 
 }
