@@ -1,8 +1,8 @@
 #include "auth.h"
 #include "models/User.h"
 
-std::shared_ptr<User>user;
 
+std::unique_ptr<Model> user = std::make_unique<User>("users");
 
 response_t Auth::registration(request_t request) {
 
@@ -14,7 +14,7 @@ response_t Auth::registration(request_t request) {
 		               request->input("password") };
 	
 	
-	user->create("users", { "login", "name", "surname", "patronymic", "birthday", "password" },
+	user->create({"login", "name", "surname", "patronymic", "birthday", "password" },
 		{ reg.login, reg.name, reg.surname, reg.patronymic, reg.birthday, reg.password });
 
 
@@ -29,9 +29,9 @@ response_t Auth::login(request_t request) {
 
 	
 
-	if (user->where_("users", "login", login.login) ){
-		if (user->where_("users", "password", login.password)) {
-			auto temp = user->find("users", std::format("login = '{}' AND password = '{}'", login.login, login.password));
+	if (user->where_("login", login.login) ){
+		if (user->where_("password", login.password)) {
+			auto temp = user->find(std::format("login = '{}' AND password = '{}'", login.login, login.password));
 
 			for (const auto& row : temp)
 			{
@@ -54,7 +54,8 @@ response_t Auth::login(request_t request) {
 }
 
 
-response_t Auth::me(request_t request) {
+response_t Auth::me(request_t request){
+	
 	return response()->json("Data");
 }
 

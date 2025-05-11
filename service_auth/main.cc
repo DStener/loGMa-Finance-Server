@@ -28,7 +28,7 @@ int main() {
 
 	app()->config(CONFIG_PATH);
 	
-	MigrationUser::up();
+	// MigrationUser::up();
 	// UserSeeder::run();
 	
 

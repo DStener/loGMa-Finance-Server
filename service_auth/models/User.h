@@ -2,6 +2,11 @@
 
 
 class User : public Model {
-  // for usability code
+public:
+  User(std::string table_name) : Model(table_name) {} 
+
 };
+
+
+
 

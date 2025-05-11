@@ -23,7 +23,8 @@ using response_vec_t = std::vector<row_t>;
 
 class Model {
 public:
-  Model() {
+
+  Model(std::string tabel_name) : table_name_(tabel_name) {
 
     Model::init_connection();
   }
@@ -33,17 +34,43 @@ public:
 
   }
 
-  size_t create(std::string table_name, std::vector<std::string>columns, std::vector<std::string>parameters) {
+  size_t create(std::vector<std::string>columns, std::vector<std::string>parameters) {
 
     if (columns.size() != parameters.size()) {
       std::cerr << "Error number of columns and parameters must match" << std::endl;
-      return;
+      return 1;
     }
 
-    std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",
-                                    table_name,
+    std::string query = "INSERT INTO " + table_name_ + "(";
+
+    for (size_t i = 0; i < columns.size(); i++) {
+      if (i != columns.size() - 1) {
+        query += columns[i] + ", ";
+      }
+      else {
+        query += columns[i] + ") ";
+      }
+    }
+
+    query += "VALUES (";
+    
+    for (size_t i = 0; i < parameters.size(); i++) {
+      if (i != parameters.size() - 1) {
+        query += "'" + parameters[i] + "'" + ", ";
+      }
+      else {
+        query += "'" + parameters[i] + "'" + ") ";
+      }
+    }
+    query += " RETURNING id;";
+
+    std::cout << query << std::endl;
+
+
+    /*std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",
+                                    table_name_,
                                     boost::join(columns, ", "),
-                                    boost::join(parameters, ", "));
+                                    boost::join(parameters, "', "));*/
 
     PGresult* res = PQexec(connection, query.c_str());
 
@@ -55,14 +82,20 @@ public:
 
     auto id = PQgetvalue(res, 0, 0);
 
-    PQclear(res);
+    try {
+      return std::stoul(id);
+    }
+    catch (const std::invalid_argument& e) {
+      PQclear(res);
 
-    return std::stoul(id);
+      std::cerr << "error" << e.what() << std::endl;
+      throw std::runtime_error("Invalid id format returned");
+    }
 
   }
 
-  void update(std::string table_name, std::string new_value, std::string condition) { 
-    std::string query = "UPDATE " + table_name + " SET " + new_value + " WHERE " + condition + ";";
+  void update(std::string new_value, std::string condition) {
+    std::string query = "UPDATE " + table_name_ + " SET " + new_value + " WHERE " + condition + ";";
     PGresult* res = PQexec(connection, query.c_str());
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
@@ -73,8 +106,8 @@ public:
 
   }
 
-  void delete_(std::string table_name, std::string condition) {
-    std::string query = "DELETE FROM " + table_name + " WHERE " + condition + ';'; 
+  void delete_(std::string condition) {
+    std::string query = "DELETE FROM " + table_name_ + " WHERE " + condition + ';'; 
     PGresult* res = PQexec(connection, query.c_str());
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
@@ -85,8 +118,8 @@ public:
 
   }
 
-  response_vec_t find(std::string table_name, std::string condition) {
-    std::string query = "SELECT * FROM " + table_name + " WHERE " + condition + ";";
+  response_vec_t find(std::string condition) {
+    std::string query = "SELECT * FROM " + table_name_ + " WHERE " + condition + ";";
     PGresult* res = PQexec(connection, query.c_str());
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -123,8 +156,8 @@ public:
   }
 
 
-  bool where_(std::string table_name, std::string column, std::string parameter) {
-    std::string query = "SELECT * FROM " + table_name + " WHERE " + column + "= '"  + parameter + "'";
+  bool where_(std::string column, std::string parameter) {
+    std::string query = "SELECT * FROM " + table_name_ + " WHERE " + column + "= '"  + parameter + "'";
 
     PGresult* res = PQexec(connection, query.c_str());
 
@@ -168,7 +201,7 @@ public:
 
 private:
   static inline PGconn* connection = nullptr;
-  
+  std::string table_name_;
 
   static json::object json_from_file(const std::string file_name) {
     
