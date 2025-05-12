@@ -2,6 +2,8 @@
 
 #include <boost/url.hpp>
 #include <iostream>
+#include <boost/tokenizer.hpp>
+
 
 namespace urls = boost::urls;
 
@@ -54,6 +56,28 @@ std::string Request::input(std::string_view&& data) {
 
   // [ 4 VARIANT ] : Finde in request body, "form data"s
   /* ... */
+
+  return {};
+}
+
+std::optional<std::string> Request::cookie(std::string_view&& field) {
+
+  const auto cookie = _request[http::field::cookie];
+
+  for (size_t n = 0; n != cookie.npos; n = cookie.find(';', n)) {
+
+    const auto next_pos = cookie.find(';', ++n);
+
+    const auto next_it = ((next_pos == cookie.npos) ? cookie.end() : cookie.begin() + next_pos);
+    const auto current_it = cookie.begin() + cookie.find_first_not_of(' ', n);
+    
+    const std::string_view part(current_it, next_it);
+    const auto equal_pos = part.find('=');
+
+    if (std::string_view(current_it, current_it + equal_pos) != field) { continue; }
+
+    return std::string(current_it + equal_pos + 1, next_it);
+  }
 
   return {};
 }

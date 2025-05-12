@@ -67,11 +67,6 @@ public:
     std::cout << query << std::endl;
 
 
-    /*std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",
-                                    table_name_,
-                                    boost::join(columns, ", "),
-                                    boost::join(parameters, "', "));*/
-
     PGresult* res = PQexec(connection, query.c_str());
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -125,7 +120,7 @@ public:
   }
 
   void delete_(std::string condition) {
-    std::string query = "DELETE FROM " + table_name_ + " WHERE " + condition + ';'; 
+    std::string query = "DELETE FROM " + table_name_ + " WHERE id=" + condition + ';'; 
     PGresult* res = PQexec(connection, query.c_str());
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
@@ -169,6 +164,7 @@ public:
 
     PQclear(res);
     
+
     return vec;
 
   }

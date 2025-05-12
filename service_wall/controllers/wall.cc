@@ -16,7 +16,10 @@ response_t WallController::create(request_t request) {
 		return response()->json("created wall is successfully");
 	}
 	else {
-		return response()->json("error")->set_status(http::status::method_not_allowed);
+		
+		return response()->json("error")
+											->set_status(http::status::method_not_allowed);
+
 	}
 
 }
@@ -46,7 +49,7 @@ response_t WallController::update(request_t request) {
 	}
 	catch (const std::invalid_argument& e) {
 		std::cerr << "error" << e.what() << std::endl;
-		return response()->json("error");
+		return response()->json("error")->set_status(http::status::method_not_allowed);
 	}
 	
 }
@@ -58,6 +61,14 @@ response_t WallController::get(request_t request){
 }
 
 response_t WallController::delete_(request_t request) {
+	conditionsDTO condition = { request->input("id") };
 
-	return response()->json("Data");
+	auto searh_wall = wall->find(std::format("id={}", condition.id));
+
+	if (searh_wall.size() == 0) {
+		return response()->json("wall not found")->set_status(http::status::not_found);
+	}
+
+	wall->delete_(condition.id);
+	return response()->json("wall deleted successfully")->set_status(http::status::ok);
 }

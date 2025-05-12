@@ -18,11 +18,6 @@ struct conditionsDTO {
   std::string id;
 };
 
-struct DeleteDTO {
-  std::string name;
-  std::string is_group;
-  std::string is_public;
-};
 
 struct GetDTO {
   std::string name;

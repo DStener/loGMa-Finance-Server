@@ -25,6 +25,8 @@ class Request {
     : _request(std::move(request)), _vars(std::move(vars)) {};
 
   std::string input(std::string_view&& data);
+  std::optional<std::string> cookie(std::string_view&& field);
+
   void shutdown();
   bool is_shutdown();
   unsigned version();
