@@ -23,7 +23,7 @@ public:
     ('Secret Project', 1, 0),
     ('Gaming Community', 1, 1),
     ('Book Club', 1, 0);
-    )";;
+    )";
 
 
     PGresult* res = PQexec(Model::get_connection(), query.c_str());

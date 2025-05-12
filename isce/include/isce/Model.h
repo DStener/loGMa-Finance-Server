@@ -89,7 +89,7 @@ public:
 
   }
 
-  void update(std::vector<std::string> new_values, std::vector<std::string> conditions) {
+  bool update(std::vector<std::string> new_values, std::vector<std::string> conditions) {
     std::string query = "UPDATE " + table_name_ + " SET ";
 
     for (size_t i = 0; i < new_values.size(); ++i) {
@@ -113,20 +113,31 @@ public:
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
       std::cerr << "updated error" << PQerrorMessage(connection) << std::endl;
+      PQclear(res);
+      return false;
     }
+
+    auto update_str = std::stoi(PQcmdTuples(res));
+
+    return update_str > 0;
 
     PQclear(res);
 
   }
 
-  void delete_(std::string condition) {
+  bool delete_(std::string condition) {
     std::string query = "DELETE FROM " + table_name_ + " WHERE id=" + condition + ';'; 
     PGresult* res = PQexec(connection, query.c_str());
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
       std::cerr << "deleted error" << PQerrorMessage(connection) << std::endl;
+      return false;
     }
+    auto delete_str = std::stoi(PQcmdTuples(res));
 
+
+    return delete_str > 0;
+    
     PQclear(res);
 
   }

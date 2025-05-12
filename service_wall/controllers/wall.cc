@@ -34,8 +34,7 @@ response_t WallController::update(request_t request) {
 
 	conditionsDTO condition = {request->input("id")};
 
-	try {
-		wall->update(
+	auto temp = wall->update(
 			{
 				std::format("name='{}'", update.name),
 				std::format("is_group={}", update.is_group),
@@ -44,12 +43,12 @@ response_t WallController::update(request_t request) {
 		{
 			std::format("id='{}'", condition.id),
 		});
-
-		return response()->json("updated wall is successfully");
+		
+	if (temp) {
+		return response()->json("updated wall successfully");
 	}
-	catch (const std::invalid_argument& e) {
-		std::cerr << "error" << e.what() << std::endl;
-		return response()->json("error")->set_status(http::status::method_not_allowed);
+	else {
+		return response()->json("error");
 	}
 	
 }
@@ -68,7 +67,9 @@ response_t WallController::delete_(request_t request) {
 	if (searh_wall.size() == 0) {
 		return response()->json("wall not found")->set_status(http::status::not_found);
 	}
+	else {
+		wall->delete_(condition.id);
+		return response()->json("wall deleted successfully")->set_status(http::status::ok);
+	}	 
 
-	wall->delete_(condition.id);
-	return response()->json("wall deleted successfully")->set_status(http::status::ok);
 }

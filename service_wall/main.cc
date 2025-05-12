@@ -12,7 +12,9 @@
 #include <isce/Framework.h>
 #include "config.h"
 #include "migration/wall_migraion.h"
+#include "migration/category_migration.h"
 #include "seeders/wall_seeder.h"
+#include "seeders/category_seeder.h"
 #include <windows.h>
 
 using namespace isce;
@@ -31,6 +33,9 @@ int main() {
 	// UserSeeder::run();
 	// MigrationWall::up();
 	// WallSeeder::run();
+	// MigrationCategory::up();
+	// CategorySeeder::run();
+
 
 	app()->run();
 
