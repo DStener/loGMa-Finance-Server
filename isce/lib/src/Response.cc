@@ -23,10 +23,13 @@ http::message_generator Response::make(bool keep_alive) {
 
 Response::ptr_t Response::json(const json::value& data) {
 
+  json::value body = data;
+  if (data.is_string()) { body = json::value{{"message", data.as_string()}}; }
+
   Response::string_body_t resp{ http::status::ok, 11 };
   resp.set(http::field::server, BOOST_BEAST_VERSION_STRING);
   resp.set(http::field::content_type, "application/json");
-  resp.body() = json::serialize(data);
+  resp.body() = json::serialize(body);
 
   _response.emplace<Response::string_body_t>(std::move(resp));
 
@@ -34,7 +37,7 @@ Response::ptr_t Response::json(const json::value& data) {
 }
 
 Response::ptr_t Response::json(std::string_view&& data) {
-  json::value json_data = {{"message", data}};
+  json::value json_data = { {"message", std::string{data}} };
   return Response::json(json_data);
 }
 

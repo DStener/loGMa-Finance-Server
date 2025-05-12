@@ -1,9 +1,11 @@
 #pragma once
 
-#include <string>
+#include <isce/DTO.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 namespace posix_time = boost::posix_time;
+
+using namespace isce;
 
 struct LoginDTO {
   std::string login;
@@ -20,7 +22,8 @@ struct RegisterDTO {
 };
 
 struct TokenDTO {
-  std::string        token;
-  posix_time::ptime  id_user;
-  posix_time::ptime  time;
+  std::string token;
+  std::string id_user;
+  std::string time;
 };
+

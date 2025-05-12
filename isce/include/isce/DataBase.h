@@ -57,7 +57,7 @@ class DataBase {
 
 	template <typename T>
 	void Create() {
-		std::string query = DTO::sqlCreateTable<T>();
+		std::string query = _DTO::sqlCreateTable<T>();
 		PGresult* res = PQexec(conn, query.c_str());
 
 		DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK);
@@ -68,13 +68,13 @@ class DataBase {
 	template <typename T>
 	ResponseVec<T> Select(const std::string& condition) {
 		std::string query = std::format("SELECT * FROM {0} {2} {1};",
-																		DTO::getName<T>(), condition,
+																		_DTO::getName<T>(), condition,
 																		((condition.size() > 0)? "WHERE" : ""));
 
 		PGresult* res = PQexec(conn, query.c_str());
 		DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
 
-		auto vec = DTO::fromSQL<T>(res);
+		auto vec = _DTO::fromSQL<T>(res);
 
 		PQclear(res);
 		return vec;
@@ -98,7 +98,7 @@ class DataBase {
 
 	template <typename T>
 	SQL_SERIAL Insert(T& t) {
-		std::string query = DTO::sqlInsert(t);
+		std::string query = _DTO::sqlInsert(t);
 
 		std::cout << query << std::endl;
 

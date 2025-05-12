@@ -27,18 +27,18 @@ namespace fs = std::filesystem;
 namespace json = boost::json;
 
 template <typename T>
-using DTORow = std::pair<SQL_SERIAL,T>;
+using _DTORow = std::pair<SQL_SERIAL,T>;
 template <typename T>
-using ResponseVec = std::vector<DTORow<T>>;
+using ResponseVec = std::vector<_DTORow<T>>;
 
 namespace isce {
-class DTO {
+class _DTO {
  public:
   template <typename T, typename Func>
   static void for_each(T& t, Func f)
   {
       using size = boost::fusion::extension::struct_size<T>;
-      DTO::FOREACH(t, f, std::make_index_sequence<size::value>());
+      _DTO::FOREACH(t, f, std::make_index_sequence<size::value>());
   }
 
   template <typename T>
@@ -49,7 +49,7 @@ class DTO {
   template <typename T>
   static T fromJson(const json::object& json) {
     T t{};
-    DTO::for_each(t, [&](std::string_view name, auto& field) {
+    _DTO::for_each(t, [&](std::string_view name, auto& field) {
         using type_dec = std::remove_cvref_t<decltype(field)>;
 
         const auto it = json.find(name);
@@ -84,7 +84,7 @@ class DTO {
   static json::object toJson(T& t) {
     json::object json{};
 
-    DTO::for_each(t, [&](std::string_view name, auto& field) {
+    _DTO::for_each(t, [&](std::string_view name, auto& field) {
       using type_dec = std::remove_cvref_t<decltype(field)>;
       if constexpr (std::is_same_v<type_dec, SQL_INTEGER>) {
         json[name] = static_cast<SQL_INTEGER>(field);
@@ -121,7 +121,7 @@ class DTO {
   //  // const std::string_view body = req.body().c_str();
 
   //  // if(it->value().starts_with("application/json")) {
-  //  //   return DTO::fromJson<T>(json::parse(body).as_object());
+  //  //   return _DTO::fromJson<T>(json::parse(body).as_object());
   //  // }
   //  return T{};
   //}
@@ -137,7 +137,7 @@ class DTO {
     for(int i = 0; i < rows; ++i) {
       T t;
       
-      DTO::for_each(t, [&](std::string_view name, auto& field) {
+      _DTO::for_each(t, [&](std::string_view name, auto& field) {
         int index = PQfnumber(res, name.data());
         if(index == -1) { return; } // if not found
 
@@ -173,7 +173,7 @@ class DTO {
     std::vector<std::string> unique_fields;
     std::vector<std::string> values;
 
-    DTO::for_each(t, [&](std::string_view name, auto& field) {
+    _DTO::for_each(t, [&](std::string_view name, auto& field) {
       fields.push_back(name.data());
 
       if (field.hasConstraint(SQL_UNIQUE)){
@@ -212,7 +212,7 @@ class DTO {
       // return std::format("INSERT INTO \"{}\"({}) VALUES({}) "
       //                  "ON CONFLICT({}) DO NOTHING "
       //                  "RETURNING id;",
-      //                  DTO::getName<T>(), 
+      //                  _DTO::getName<T>(), 
       //                  boost::join(fields, ", "),
       //                  boost::join(values, ", "),
       //                  boost::join(unique_fields, ", "));
@@ -220,14 +220,14 @@ class DTO {
       return std::format("INSERT INTO \"{0}\"({1}) VALUES({2}) "
                          "ON CONFLICT ON CONSTRAINT \"{0}_pkey\" DO NOTHING "
                          "RETURNING id;",
-                         DTO::getName<T>(), 
+                         _DTO::getName<T>(), 
                          boost::join(fields, ", "),
                          boost::join(values, ", "));
     }
 
     return std::format("INSERT INTO \"{0}\"({1}) VALUES({2}) "
                        "RETURNING id;",
-                       DTO::getName<T>(), 
+                       _DTO::getName<T>(), 
                        boost::join(fields, ", "),
                        boost::join(values, ", "));
   }
@@ -238,7 +238,7 @@ class DTO {
 
     std::vector<std::string> fields;
 
-    DTO::for_each(t, [&](std::string_view name, auto& field) {
+    _DTO::for_each(t, [&](std::string_view name, auto& field) {
 
       std::vector<std::string> field_construct{name.data()};
 
@@ -290,7 +290,7 @@ class DTO {
                          "id SERIAL PRIMARY KEY,"
                          "{}" 
                        ");",
-                       DTO::getName<T>(), 
+                       _DTO::getName<T>(), 
                        boost::join(fields, ", "));
   }
 
