@@ -4,6 +4,7 @@ project(service_wall CXX)
 # Include ISCE system
 include(${CMAKE_SOURCE_DIR}/isce/isce.cmake)
 
+
 file(GLOB_RECURSE SERVICE_SRC "*.cc" "*.h")
 add_executable(${PROJECT_NAME} ${SERVICE_SRC})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.inc config.h @ONLY)
@@ -18,6 +19,7 @@ target_include_directories(${PROJECT_NAME}
                                   ${CMAKE_CURRENT_SOURCE_DIR}/dto
                                   ${CMAKE_CURRENT_SOURCE_DIR}/controllers
                                   ${CMAKE_CURRENT_SOURCE_DIR}/systems
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/models 
                                   ${ISCE_INCLUDE})
 
 target_link_libraries(${PROJECT_NAME} ${ISCE_LIBRARY} isce)

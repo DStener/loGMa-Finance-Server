@@ -94,8 +94,25 @@ public:
 
   }
 
-  void update(std::string new_value, std::string condition) {
-    std::string query = "UPDATE " + table_name_ + " SET " + new_value + " WHERE " + condition + ";";
+  void update(std::vector<std::string> new_values, std::vector<std::string> conditions) {
+    std::string query = "UPDATE " + table_name_ + " SET ";
+
+    for (size_t i = 0; i < new_values.size(); ++i) {
+      query += new_values[i];
+      if (i != new_values.size() - 1)
+        query += ", ";
+    }
+
+    query += " WHERE ";
+
+    for (size_t i = 0; i < conditions.size(); ++i) {
+      query += conditions[i];
+      if (i != conditions.size() - 1)
+        query += " AND ";
+    }
+
+    query += ";";
+
     PGresult* res = PQexec(connection, query.c_str());
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {

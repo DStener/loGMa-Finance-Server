@@ -18,6 +18,7 @@ target_include_directories(${PROJECT_NAME}
                                   ${CMAKE_CURRENT_SOURCE_DIR}/dto
                                   ${CMAKE_CURRENT_SOURCE_DIR}/controllers
                                   ${CMAKE_CURRENT_SOURCE_DIR}/systems
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/models
                                   ${ISCE_INCLUDE})
 
 target_link_libraries(${PROJECT_NAME} ${ISCE_LIBRARY} isce)
