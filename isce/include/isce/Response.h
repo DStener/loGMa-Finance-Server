@@ -19,6 +19,9 @@
 #include <boost/config.hpp>
 #include <boost/function.hpp>
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+namespace posix_time = boost::posix_time;
 
 namespace http = boost::beast::http;
 namespace json = boost::json;
@@ -47,12 +50,18 @@ public:
 
   Response::ptr_t set_status(http::status&& status);
 
+  Response::ptr_t cookie(const std::string& target, 
+                         std::string path = "/",
+                         posix_time::time_duration period = posix_time::hours(90 * 24));
+
   http::message_generator make(bool keep_alive);
 
+
+  Response() = default;
 private:
   Response::boost_variant_t _response;
 
-  Response() = default;
+  
 
   friend std::shared_ptr<Response> response();
 };

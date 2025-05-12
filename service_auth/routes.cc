@@ -9,8 +9,8 @@ using namespace isce;
 void Route::up() {
 
   Route::prefix("api/auth")->middleware({})->group({
-    Route::post("/login", Auth::login),  
-    Route::post("/register", Auth::registration),
+    Route::get("/login", Auth::login),  
+    Route::get("/reg", Auth::registration),
     Route::get("/me", Auth::me),
     Route::post("/out", Auth::out),
     Route::post("/out/{id}", Auth::out),

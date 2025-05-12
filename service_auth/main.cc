@@ -12,29 +12,23 @@
 #include <isce/Framework.h>
 
 #include "config.h"
+
 #include "user_migration.h"
 #include "users_seeder.h"
-#include <windows.h>
+#include "token_migration.h"
 
 using namespace isce;
 
 int main() {
 
-#ifdef _WIN32
-		SetConsoleCP(CP_UTF8);
-		SetConsoleOutputCP(CP_UTF8);
-#endif
-
-
 	app()->config(CONFIG_PATH);
 	
-	// MigrationUser::up();
-	// UserSeeder::run();
-	
+	MigrationUser::up();
+	UserSeeder::run();
 
+	MigrationToken::up();
 
 	app()->run();
-
 
 	Model::close_connection(); 
 	return 0;
