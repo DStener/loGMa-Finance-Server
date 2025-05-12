@@ -10,24 +10,45 @@ response_t WallController::create(request_t request) {
 									request->input("is_public") };
 
 
-	wall->create({ "name", "is_group", "is_public" }, { create.name, create.is_group, create.is_public });
+	auto id = wall->create({ "name", "is_group", "is_public" }, { create.name, create.is_group, create.is_public });
 
-	
+	if (id) {
+		return response()->json("created wall is successfully");
+	}
+	else {
+		return response()->json("error")->set_status(http::status::method_not_allowed);
+	}
+
 }
 
 response_t WallController::update(request_t request) {
 
+
 	UpdateDTO update{
-									request->input("name"),
-									request->input("is_group"),
-									request->input("is_public") };
-	
-	
-	wall->update()
+									request->input("name_new"),
+									request->input("is_group_new"),
+									request->input("is_public_new") };
 
-	return response()->json("error");
-	
+	conditionsDTO condition = {request->input("id")};
 
+	try {
+		wall->update(
+			{
+				std::format("name='{}'", update.name),
+				std::format("is_group={}", update.is_group),
+				std::format("is_public={}",update.is_public)
+			},
+		{
+			std::format("id='{}'", condition.id),
+		});
+
+		return response()->json("updated wall is successfully");
+	}
+	catch (const std::invalid_argument& e) {
+		std::cerr << "error" << e.what() << std::endl;
+		return response()->json("error");
+	}
+	
 }
 
 
@@ -37,7 +58,6 @@ response_t WallController::get(request_t request){
 }
 
 response_t WallController::delete_(request_t request) {
-
 
 	return response()->json("Data");
 }

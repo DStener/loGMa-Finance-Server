@@ -14,6 +14,10 @@ struct UpdateDTO {
   std::string is_public;
 };
 
+struct conditionsDTO {
+  std::string id;
+};
+
 struct DeleteDTO {
   std::string name;
   std::string is_group;

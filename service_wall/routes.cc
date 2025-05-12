@@ -10,9 +10,9 @@ void Route::up() {
 
   Route::prefix("api/ref")->middleware({})->group({
     Route::post("/wall", WallController::create),  
-    Route::post("/register", WallController::update),
-    Route::get("/me", WallController::get),
-    Route::delete_("/out",WallController::delete_)
+    Route::put("/wall/{id_wall}", WallController::update),
+    Route::get("/get", WallController::get),
+    Route::delete_("/del",WallController::delete_)
   });
 
 }

@@ -10,10 +10,9 @@
 #include <isce/Route.h>
 
 #include <isce/Framework.h>
-
 #include "config.h"
-#include "user_migration.h"
-#include "users_seeder.h"
+#include "migration/wall_migraion.h"
+#include "seeders/wall_seeder.h"
 #include <windows.h>
 
 using namespace isce;
@@ -30,8 +29,8 @@ int main() {
 	
 	// MigrationUser::up();
 	// UserSeeder::run();
-	
-
+	// MigrationWall::up();
+	// WallSeeder::run();
 
 	app()->run();
 

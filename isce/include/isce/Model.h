@@ -114,6 +114,7 @@ public:
     query += ";";
 
     PGresult* res = PQexec(connection, query.c_str());
+    
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
       std::cerr << "updated error" << PQerrorMessage(connection) << std::endl;
