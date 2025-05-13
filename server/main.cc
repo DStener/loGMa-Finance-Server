@@ -35,6 +35,10 @@
 using namespace isce;
 
 int main() {
+#ifdef _WIN32
+	SetConsoleCP(CP_UTF8);
+	SetConsoleOutputCP(CP_UTF8);
+#endif
 
 	app()->config(CONFIG_PATH);
 	app()->default_response(sys::StaticFile::finde);

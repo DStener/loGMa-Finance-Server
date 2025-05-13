@@ -45,7 +45,7 @@ void Route::up() {
     });
 
   Route::prefix("api/bank")->middleware({})->group({
-    Route::get("/test", Bank::test)
+    Route::post("/get_rate", Bank::get_rate)
   });
 
 }
