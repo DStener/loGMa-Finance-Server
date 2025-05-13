@@ -22,17 +22,6 @@ int main() {
 
 	app()->config(CONFIG_PATH);
 	
-<<<<<<< HEAD
-	// MigrationUser::up();
-	// UserSeeder::run();
-	MigrationWall::up();
-
-=======
-	MigrationUser::up();
-	UserSeeder::run();
->>>>>>> 868da94d1c53cbd5b39d814d554f2b9680be7607
-
-	MigrationToken::up();
 
 	app()->run();
 
