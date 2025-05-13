@@ -7,6 +7,20 @@ namespace posix_time = boost::posix_time;
 
 using namespace isce;
 
+// operation
+struct OperationCreateDTO {
+  std::string value;
+  std::string id_currency;
+  std::string id_user;
+};
+
+struct OperationUpdateDTO {
+  std::string value;
+  std::string id_currency;
+  std::string id_user;
+};
+
+
 struct LoginDTO {
   std::string login;
   std::string password;

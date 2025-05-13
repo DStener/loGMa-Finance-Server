@@ -1,5 +1,4 @@
 #include "isce/Model.h"
-#include "isce/DataBase.h"
 #include "seeder.h"
 #include <libpq-fe.h>
 

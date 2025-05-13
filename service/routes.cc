@@ -5,6 +5,7 @@
 #include "auth.h"
 #include "wall.h"
 #include "category.h"
+#include "operation.h"
 
 using namespace isce;
 
@@ -33,6 +34,15 @@ void Route::up() {
     Route::put("/category",CategoryController::update),
     Route::get("/get_category",CategoryController::get),
     Route::delete_("/del_category",CategoryController::delete_),
+    
+    // opreation
+    Route::post("/opreation", OperationController::create),
+    Route::put("/opreation", OperationController::update),
+    Route::get("/get_opreation", OperationController::get),
+    Route::delete_("/del_opreation", OperationController::delete_)
+
     });
+
+  
 
 }

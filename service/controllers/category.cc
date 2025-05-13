@@ -10,10 +10,10 @@ response_t CategoryController::create(request_t request) {
 									request->input("id_wall") };
 
 
-	auto id = category->create({ "icon", "name", "id_wall" }, { create.icon, create.name, create.id_wall });
+	auto id = category->create({ "icon", "name", "id_wall" }, { create.icon, create.name, create.id_wall});
 
 	if (id) {
-		return response()->json("created category is successfully");
+		return response()->json("created category successfully");
 	}
 	else {
 		return response()->json("error")->set_status(http::status::method_not_allowed);

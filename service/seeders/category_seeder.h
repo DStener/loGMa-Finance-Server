@@ -1,5 +1,4 @@
 #include "isce/Model.h"
-#include "isce/DataBase.h"
 #include "seeder.h"
 #include <libpq-fe.h>
 
@@ -13,17 +12,18 @@ public:
 
     std::string query = R"(
     INSERT INTO category (icon, name, id_wall) VALUES
-    (101, 'Announcements', 1),
-    (102, 'General Discussion', 1),
-    (103, 'Ideas & Suggestions', 2),
-    (104, 'Personal Notes', 2),
-    (105, 'Development', 3),
-    (106, 'Bugs & Issues', 3),
-    (107, 'Travel Logs', 6),
-    (108, 'Recipes', 7),
-    (109, 'Secret Plans', 8),
-    (110, 'Book Reviews', 10);
+    (1001, 'Groceries', 1),
+    (1002, 'Transport', 1),
+    (1003, 'Entertainment', 2),
+    (1004, 'Salary', 3),
+    (1005, 'Gifts', 2),
+    (1006, 'Education', 4),
+    (1007, 'Utilities', 1),
+    (1008, 'Healthcare', 4),
+    (1009, 'Dining Out', 2),
+    (1010, 'Subscriptions', 2);
     )";
+
 
 
     PGresult* res = PQexec(Model::get_connection(), query.c_str());

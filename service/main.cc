@@ -16,17 +16,33 @@
 #include "user_migration.h"
 #include "users_seeder.h"
 #include "token_migration.h"
+#include "migration/category_migration.h"
+#include "seeders/category_seeder.h"
+#include "migration/user_and_wall_migration.h"
+#include "migration/operation_migration.h"
+#include "seeders/user_and_wall_seeder.h"
+#include "seeders/operation_seeder.h"
 
 using namespace isce;
 
 int main() {
 
+
+
 	app()->config(CONFIG_PATH);
 
-	MigrationUser::up();
-	UserSeeder::run();
+	//MigrationUser::up();
+	/*UserSeeder::run();*/
+	/*MigrationUserAndWall::up();
+	UserAndWallSeeder::run();
 
-	MigrationToken::up();
+	MigrationOperation::up();
+	OperationSeedr::run();
+	MigrationToken::up();*/
+
+	//MigrationCategory::up();
+	CategorySeeder::run();
+
 
 	app()->run();
 
