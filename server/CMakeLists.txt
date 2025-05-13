@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(service_auth CXX)
+project(server CXX)
 
 # Include ISCE system
 include(${CMAKE_SOURCE_DIR}/isce/isce.cmake)

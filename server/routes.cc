@@ -5,6 +5,7 @@
 #include "auth.h"
 #include "wall.h"
 #include "category.h"
+#include "bank.h"
 
 using namespace isce;
 
@@ -35,4 +36,9 @@ void Route::up() {
     Route::delete_("/del_category",CategoryController::delete_),
     });
 
+  Route::prefix("api/bank")->middleware({})->group({
+    Route::get("/test", Bank::test)
+  });
+
+  
 }
