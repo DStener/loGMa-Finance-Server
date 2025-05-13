@@ -14,14 +14,20 @@
 #include "dto.h"
 
 #include "user_migration.h"
-#include "users_seeder.h"
 #include "token_migration.h"
-#include "migration/category_migration.h"
-#include "seeders/category_seeder.h"
 #include "migration/user_and_wall_migration.h"
 #include "migration/operation_migration.h"
+#include "migration/category_migration.h"
+#include "migration/operation_and_wall_migration.h"
+#include "migration/currency_migration.h"
+
+#include "users_seeder.h"
+#include "seeders/category_seeder.h"
 #include "seeders/user_and_wall_seeder.h"
 #include "seeders/operation_seeder.h"
+#include "seeders/operation_and_wall_seeder.h"
+#include "seeders/currency_seeder.h"
+
 
 using namespace isce;
 
@@ -41,7 +47,13 @@ int main() {
 	MigrationToken::up();*/
 
 	//MigrationCategory::up();
-	CategorySeeder::run();
+	//CategorySeeder::run();
+
+	/*MigrationOperationAndWall::up();
+	OperationAndWallSeedr::run();*/
+
+	MigrationÑurrency::up();
+	ÑurrencySeeder::run();
 
 
 	app()->run();
