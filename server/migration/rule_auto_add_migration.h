@@ -3,12 +3,11 @@
 
 
 
-class MigrationCategory : public Migration {
+class MigrationRuleAutoAdd : public Migration {
 public:
 	static void up() {
-		Schema::create("category", {
-			"icon INTEGER",
-			"name VARCHAR(255) NOT NULL",
+		Schema::create("rule_auto_add", {
+			"id_category INTEGER NOT NULL",
 			"id_wall INTEGER NOT NULL REFERENCES wall(id)",
 			});
 	}
