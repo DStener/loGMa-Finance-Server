@@ -5,6 +5,7 @@
 #include "auth.h"
 #include "wall.h"
 #include "category.h"
+#include "bank.h"
 #include "operation.h"
 
 using namespace isce;
@@ -43,6 +44,8 @@ void Route::up() {
 
     });
 
-  
+  Route::prefix("api/bank")->middleware({})->group({
+    Route::get("/test", Bank::test)
+  });
 
 }

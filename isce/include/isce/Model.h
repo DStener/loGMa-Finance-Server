@@ -100,10 +100,8 @@ public:
 
     auto update_str = std::stoi(PQcmdTuples(res));
 
-    return update_str > 0;
-
     PQclear(res);
-
+    return update_str > 0;
   }
 
   bool delete_(std::string condition) {

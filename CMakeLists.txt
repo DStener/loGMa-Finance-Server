@@ -2,6 +2,6 @@
 project(loGMa-Server CXX)
 
 # add_subdirectory(${CMAKE_SOURCE_DIR}/server_hello)
-add_subdirectory(${CMAKE_SOURCE_DIR}/service)
+add_subdirectory(${CMAKE_SOURCE_DIR}/server)
 
 # add_subdirectory(${CMAKE_SOURCE_DIR}/service_wall)
