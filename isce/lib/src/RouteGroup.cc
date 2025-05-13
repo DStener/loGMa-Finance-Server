@@ -1,4 +1,5 @@
 #include "Route.h"
+#include <iterator>
 
 using namespace isce;
 
@@ -9,7 +10,8 @@ __group_ptr__ RouteGroup::prefix(std::string_view&& pref) {
 }
 
 __group_ptr__ RouteGroup::middleware(middlewares_t&& middlewares) {
-  _middlewares.append_range(std::move(middlewares));
+  std::move(middlewares.begin(), middlewares.end(), std::back_inserter(_middlewares));
+
   this->update();
   return shared_from_this();
 }
@@ -26,6 +28,6 @@ __group_ptr__ RouteGroup::group(routes_t&& routes) {
 void RouteGroup::update() {
   for (auto& pRoute : _routes) {
     pRoute->_prefix = _prefix;
-    pRoute->_middlewares.append_range(_middlewares);
+    std::copy(_middlewares.begin(), _middlewares.end(), std::back_inserter(pRoute->_middlewares));
   }
 }

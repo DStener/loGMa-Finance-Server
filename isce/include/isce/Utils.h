@@ -23,5 +23,24 @@ class Utils{
 
     return result;
   }
+
+  static std::string generate_token(size_t len = 32) {
+
+    std::string out;
+    std::srand(std::time({}));
+    
+    for (size_t i = 0; i < len; ++i) {
+      // 62 = len(0..9) + len(A..Z) + len(a..z)
+      // 48 = '0' in ASCII
+      char value = std::rand() % 62 + 48; 
+
+      if (value > 57) { value += 8; } // A..Z
+      if (value > 90) { value += 7; } // a..z
+
+      out += value;
+    }
+   
+    return out;
+  }
 };
 } // namespace isce

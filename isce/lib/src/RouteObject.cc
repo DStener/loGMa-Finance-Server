@@ -1,4 +1,5 @@
 #include "Route.h"
+#include <iterator>
 
 using namespace isce;
 
@@ -7,9 +8,10 @@ RouteObjet::RouteObjet(route_t route) {
   _uri = route->_uri;
   _callback = route->_callback;
   _prefix = route->_prefix;
-  _methods.insert_range(route->_methods);
-  _middlewares.append_range(route->_middlewares);
-  vars.append_range(route->vars);
+
+  _methods.insert(route->_methods.begin(), route->_methods.end());
+  _middlewares.insert(route->_middlewares.begin(), route->_middlewares.back());
+  std::copy(route->vars.begin(), route->vars.end(), std::back_inserter(vars));
 }
 
 __object_ptr__ RouteObjet::get(uri_t&& uri, callback_t&& callback) {
@@ -87,7 +89,7 @@ __object_ptr__ RouteObjet::prefix(prefix_t&& pref) {
 }
 
 __object_ptr__ RouteObjet::middleware(middlewares_t&& middlewares) {
-  _middlewares.append_range(std::move(middlewares));
+  std::move(middlewares.begin(), middlewares.end(), std::back_inserter(_middlewares));
   return shared_from_this();
 }
 

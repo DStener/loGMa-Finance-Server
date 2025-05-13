@@ -8,10 +8,14 @@
 #include <boost/json.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <sstream>
+#include <format>
 
 #include "config.h"
+#include <isce/DTO.h>
 
 #include <boost/algorithm/string/join.hpp>
+
+using namespace isce;
 
 namespace json = boost::json;
 
@@ -19,6 +23,14 @@ using rec_t = std::pair<std::string, std::string>;
 using row_t = std::vector<rec_t>;
 
 using response_vec_t = std::vector<row_t>;
+
+#define DB_CHECK_ERROR(condition) 																		 \
+	if(condition) {																											 \
+		std::string error = std::format("{}, func {}(), line {}: {}", 		 \
+																		__FILE__, __FUNCTION__, __LINE__,  \
+																		PQerrorMessage(Model::get_connection()));\
+		throw std::runtime_error(error);																	 \
+	}
 
 
 class Model {
@@ -41,39 +53,14 @@ public:
       return 1;
     }
 
-    std::string query = "INSERT INTO " + table_name_ + "(";
-
-    for (size_t i = 0; i < columns.size(); i++) {
-      if (i != columns.size() - 1) {
-        query += columns[i] + ", ";
-      }
-      else {
-        query += columns[i] + ") ";
-      }
-    }
-
-    query += "VALUES (";
-    
-    for (size_t i = 0; i < parameters.size(); i++) {
-      if (i != parameters.size() - 1) {
-        query += "'" + parameters[i] + "'" + ", ";
-      }
-      else {
-        query += "'" + parameters[i] + "'" + ") ";
-      }
-    }
-    query += " RETURNING id;";
-
-    std::cout << query << std::endl;
+    std::string query = std::format("INSERT INTO {} ({}) VALUES ('{}') RETURNING id",
+                                    table_name_,
+                                    boost::join(columns, ", "),
+                                    boost::join(parameters, "', '"));
 
 
     PGresult* res = PQexec(connection, query.c_str());
-
-    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-      std::cout << PQerrorMessage(Model::get_connection()) << std::endl;
-      PQclear(res);
-      throw std::runtime_error("user not found");
-    }
+    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
 
     auto id = PQgetvalue(res, 0, 0);
 
@@ -109,13 +96,7 @@ public:
     query += ";";
 
     PGresult* res = PQexec(connection, query.c_str());
-    
-
-    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-      std::cerr << "updated error" << PQerrorMessage(connection) << std::endl;
-      PQclear(res);
-      return false;
-    }
+    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK)
 
     auto update_str = std::stoi(PQcmdTuples(res));
 
@@ -127,31 +108,22 @@ public:
 
   bool delete_(std::string condition) {
     std::string query = "DELETE FROM " + table_name_ + " WHERE id=" + condition + ';'; 
-    PGresult* res = PQexec(connection, query.c_str());
 
-    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-      std::cerr << "deleted error" << PQerrorMessage(connection) << std::endl;
-      return false;
-    }
+    PGresult* res = PQexec(connection, query.c_str());
+    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK)
+
     auto delete_str = std::stoi(PQcmdTuples(res));
 
-
-    return delete_str > 0;
-    
     PQclear(res);
-
+    return delete_str > 0;
   }
 
   response_vec_t find(std::string condition) {
     std::string query = "SELECT * FROM " + table_name_ + " WHERE " + condition + ";";
-    PGresult* res = PQexec(connection, query.c_str());
 
-    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-      std::cout << PQerrorMessage(Model::get_connection()) << std::endl;
-      PQclear(res);
-      throw std::runtime_error("user not found");
-    }
-    
+    PGresult* res = PQexec(connection, query.c_str());
+    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
+
     response_vec_t vec;
 
 
@@ -174,12 +146,8 @@ public:
     }
 
     PQclear(res);
-    
-
     return vec;
-
   }
-
 
   bool where_(std::string column, std::string parameter) {
     std::string query = "SELECT * FROM " + table_name_ + " WHERE " + column + "= '"  + parameter + "'";
@@ -223,6 +191,68 @@ public:
       connection = nullptr;
     }
   }
+
+  ///////////////// DTO FUNCTIONS /////////////////////
+
+  template <typename T>
+  size_t create(const T& t) {
+
+    std::vector<std::string> colums;
+    std::vector<std::string> values;
+
+    DTO::for_each(t, [&](std::string_view&& name, auto& field) {
+      colums.push_back(name.data());
+      values.push_back(DTO::to_string(field));
+      });
+
+    std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",
+      table_name_,
+      boost::join(colums, ", "),
+      boost::join(values, ", "));
+
+    PGresult* res = PQexec(connection, query.c_str());
+    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
+
+    auto id = PQgetvalue(res, 0, 0);
+
+    PQclear(res);
+    return std::stoul(id);
+  }
+
+  template<typename T>
+  resp_vec_t<T> find(std::string condition) {
+
+    resp_vec_t<T> out;
+    std::string query = std::format("SELECT * FROM {} WHERE {}",
+      table_name_, condition);
+
+    PGresult* res = PQexec(connection, query.c_str());
+    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
+
+      int rows = PQntuples(res);
+    int cols = PQnfields(res);
+
+    std::cout << rows << " " << cols << std::endl;
+
+    for (int i = 0; i < rows; ++i) {
+      T t;
+
+      DTO::for_each(t, [&](std::string_view&& name, auto& field) {
+        int index = PQfnumber(res, name.data());
+        if (index == -1) { return; } // if not found
+
+        const auto value = PQgetvalue(res, i, index);
+
+        field = value; // [FIXME]
+        });
+
+      out.push_back(std::make_pair(i + 1, std::move(t)));
+    }
+
+    return out;
+  }
+
+
 
 private:
   static inline PGconn* connection = nullptr;

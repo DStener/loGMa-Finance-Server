@@ -3,14 +3,15 @@
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <iostream>
 
-#include <isce/DataBase.h>
 #include <isce/Utils.h>
 #include <isce/Model.h>
 
 #include <isce/Route.h>
 
 #include <isce/Framework.h>
+
 #include "config.h"
+#include "dto.h"
 
 #include "user_migration.h"
 #include "users_seeder.h"
@@ -21,7 +22,11 @@ using namespace isce;
 int main() {
 
 	app()->config(CONFIG_PATH);
-	
+
+	MigrationUser::up();
+	UserSeeder::run();
+
+	MigrationToken::up();
 
 	app()->run();
 

@@ -1,4 +1,7 @@
 #include "Framework.h"
+#include <boost/asio/ip/address.hpp>
+#include <stdexcept>
+#include <string>
 
 using namespace isce;
 
@@ -37,14 +40,46 @@ framework_t Framework::config(path_t path) {
 	std::ifstream file;
 	file.open(path);
 
-	//if (file.is_open()) {
-	//	// Read entire file 
-	//	std::ostringstream stream;
-	//	stream << file.rdbuf();
+	if (file.is_open()) {
+		// Read entire file 
+		std::ostringstream stream;
+		stream << file.rdbuf();
 
-	//	_config = json::parse(stream.str()).as_object();
-	//}
+		_config = json::parse(stream.str()).as_object();
+	}
 
 	file.close();
 	return shared_from_this();
+}
+
+
+
+net::ip::address Framework::address() {
+	const auto it = _config.find("address");
+
+	if(it == _config.end()) {
+		throw std::runtime_error("In config file not found 'address'");
+	}
+
+	return net::ip::make_address(it->value().as_string());
+}
+
+unsigned short Framework::port() {
+	const auto it = _config.find("port");
+
+	if(it == _config.end()) {
+		throw std::runtime_error("In config file not found 'port'");
+	}
+
+	return it->value().as_int64();
+}
+
+size_t Framework::workers() {
+	const auto it = _config.find("workers");
+
+	if(it == _config.end()) {
+		throw std::runtime_error("In config file not found 'port'");
+	}
+
+	return it->value().as_int64();
 }

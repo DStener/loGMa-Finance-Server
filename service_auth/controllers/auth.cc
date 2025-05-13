@@ -1,10 +1,8 @@
 #include "auth.h"
 #include "models/User.h"
 #include "models/Token.h"
-
-
-std::unique_ptr<Model> user = std::make_unique<User>("users");
-std::unique_ptr<Model> token = std::make_unique<Token>("token");
+#include <isce/Utils.h>
+#include "systems/login.h"
 
 response_t Auth::registration(request_t request) {
 
@@ -15,77 +13,81 @@ response_t Auth::registration(request_t request) {
 		               request->input("birthday"),
 		               request->input("password") };
 	
-	
-	user->create({ "login", "name", "surname", "patronymic", "birthday", "password" },
-		{ reg.login, reg.name, reg.surname, reg.patronymic, reg.birthday, reg.password });
+	user->create(reg);
 
-	return response()->json("error")
-		               ->cookie("token=fjkegwfhjkeghjkfegfhj");
+	return response()->json("SUCCES")
+		               ->set_status(http::status::created);
 }
 
 response_t Auth::login(request_t request) {
 
-	LoginDTO login{ request->input("login"),
-									request->input("password") };
+	const auto login_v = request->input("login");
+	const auto password_v = request->input("password");
 
-	std::cout << "Token: " << request->cookie("token").value_or("") << std::endl;
+	const auto login = sys::Login(login_v, password_v);
+	LOGIN_CHECK_ERROR(login)
 
+	TokenDTO dto_token {Utils::generate_token(),
+											std::to_string(login.id),
+	                    "2020-02-02"};
 
-	//if (user->where_("login", login.login) ){
-	//	if (user->where_("password", login.password)) {
-	//		auto temp = user->find(std::format("login = '{}' AND password = '{}'", login.login, login.password));
+	std::cout << "TEST" << dto_token.token << std::endl;
 
-	//		for (const auto& row : temp)
-	//		{
-	//			std::cout << std::endl;
-	//			for (const auto& value : row)
-	//			{
-	//				std::cout << value.first << ":" << value.second << ' ';
-	//			}
-	//		}
+	// Insert value to DB
+	token->create(dto_token);
 
-	//		return response()->json("so cool"); // token or next page
-
-	//	}
-	//}
-	
-	
-	return response()->json("error");
-	
-
+	return response()->json("SUCCES")
+									 ->cookie(std::format("token={}",dto_token.token));
 }
 
 
 response_t Auth::me(request_t request) {
 	
-	const auto value_token = request->cookie("token");
-	auto db_token = token->find(std::format("token = '{}'", value_token.value_or("")));
+	const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)
 
-	// Return error
-	if (db_token.size() == 0) {
-		return response()->json("Not authorized")
-										 ->set_status(http::status::unauthorized);
-	}
+	auto json = DTO::to_json(login.user);
+	json.erase("password");
 
-	// 
-
-
-	return response()->json("Data");
+	return response()->json(json);
 }
 
 response_t Auth::out(request_t request) {
 
-	if (request->input("id") != "") {
+	const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)
 
+  const auto id = request->input("id");
+
+	if (!id.empty()) {
+		token->delete_(std::format("id_user = {}", id));
+	} else {
+		token->delete_(std::format("id_user = {}", login.id));
 	}
 
-	return response()->json("Data");
+	return response()->json("SUCCES");
 }
 
 response_t Auth::sessions(request_t request) {
+
+	const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)
+
+	const auto condition = std::format("id_user = {}", login.id);
+	const auto token_vec = token->find<TokenDTO>(condition);
+
+	const auto json = DTO::to_json(token_vec);
+
 	return response()->json("Data");;
 }
 
 response_t Auth::out_all(request_t request) {
+
+	const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)
+
+  const auto condition = std::format("id_user = {}", login.id);
+	token->delete_(condition);
+
 	return response()->json("Data");
 }

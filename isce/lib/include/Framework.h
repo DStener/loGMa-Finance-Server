@@ -24,17 +24,25 @@ namespace net = boost::asio;
 namespace json = boost::json;
 
 namespace isce {
-//class RouteObjet;
 class Framework : public std::enable_shared_from_this<Framework> {
  public:
   using path_t = std::filesystem::path;
   using framework_t = std::shared_ptr<Framework>;
   //using route_t = std::shared_ptr<RouteObjet>;
+  route_t _bad_request = route_t(new RouteObjet(Framework::do_nothing));
+  route_t get_route(std::string_view&& uri, http::verb&& method);
+
 
   void run();
   framework_t add(route_t route);
   framework_t config(path_t path);
   //framework_t bad_request(route_t rou)
+
+
+  net::ip::address address();
+  unsigned short port();
+  size_t workers();
+
 
   static response_t do_nothing(request_t request) {
     request->shutdown();
@@ -43,11 +51,9 @@ class Framework : public std::enable_shared_from_this<Framework> {
 private:
   json::object _config;
   std::vector<route_t> _routes = {};
-  route_t _bad_request = route_t(new RouteObjet(Framework::do_nothing));
 
   // HttpServer.cc
   void server_run();
-  route_t get_route(std::string_view&& uri, http::verb&& method);
   net::awaitable<void> server_listen(net::ip::tcp::endpoint endpoint);
   net::awaitable<void> server_do_session(beast::tcp_stream stream);
   

@@ -9,10 +9,6 @@ namespace urls = boost::urls;
 
 using namespace isce;
 
-request_t isce::request() {
-  return std::make_shared<Request>();
-}
-
 inline std::string data_parse(std::string_view target, std::string_view&& data) {
 
   const auto offset = target.size() + 1;
