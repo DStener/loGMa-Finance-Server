@@ -1,6 +1,8 @@
 #pragma once 
 
 #include <string>
+#include <format>
+
 #include <boost/pfr.hpp>
 #include <boost/json/object.hpp>
 

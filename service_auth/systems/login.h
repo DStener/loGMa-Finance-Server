@@ -10,7 +10,7 @@ using namespace isce;
 
 #define LOGIN_CHECK_ERROR(obj)                \
 if (!obj.message.empty()) {                   \
-  return response()->json(std::move(obj.message))        \
+  return response()->json(obj.message)        \
     ->set_status(http::status::unauthorized); \
 }
 

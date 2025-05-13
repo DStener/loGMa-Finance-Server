@@ -1,9 +1,24 @@
 #pragma once 
 
+#include <boost/asio/ip/address.hpp>
 #include <memory>
 #include <filesystem>
 
+#include <boost/json.hpp>
+#include <boost/asio/awaitable.hpp>
+#include <boost/asio/co_spawn.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/http.hpp>
+#include <boost/beast/version.hpp>
+#include <boost/config.hpp>
+#include <boost/function.hpp>
 
+namespace beast = boost::beast;
+namespace http = beast::http;
+namespace net = boost::asio;
+namespace json = boost::json;
 
 namespace isce {
   class  RouteObjet;
@@ -16,6 +31,14 @@ public:
   void run();
   framework_t add(route_t route);
   framework_t config(path_t path);
+
+  net::ip::address address();
+  unsigned short port();
+  size_t workers();
+  
+private:
+
+  route_t get_route(std::string_view&& uri, http::verb&& method);
 };
 Framework::framework_t app();
 }

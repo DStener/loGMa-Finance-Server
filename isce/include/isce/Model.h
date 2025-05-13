@@ -8,11 +8,14 @@
 #include <boost/json.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <sstream>
+#include <format>
 
 #include "config.h"
 #include <isce/DTO.h>
 
 #include <boost/algorithm/string/join.hpp>
+
+using namespace isce;
 
 namespace json = boost::json;
 
@@ -111,10 +114,8 @@ public:
 
     auto delete_str = std::stoi(PQcmdTuples(res));
 
-    return delete_str > 0;
-    
     PQclear(res);
-
+    return delete_str > 0;
   }
 
   response_vec_t find(std::string condition) {
