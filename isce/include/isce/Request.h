@@ -34,6 +34,7 @@ class Request {
   void shutdown();
   bool is_shutdown();
   unsigned version();
+  std::string target();
  private:
    bool _is_shutdown = false;
    const Request::boost_t& _request;

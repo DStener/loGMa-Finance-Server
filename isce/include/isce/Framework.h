@@ -31,10 +31,12 @@ public:
   void run();
   framework_t add(route_t route);
   framework_t config(path_t path);
+  framework_t default_response(callback_t&& callback);
 
   net::ip::address address();
   unsigned short port();
   size_t workers();
+  std::string root();
   
 private:
 

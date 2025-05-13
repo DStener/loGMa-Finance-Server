@@ -58,11 +58,9 @@ public:
   // Response::ptr_t json(std::string_view&& data);
 
   Response::ptr_t file(std::string_view path);
-
   Response::ptr_t not_found(std::string_view&& target);
-
   Response::ptr_t set_status(http::status&& status);
-
+  Response::ptr_t mime(std::string&& mime);
   Response::ptr_t cookie(const std::string& target, 
                          std::string path = "/",
                          posix_time::time_duration period = posix_time::hours(90 * 24));

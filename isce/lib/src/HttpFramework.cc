@@ -207,8 +207,6 @@ void Framework::server_run() {
       workers.back().start();
   }
 
-
-  // ioc.run();
   for (;;) ioc.poll();
 }
 
@@ -216,10 +214,11 @@ route_t Framework::get_route(uri_t&& uri, http::verb&& method) {
   auto it = std::find_if(_routes.begin(), _routes.end(), [&](route_t route){
     return route->is_match(uri, method);
   });
-  if (it == _routes.end()) { return _bad_request; }
+  if (it == _routes.end()) { return _default_request; }
 
   return *it;
 }
+
 
 
 net::awaitable<void> Framework::server_listen(net::ip::tcp::endpoint endpoint) {

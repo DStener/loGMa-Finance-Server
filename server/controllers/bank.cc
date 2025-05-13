@@ -6,7 +6,7 @@
 
 response_t Bank::test(request_t request) {
 
-	const auto cbank = sys::CBank();
+	const auto cbank = sys::cbank();
 
 	return response()->json("The Best Of the best");
 }

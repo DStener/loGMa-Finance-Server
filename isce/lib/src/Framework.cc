@@ -52,6 +52,11 @@ framework_t Framework::config(path_t path) {
 	return shared_from_this();
 }
 
+framework_t Framework::default_response(callback_t&& callback) {
+	_default_request = route_t(new RouteObjet(std::move(callback)));
+	return shared_from_this();
+}
+
 
 
 net::ip::address Framework::address() {
@@ -82,4 +87,14 @@ size_t Framework::workers() {
 	}
 
 	return it->value().as_int64();
+}
+
+std::string Framework::root() {
+	const auto it = _config.find("root");
+
+	if (it == _config.end()) {
+		throw std::runtime_error("In config file not found 'root'");
+	}
+
+	return it->value().as_string().c_str();
 }

@@ -5,7 +5,7 @@ project(server CXX)
 include(${CMAKE_SOURCE_DIR}/isce/isce.cmake)
 
 file(GLOB_RECURSE SERVICE_SRC "*.cc" "*.h")
-add_executable(${PROJECT_NAME} ${SERVICE_SRC})
+add_executable(${PROJECT_NAME} ${SERVICE_SRC} "systems/static_file.h")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.inc config.h @ONLY)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/isce CMAKE_CURRENT_BINARY_DIR)

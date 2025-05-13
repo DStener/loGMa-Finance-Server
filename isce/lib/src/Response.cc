@@ -7,23 +7,6 @@ using namespace isce;
 
 extern response_t isce::response() { return response_t(new Response()); }
 
-// http::message_generator Response::make(bool keep_alive) {
-//   // file_body_t
-//   if (std::holds_alternative<file_body_t>(_response)) {
-
-//     auto resp = std::move(std::get<file_body_t>(_response));
-//     resp.keep_alive(keep_alive);
-
-//     return http::message_generator(std::move(resp));
-//   }
-  
-//   // string_body_t
-//   auto resp = std::move(std::get<string_body_t>(_response));
-//   resp.keep_alive(keep_alive);
-
-//   return http::message_generator(std::move(resp));
-// }
-
 void Response::make_string_body(string_body_t& resp) {
   resp->result(_status);
   resp->keep_alive(false);
@@ -31,7 +14,6 @@ void Response::make_string_body(string_body_t& resp) {
   resp->body() = _body;
 
   if(!_cookie.empty()) {
-    // resp-set(http::field::date, "Mon, 12 May 2025 10:19:45 GMT");
     resp->set(http::field::access_control_allow_credentials, "true");
     resp->set(http::field::access_control_expose_headers, "Set-Cookie");
     resp->set(http::field::set_cookie, _cookie);
@@ -58,9 +40,15 @@ void Response::make_file_body(file_body_t& resp) {
   resp->set(http::field::content_type, _content_type);
   resp->body() = std::move(file);
 
+  // X-Content-Type-Options
+  if (_content_type == "text/css") {
+    resp->set("X-Content-Type-Options", "style");
+  } else if (_content_type == "application/javascript"){
+    resp->set("X-Content-Type-Options", "script");
+  }
+
 
   if(!_cookie.empty()) {
-    // resp-set(http::field::date, "Mon, 12 May 2025 10:19:45 GMT");
     resp->set(http::field::access_control_allow_credentials, "true");
     resp->set(http::field::access_control_expose_headers, "Set-Cookie");
     resp->set(http::field::set_cookie, _cookie);
@@ -101,7 +89,7 @@ Response::ptr_t Response::file(std::string_view path) {
     std::cout << "NO FILE" << std::endl;
   }
 
-  _is_file = false;
+  _is_file = true;
   _body = std::string{path};
   _content_type = "application/octet-stream";
   _status = http::status::ok;
@@ -200,5 +188,11 @@ Response::ptr_t Response::cookie(const std::string& target,
 
   //   _response.emplace<string_body_t>(std::move(resp));
   // }
+  return shared_from_this();
+}
+
+
+Response::ptr_t Response::mime(std::string&& mime) {
+  _content_type = std::move(mime);
   return shared_from_this();
 }

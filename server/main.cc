@@ -10,8 +10,10 @@
 
 #include <isce/Framework.h>
 
+
 #include "config.h"
 #include "dto.h"
+#include "systems/static_file.h"
 
 #include "user_migration.h"
 #include "token_migration.h"
@@ -34,9 +36,8 @@ using namespace isce;
 
 int main() {
 
-
-
 	app()->config(CONFIG_PATH);
+	app()->default_response(sys::StaticFile::finde);
 
 	//MigrationUser::up();
 	/*UserSeeder::run();*/

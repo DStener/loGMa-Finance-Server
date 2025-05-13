@@ -88,3 +88,7 @@ bool Request::is_shutdown() {
 unsigned Request::version() {
   return _request.version();
 }
+
+std::string Request::target() {
+  return _request.target();
+}

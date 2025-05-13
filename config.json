@@ -4,6 +4,8 @@
     "workers": 100,
     "idle_connection_timeout": 60,
 
+    "root" : "/root",
+
     "database": {
         "host": "localhost",
         "dbname": "logma",
