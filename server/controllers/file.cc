@@ -28,6 +28,8 @@ inline std::string construct_path(std::string filename) {
 
 response_t FileController::get(request_t request) {
 
+  std::cout << "GET " << request->input("id") << std::endl;
+
   const auto id = request->input("id");
   if(id.empty()) { return response()->not_found("NOT FOUND"); }
 

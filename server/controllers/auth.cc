@@ -25,6 +25,8 @@ response_t Auth::login(request_t request) {
 	const auto login_v = request->input("login");
 	const auto password_v = request->input("password");
 
+	std::cout << "STD: " <<  login_v << std::endl;
+
 	const auto login = sys::Login(login_v, password_v);
 	LOGIN_CHECK_ERROR(login)
 
@@ -32,18 +34,19 @@ response_t Auth::login(request_t request) {
 											std::to_string(login.id),
 	                    "2020-02-02"};
 
-	std::cout << "TEST" << dto_token.token << std::endl;
 
 	// Insert value to DB
 	token->create(dto_token);
 
 	return response()->json("SUCCES")
-									 ->cookie(std::format("token={}",dto_token.token));
+				           ->cookie(std::format("token={}",dto_token.token));
 }
 
 
 response_t Auth::me(request_t request) {
 	
+	std::cout << "CALL" << std::endl;
+
 	const auto login = sys::Login(request);
 	LOGIN_CHECK_ERROR(login)
 
@@ -58,7 +61,7 @@ response_t Auth::out(request_t request) {
 	const auto login = sys::Login(request);
 	LOGIN_CHECK_ERROR(login)
 
-  const auto id = request->input("id");
+  	const auto id = request->input("id");
 
 	if (!id.empty()) {
 		token->delete_(std::format("id_user = {}", id));

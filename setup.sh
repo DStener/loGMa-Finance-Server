@@ -2,6 +2,8 @@
 
 SRC_DIR=$(dirname -- "$( readlink -f -- "$0"; )")
 
+# echo pwd
+
 # -=-=-=-=-=-=-=- SETUP CLIENT -=-=-=-=-=-=-=-
 
 # REMOVE BUILD DIRECTORY IF IS EXIST
