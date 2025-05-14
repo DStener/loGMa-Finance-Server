@@ -33,7 +33,11 @@ public:
   const std::string port = "80";
 
   boost::property_tree::ptree currencies;
-  
+
+  void start_work() {
+    request_to_bank();
+  }
+
   std::string get_currency(std::string iso_code) {
     try {
       for (const auto& v : currencies.get_child("ValCurs")) {
@@ -61,11 +65,18 @@ public:
     return "";
   }
   
+  CBank(std::string date) {
+    this->date = date;
+
+  }
+
   ~CBank() = default;
 
-
+  
 private:
-  void request_to_bank(std::string path) {
+  std::string date;
+
+  void request_to_bank() {
     try {
       // The io_context is required for all I/O
       net::io_context ioc;
@@ -82,7 +93,7 @@ private:
 
       // "/scripts/XML_valFull.asp?d=0"
       // Set up an HTTP GET request message
-      http::request<http::string_body> req{ http::verb::get,path, 11 };
+      http::request<http::string_body> req{ http::verb::get,std::format("/scripts/XML_daily.asp?date_req={}", date), 11};
       req.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
       req.set(http::field::host, host);
 
@@ -118,19 +129,15 @@ private:
     }
   }
 
-  CBank() {
-    request_to_bank("/scripts/XML_daily.asp?date_req=13/05/2025");
-  }
 
-
-  friend CBank::ptr_t cbank();
+  /*friend CBank::ptr_t cbank();*/
 };
 
-CBank::ptr_t cbank() {
-  static std::once_flag flag;
-  static CBank::ptr_t instance;
-  std::call_once(flag, [&]() { instance.reset(new CBank()); });
-  return instance;
-}
+//CBank::ptr_t cbank() {
+//  static std::once_flag flag;
+//  static CBank::ptr_t instance;
+//  std::call_once(flag, [&]() { instance.reset(new CBank()); });
+//  return instance;
+//}
   
 } // namespace sys

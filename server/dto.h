@@ -18,6 +18,7 @@ struct OperationCreateDTO {
 
 struct BankRequestDTO {
   std::string iso;
+  std::string date;
 };
 
 
