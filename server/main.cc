@@ -40,17 +40,20 @@
 using namespace isce;
 
 void Migration() {
-	// 1
+	// 0 token
+	/*MigrationToken::up();*/
+
+	// 1 users
 
 	/*MigrationUser::up();
 	UserSeeder::run();*/
 
-	// 2
+	// 2 currency 
 
 	/*Migration—urrency::up();
 	—urrencySeeder::run();*/
 
-	// 3 
+	// 3 operaion 
 	/*MigrationOperation::up();
 	OperationSeedr::run();*/
 
@@ -59,9 +62,25 @@ void Migration() {
 	WallSeeder::run();*/
 
 	// 5 category
-	MigrationCategory::up();
-	CategorySeeder::run();
+	/*MigrationCategory::up();
+	CategorySeeder::run();*/
 
+	// 6 user and wall migration
+	/*MigrationUserAndWall::up();
+	UserAndWallSeeder::run();*/
+
+	// 7 operation_and_wall
+	/*MigrationOperationAndWall::up();
+	OperationAndWallSeedr::run();*/
+
+	// 8 operation and category
+	/*MigrationOperationAndCategory::up();
+	OperationAndCategorySeeder::run();*/
+
+	// 9 rule_auto_add
+	/*MigrationRuleAutoAdd::up();
+	RuleAutoAddSeeder::run();*/
+	
 }
 
 int main() {

@@ -21,7 +21,7 @@ public:
     (2, 5, false),
     (3, 4, false),
     (5, 5, false),
-    (4, 3, true);
+    (4, 6, true);
     )";
 
 
