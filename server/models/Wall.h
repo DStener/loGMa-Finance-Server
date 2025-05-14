@@ -7,6 +7,8 @@ public:
 
 };
 
+static inline std::unique_ptr<Model> wall = std::make_unique<Wall>("wall");
+
 
 
 

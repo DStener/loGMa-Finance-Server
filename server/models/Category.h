@@ -7,6 +7,5 @@ public:
 
 };
 
-
-
-
+static inline std::unique_ptr<Model> category = std::make_unique<Category>("category");
+ 

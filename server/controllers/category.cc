@@ -1,7 +1,6 @@
 #include "category.h"
 #include <models/Category.h>
-
-std::unique_ptr<Model> category = std::make_unique<Category>("category");
+#include <models/Wall.h>
 
 response_t CategoryController::create(request_t request) {
 	CreateCategoryDTO create{
@@ -9,6 +8,11 @@ response_t CategoryController::create(request_t request) {
 									request->input("name"),
 									request->input("id_wall") };
 
+	auto id_wall = wall->find(std::format("id={}", create.id_wall));
+
+	if (id_wall.size() == 0) {
+		return response()->json("wall not found")->set_status(http::status::not_found);
+	}
 
 	auto id = category->create({ "icon", "name", "id_wall" }, { create.icon, create.name, create.id_wall});
 

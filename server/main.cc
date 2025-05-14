@@ -24,6 +24,8 @@
 #include "migration/currency_migration.h"
 #include "migration/rule_auto_add_migration.h"
 #include "migration/operation_and_category_migration.h"
+#include "migration/wall_migraion.h"
+
 
 #include "users_seeder.h"
 #include "seeders/category_seeder.h"
@@ -33,7 +35,7 @@
 #include "seeders/currency_seeder.h"
 #include "seeders/rule_auto_add_seeder.h"
 #include "seeders/operation_and_category_seeder.h"
-
+#include "seeders/wall_seeder.h"
 
 using namespace isce;
 
@@ -48,10 +50,17 @@ void Migration() {
 	/*Migration—urrency::up();
 	—urrencySeeder::run();*/
 
-	// 3
+	// 3 
 	/*MigrationOperation::up();
 	OperationSeedr::run();*/
 
+	// 4 wall
+	/*MigrationWall::up();
+	WallSeeder::run();*/
+
+	// 5 category
+	MigrationCategory::up();
+	CategorySeeder::run();
 
 }
 

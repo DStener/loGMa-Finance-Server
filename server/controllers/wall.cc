@@ -1,7 +1,6 @@
 #include "wall.h"
 #include <models/Wall.h>
 
-std::unique_ptr<Model> wall = std::make_unique<Wall>("wall");
 
 response_t WallController::create(request_t request) {
 	CreateDTO create{

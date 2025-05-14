@@ -7,9 +7,9 @@ class MigrationWall : public Migration {
 public:
 	static void up() {
 		Schema::create("wall", {
-			"name VARCHAR(255)",
-			"is_group INTEGER",
-			"is_public INTEGER",
+			"name VARCHAR(255) NOT NULL",
+			"is_group BOOLEAN DEFAULT false",
+			"is_public BOOLEAN DEFAULT false",
 			});
 	}
 
