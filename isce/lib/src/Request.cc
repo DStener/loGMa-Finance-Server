@@ -90,6 +90,28 @@ inline File form_parser(std::string_view target, std::string_view&& data,
   return File("", "", "");
 }
 
+File Request::file(std::string_view&& data) {
+
+  const auto type_it = _request.find(http::field::content_type);
+  const bool has_content_type = (type_it != _request.end());
+
+  const bool is_form_data = has_content_type &&
+                            type_it->value().starts_with("multipart/form-data") ||
+                            type_it->value().starts_with("application/x-www-form-urlencoded");
+
+  if (!is_form_data) { return File(); }
+
+  const auto value = type_it->value();
+
+  const auto start_pos = value.find("boundary=");
+  if (start_pos == value.npos) { return{}; }
+
+  const auto start_it = value.begin() + start_pos + 9;
+  std::string_view boundary(start_it, value.end());
+
+  return form_parser(data, _request.body(), std::move(boundary));
+}
+
 std::string Request::input(std::string_view&& data) {
   
   const auto type_it = _request.find(http::field::content_type);

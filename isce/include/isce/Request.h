@@ -30,6 +30,7 @@ class Request {
     : _request(request), _vars(std::move(vars)) {};
 
   std::string input(std::string_view&& data);
+  File file(std::string_view&& data);
   std::optional<std::string> cookie(std::string_view&& field);
 
   void shutdown();

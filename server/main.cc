@@ -1,4 +1,4 @@
-#include <boost/date_time/posix_time/posix_time_duration.hpp>
+ï»¿#include <boost/date_time/posix_time/posix_time_duration.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <iostream>
@@ -25,6 +25,7 @@
 #include "migration/rule_auto_add_migration.h"
 #include "migration/operation_and_category_migration.h"
 #include "migration/wall_migraion.h"
+#include "migration/file_migration.h"
 
 
 #include "users_seeder.h"
@@ -35,52 +36,54 @@
 #include "seeders/currency_seeder.h"
 #include "seeders/rule_auto_add_seeder.h"
 #include "seeders/operation_and_category_seeder.h"
-#include "seeders/wall_seeder.h"
+#include "seeders/wall_seeder.h"]
+
 
 using namespace isce;
 
 void Migration() {
-	// 0 token
-	/*MigrationToken::up();*/
 
-	// 1 users
+	// 0 users
+	MigrationUser::up();
+	UserSeeder::run();
 
-	/*MigrationUser::up();
-	UserSeeder::run();*/
+	// 1 token
+	MigrationToken::up();
 
-	// 2 currency 
+	// 2 file
+	MigrationFiles::up();
 
-	/*MigrationÑurrency::up();
-	ÑurrencySeeder::run();*/
+	// 3 currency 
+	MigrationÐ¡urrency::up();
+	Ð¡urrencySeeder::run();
 
-	// 3 operaion 
-	/*MigrationOperation::up();
-	OperationSeedr::run();*/
+	// 4 operaion 
+	MigrationOperation::up();
+	OperationSeedr::run();
 
-	// 4 wall
-	/*MigrationWall::up();
-	WallSeeder::run();*/
+	// 5 wall
+	MigrationWall::up();
+	WallSeeder::run();
 
-	// 5 category
-	/*MigrationCategory::up();
-	CategorySeeder::run();*/
+	// 6 category
+	MigrationCategory::up();
+	CategorySeeder::run();
 
-	// 6 user and wall migration
-	/*MigrationUserAndWall::up();
-	UserAndWallSeeder::run();*/
+	// 7 user and wall migration
+	MigrationUserAndWall::up();
+	UserAndWallSeeder::run();
 
-	// 7 operation_and_wall
-	/*MigrationOperationAndWall::up();
-	OperationAndWallSeedr::run();*/
+	// 8 operation_and_wall
+	MigrationOperationAndWall::up();
+	OperationAndWallSeedr::run();
 
-	// 8 operation and category
-	/*MigrationOperationAndCategory::up();
-	OperationAndCategorySeeder::run();*/
+	// 9 operation and category
+	MigrationOperationAndCategory::up();
+	OperationAndCategorySeeder::run();
 
-	// 9 rule_auto_add
-	/*MigrationRuleAutoAdd::up();
-	RuleAutoAddSeeder::run();*/
-	
+	// 10 rule_auto_add
+	MigrationRuleAutoAdd::up();
+	RuleAutoAddSeeder::run();
 }
 
 int main() {
@@ -93,33 +96,6 @@ int main() {
 	app()->default_response(sys::StaticFile::finde);
 
 	Migration();
-
-
-	
-	/*MigrationUser::up();
-	UserSeeder::run();*/
-
-	/*MigrationUserAndWall::up();
-	UserAndWallSeeder::run();
-
-	MigrationOperation::up();
-	OperationSeedr::run();
-	MigrationToken::up();*/
-
-	//MigrationCategory::up();
-	//CategorySeeder::run();
-
-	/*MigrationOperationAndWall::up();
-	OperationAndWallSeedr::run();*/
-
-	/*MigrationÑurrency::up();
-	ÑurrencySeeder::run();*/
-
-	/*MigrationRuleAutoAdd::up();
-	RuleAutoAddSeeder::run();*/
-
-	/*MigrationOperationAndCategory::up();
-	OperationAndCategorySeeder::run();*/
 
 	app()->run();
 

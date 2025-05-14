@@ -37,6 +37,7 @@ public:
   unsigned short port();
   size_t workers();
   std::string root();
+  std::string upload();
   
 private:
 

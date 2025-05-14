@@ -4,7 +4,8 @@
     "workers": 100,
     "idle_connection_timeout": 60,
 
-    "root" : "/root",
+    "root": "/root",
+    "upload_path":  "/upload",
 
     "database": {
         "host": "localhost",
