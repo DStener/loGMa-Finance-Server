@@ -35,24 +35,101 @@ inline std::string data_parse(std::string_view target, std::string_view&& data) 
   return {};
 }
 
+// name, data, filename
+inline File form_parser(std::string_view target, std::string_view&& data,
+                          std::string_view&& boundary, bool is_file = false) {
+
+  const auto separator = std::format("--{}", boundary);
+
+  for (size_t pos = 0; pos != data.npos;) {
+    
+    pos += separator.size();
+
+    const bool is_end = ("--" == std::string_view(data.begin() + pos, data.begin() + pos + 2));
+    if (is_end) { break; }
+
+    // Start position of "Content-Disposition..."
+    auto __nline_pos = data.find("\n", pos + 4); // 4 = len("--") + len("\n") + 1
+
+    // name
+    const auto __name_spos = data.find("name=\"", pos);
+    const auto __name_epos = data.find("\";", __name_spos);
+
+    const bool __name_efinde = (__name_epos != data.npos);
+
+    const auto __name_sit = data.begin() + __name_spos + 6;
+    const auto __name_eit = (__name_efinde)? data.begin() + __name_epos : data.begin() + __nline_pos - 2;
+
+    auto name = std::string(__name_sit, __name_eit);
+
+
+    // filename
+    const auto __filename_spos = data.find("filename=\"", pos);
+
+    const bool __name_sfinde = (__filename_spos < __nline_pos);
+
+    const auto __filename_sit = (__name_sfinde)? data.begin() + __filename_spos : data.begin() + __nline_pos;
+    const auto __filename_eit = data.begin() + __nline_pos;
+
+    auto filename = std::string(__filename_sit, __filename_eit);
+
+    //std::cout << "FILENAME: " << filename << std::endl;
+
+    // pos++
+    pos = data.find(separator, pos + 1);
+    if (name != target) { continue; }
+
+    // data
+    const bool has_another_line = (std::string_view(__filename_eit + 1, __filename_eit + 13) == "Content-Type");
+    if (has_another_line) { __nline_pos = data.find('\n', __nline_pos + 1); }
+
+    auto body = std::string(data.begin() + __nline_pos + 3, data.begin() + pos - 1);
+
+    return File(std::move(name), std::move(body), std::move(filename)); 
+  }
+  return File("", "", "");
+}
+
 std::string Request::input(std::string_view&& data) {
   
-  // [ 1 VARIANT ] : Finde in target path as regex var. Like "/test/{id}"
-  auto it = std::find_if(_vars.begin(), _vars.end(), [&](const var_t& var) { 
-                         return var.first == data; });
+  const auto type_it = _request.find(http::field::content_type);
+  const bool has_content_type = (type_it != _request.end());
+  
+  const bool is_form_data = has_content_type &&
+                            type_it->value().starts_with("multipart/form-data") ||
+                            type_it->value().starts_with("application/x-www-form-urlencoded");
+  
+  // [ 1 VARIANT ] : Finde in request body, "form data"
+  if (is_form_data) {
+    const auto value = type_it->value();
+
+    const auto start_pos = value.find("boundary=");
+    if (start_pos == value.npos) { return{}; }
+
+    const auto start_it = value.begin() + start_pos + 9;
+    std::string_view boundary(start_it, value.end());
+
+    const auto file = form_parser(data, _request.body(), std::move(boundary));
+   
+    return std::string{ file.data() };
+  }
+ 
+  // [ 2 VARIANT ] : Finde in target path as regex var. Like "/test/{id}"
+  auto it = std::find_if(_vars.begin(), _vars.end(), [&](const var_t& var) {
+    return var.first == data; });
   if (it != _vars.end()) { return std::get<1>(*it); }
 
-  // [ 2 VARIANT ] : Finde in path var. Like "/test?id=..."
+  // [ 3 VARIANT ] : Finde in path var. Like "/test?id=..."
   auto out = data_parse(data, urls::url_view(_request.target()).query());
   if (!out.empty()) { return out; }
 
-  // [ 3 VARIANT ] : Finde in request body. Like "id=...&test=..."
+  // [ 4 VARIANT ] : Finde in request body. Like "id=...&test=..."
   out = data_parse(data, _request.body());
-  if (!out.empty()) { return out; } 
+  if (!out.empty()) { return out; }
 
   // [ 4 VARIANT ] : Finde in request body, "form data"s
   /* ... */
-
+ 
   return {};
 }
 

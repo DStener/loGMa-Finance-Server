@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <isce/fields_alloc.hpp>
+#include <isce/File.h>
 
 namespace beast = boost::beast;
 namespace http = beast::http;
