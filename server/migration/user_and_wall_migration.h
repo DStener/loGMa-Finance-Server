@@ -9,7 +9,8 @@ public:
 		Schema::create("user_and_wall", {
 			"id_user INTEGER NOT NULL REFERENCES users(id)",
 			"id_wall INTEGER NOT NULL REFERENCES wall(id)",
-			"is_admin BOOL DEFAULT false"
+			"is_admin BOOL DEFAULT false",
+			"UNIQUE(id_user,id_wall)"
 		});
 	}
 

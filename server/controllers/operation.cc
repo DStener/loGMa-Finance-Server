@@ -1,5 +1,6 @@
 #include "operation.h"
 #include <models/Operation.h>
+#include <models/User.h>
 
 std::unique_ptr<Model> operation = std::make_unique<Operation>("operation");
 
@@ -9,8 +10,14 @@ response_t OperationController::create(request_t request) {
 									request->input("id_currency"),
 									request->input("id_user")};
 
+	auto user_id = user->find(std::format("id={}", create.id_user));
+
+	if (user_id.size() == 0) {
+		return response()->json("user not found")->set_status(http::status::not_found);
+	}
 
 	auto id = operation->create({ "value", "id_currency", "id_user" }, { create.value, create.id_currency, create.id_user });
+
 
 	if (id) {
 		return response()->json("created operation successfully");

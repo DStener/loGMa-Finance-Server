@@ -23,6 +23,7 @@
 #include "migration/operation_and_wall_migration.h"
 #include "migration/currency_migration.h"
 #include "migration/rule_auto_add_migration.h"
+#include "migration/operation_and_category_migration.h"
 
 #include "users_seeder.h"
 #include "seeders/category_seeder.h"
@@ -31,8 +32,28 @@
 #include "seeders/operation_and_wall_seeder.h"
 #include "seeders/currency_seeder.h"
 #include "seeders/rule_auto_add_seeder.h"
+#include "seeders/operation_and_category_seeder.h"
+
 
 using namespace isce;
+
+void Migration() {
+	// 1
+
+	/*MigrationUser::up();
+	UserSeeder::run();*/
+
+	// 2
+
+	/*MigrationÑurrency::up();
+	ÑurrencySeeder::run();*/
+
+	// 3
+	/*MigrationOperation::up();
+	OperationSeedr::run();*/
+
+
+}
 
 int main() {
 #ifdef _WIN32
@@ -43,8 +64,13 @@ int main() {
 	app()->config(CONFIG_PATH);
 	app()->default_response(sys::StaticFile::finde);
 
-	//MigrationUser::up();
-	/*UserSeeder::run();*/
+	Migration();
+
+
+	
+	/*MigrationUser::up();
+	UserSeeder::run();*/
+
 	/*MigrationUserAndWall::up();
 	UserAndWallSeeder::run();
 
@@ -64,6 +90,8 @@ int main() {
 	/*MigrationRuleAutoAdd::up();
 	RuleAutoAddSeeder::run();*/
 
+	/*MigrationOperationAndCategory::up();
+	OperationAndCategorySeeder::run();*/
 
 	app()->run();
 

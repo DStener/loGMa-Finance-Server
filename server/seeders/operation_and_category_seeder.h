@@ -3,22 +3,26 @@
 #include <libpq-fe.h>
 
 
-class OperationSeedr : public Seeder{
+class OperationAndCategorySeeder : public Seeder{
 public:
 
   static void run() {
     
     Model::init_connection();
-    
-    std::string query = R"(
-    INSERT INTO operation (value, id_currency, id_user) VALUES
-    (10000, 1, 1),
-    (-22500, 2, 2),
-    (-50000, 1, 3),
-    (-999999, 3, 4),
-    (120000, 2, 5);
-    )";
 
+    std::string query = R"(
+    INSERT INTO operation_and_category (id_operation, id_category) VALUES
+    (1, 2),
+    (1, 3),
+    (2, 1),
+    (3, 2),
+    (4, 1),
+    (4, 3),
+    (5, 2),
+    (6, 4),
+    (7, 1),
+    (8, 3);
+    )";
 
     PGresult* res = PQexec(Model::get_connection(), query.c_str());
 

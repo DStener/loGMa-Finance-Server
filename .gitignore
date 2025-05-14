@@ -4,3 +4,4 @@ out/
 .cache/
 .idea/
 cmake-build-debug/
+CMakeSettings.json
