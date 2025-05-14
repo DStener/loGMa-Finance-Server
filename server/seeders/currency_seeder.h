@@ -10,16 +10,16 @@ public:
     
     Model::init_connection();
 
-    std::string query = R"(
-    INSERT INTO currency (name, sign) VALUES
-    ('Ruble', 'R'),
-    ('Dollar', 'D'),
-    ('Euro', 'E');
-    )";
+    // std::string query = R"(
+    // INSERT INTO currency (name, sign) VALUES
+    // ('Ruble', 'R'),
+    // ('Dollar', 'D'),
+    // ('Euro', 'E');
+    // )";
 
 
 
-    PGresult* res = PQexec(Model::get_connection(), query.c_str());
+    // PGresult* res = PQexec(Model::get_connection(), query.c_str());
 
   }
 

@@ -19,9 +19,9 @@ call npm install
 call npm run -s build
 
 rem REMOVE BUILD DIRECTORY IF IS EXIST
-if exist %mypath:~0,-1%\root\ (
-	rmdir /S /Q %mypath:~0,-1%\root
-) 
+rem if exist %mypath:~0,-1%\root\ (
+rem 	rmdir /S /Q %mypath:~0,-1%\root
+rem ) 
 
 rem COPY STATIC FILE OF CLIENT
 xcopy /E /I dist\ %mypath:~0,-1%\root

@@ -3,6 +3,5 @@ out/
 .vs/
 .cache/
 .idea/
-root/
 cmake-build-debug/
 CMakeSettings.json

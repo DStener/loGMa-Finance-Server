@@ -7,6 +7,7 @@
 #include "category.h"
 #include "bank.h"
 #include "operation.h"
+#include "file.h"
 
 using namespace isce;
 
@@ -46,6 +47,10 @@ void Route::up() {
 
   Route::prefix("api/bank")->middleware({})->group({
     Route::post("/get_rate", Bank::get_rate)
+  });
+
+  Route::prefix("api/file")->middleware({})->group({
+    Route::post("/{id}", FileController::get)
   });
 
 }

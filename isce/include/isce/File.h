@@ -22,7 +22,7 @@ public:
     return std::filesystem::path(_filename).filename().string();
   }
 
-  void save(std::string file) {
+  void save(std::string file) const {
     std::ofstream ostrm(file, std::ios::binary);
     ostrm << _data;
   }

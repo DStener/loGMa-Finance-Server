@@ -36,7 +36,8 @@
 #include "seeders/currency_seeder.h"
 #include "seeders/rule_auto_add_seeder.h"
 #include "seeders/operation_and_category_seeder.h"
-#include "seeders/wall_seeder.h"]
+#include "seeders/wall_seeder.h"
+#include "seeders/file_seeder.h"
 
 
 using namespace isce;
@@ -52,6 +53,7 @@ void Migration() {
 
 	// 2 file
 	MigrationFiles::up();
+	FileSeeder::run();
 
 	// 3 currency 
 	MigrationСurrency::up();

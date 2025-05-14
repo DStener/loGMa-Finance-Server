@@ -7,11 +7,12 @@
 response_t Auth::registration(request_t request) {
 
 	RegisterDTO reg{ request->input("login"),
-									 request->input("name"),
-									 request->input("surname"),
-		               request->input("patronymic"),
-		               request->input("birthday"),
-		               request->input("password") };
+					 "1",
+					 request->input("name"),
+					 request->input("surname"),
+					 request->input("patronymic"),
+					 request->input("birthday"),
+					 request->input("password") };
 	
 	user->create(reg);
 
