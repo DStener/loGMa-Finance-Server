@@ -24,35 +24,38 @@ void Route::up() {
 
   });
 
-  Route::prefix("api/ref")->middleware({})->group({
+  Route::prefix("api/wall")->middleware({})->group({
 
-    Route::post("/wall", WallController::create),
-    Route::put("/wall", WallController::update),
-    Route::get("/get_wall", WallController::get),
-    Route::delete_("/del_wall",WallController::delete_),
-    Route::post("/get_user_wall", WallController::get_user_wall),
-    Route::post("/get_operation_wall", WallController::get_operation_wall),
-
+    Route::post("/", WallController::create),
+    Route::put("/", WallController::update),
+    Route::get("/", WallController::get),
+    Route::delete_("/delete",WallController::delete_),
+    Route::post("/my", WallController::get_user_wall),
+    Route::post("/operations", WallController::get_operation_wall),
+  });
+  Route::prefix("api/category")->middleware({})->group({
     // category
-    Route::post("/category",CategoryController::create),
-    Route::put("/category",CategoryController::update),
-    Route::get("/get_category",CategoryController::get),
-    Route::delete_("/del_category",CategoryController::delete_),
-    
+    Route::post("/",CategoryController::create),
+    Route::put("/",CategoryController::update),
+    Route::get("/",CategoryController::get),
+    Route::delete_("/delete",CategoryController::delete_),
+  });
+  Route::prefix("api/opreation")->middleware({})->group({  
     // opreation
-    Route::post("/opreation", OperationController::create),
-    Route::put("/opreation", OperationController::update),
-    Route::get("/get_opreation", OperationController::get),
-    Route::delete_("/del_opreation", OperationController::delete_)
+    Route::post("/", OperationController::create),
+    Route::put("/", OperationController::update),
+    Route::get("/", OperationController::get),
+    Route::delete_("/delete", OperationController::delete_)
 
-    });
+  });
 
   Route::prefix("api/bank")->middleware({})->group({
     Route::post("/get_rate", Bank::get_rate)
   });
 
   Route::prefix("api/file")->middleware({})->group({
-    Route::get("/{id}", FileController::get)
+    Route::get("/{id}", FileController::get),
+    Route::post("/", FileController::upload)
   });
 
 }

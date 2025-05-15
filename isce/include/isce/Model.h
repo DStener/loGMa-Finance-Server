@@ -115,6 +115,18 @@ public:
     PQclear(res);
     return delete_str > 0;
   }
+  bool cdelete(std::string condition) {
+    std::string query = std::format("DELETE FROM {} WHERE {};",
+                                    table_name_, condition);
+
+    PGresult* res = PQexec(connection, query.c_str());
+    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK)
+
+    auto delete_str = std::stoi(PQcmdTuples(res));
+
+    PQclear(res);
+    return delete_str > 0;
+  }
 
   response_vec_t find(std::string condition) {
     std::string query = "SELECT * FROM " + table_name_ + " WHERE " + condition + ";";

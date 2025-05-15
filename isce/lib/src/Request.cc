@@ -120,7 +120,18 @@ std::string Request::input(std::string_view&& data) {
                             type_it->value().starts_with("multipart/form-data") ||
                             type_it->value().starts_with("application/x-www-form-urlencoded");
   
-  // [ 1 VARIANT ] : Finde in request body, "form data"
+
+  // [ 1 VARIANT ] : Finde in target path as regex var. Like "/test/{id}"
+  auto it = std::find_if(_vars.begin(), _vars.end(), [&](const var_t& var) {
+    return var.first == data; });
+  if (it != _vars.end()) { return std::get<1>(*it); }
+
+  // [ 2 VARIANT ] : Finde in path var. Like "/test?id=..."
+  auto out = data_parse(data, urls::url_view(_request.target()).query());
+  if (!out.empty()) { return out; }
+
+
+  // [ 3 VARIANT ] : Finde in request body, "form data"
   if (is_form_data) {
 
     const auto value = type_it->value();
@@ -136,21 +147,9 @@ std::string Request::input(std::string_view&& data) {
     return std::string{ file.data() };
   }
  
-  // [ 2 VARIANT ] : Finde in target path as regex var. Like "/test/{id}"
-  auto it = std::find_if(_vars.begin(), _vars.end(), [&](const var_t& var) {
-    return var.first == data; });
-  if (it != _vars.end()) { return std::get<1>(*it); }
-
-  // [ 3 VARIANT ] : Finde in path var. Like "/test?id=..."
-  auto out = data_parse(data, urls::url_view(_request.target()).query());
-  if (!out.empty()) { return out; }
-
   // [ 4 VARIANT ] : Finde in request body. Like "id=...&test=..."
   out = data_parse(data, _request.body());
   if (!out.empty()) { return out; }
-
-  // [ 4 VARIANT ] : Finde in request body, "form data"s
-  /* ... */
  
   return {};
 }
@@ -170,8 +169,6 @@ std::optional<std::string> Request::cookie(std::string_view&& field) {
     const std::string_view part(current_it, next_it);
     const auto equal_pos = part.find('=');
 
-
-    std::cout << std::string_view(current_it, current_it + equal_pos) << " = " << field << std::endl;
     if (std::string_view(current_it, current_it + equal_pos) != field) { continue; }
 
     return std::string(current_it + equal_pos + 1, next_it);
