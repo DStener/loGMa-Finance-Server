@@ -201,7 +201,7 @@ public:
     DTO::for_each(t, [&](std::string_view&& name, auto& field) {
       colums.push_back(name.data());
       values.push_back(DTO::to_string(field));
-      });
+    });
 
     std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",
       table_name_,
@@ -222,15 +222,13 @@ public:
 
     resp_vec_t<T> out;
     std::string query = std::format("SELECT * FROM {} WHERE {}",
-      table_name_, condition);
+                                    table_name_, condition);
 
     PGresult* res = PQexec(connection, query.c_str());
     DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
 
-      int rows = PQntuples(res);
+    int rows = PQntuples(res);
     int cols = PQnfields(res);
-
-    std::cout << rows << " " << cols << std::endl;
 
     for (int i = 0; i < rows; ++i) {
       T t;
@@ -242,7 +240,7 @@ public:
         const auto value = PQgetvalue(res, i, index);
 
         field = value; // [FIXME]
-        });
+      });
 
       out.push_back(std::make_pair(i + 1, std::move(t)));
     }

@@ -1,9 +1,9 @@
-#include <isce/Schema.h>
+﻿#include <isce/Schema.h>
 #include "Migration.h"
 
 
 
-class Migration�urrency : public Migration {
+class MigrationСurrency : public Migration {
 public:
 	static void up() {
 		Schema::create("currency", {

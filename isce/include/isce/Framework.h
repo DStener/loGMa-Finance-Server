@@ -14,6 +14,7 @@
 #include <boost/beast/version.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>
+#include <isce/Request.h>
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -27,6 +28,8 @@ public:
   using path_t = std::filesystem::path;
   using framework_t = std::shared_ptr<Framework>;
   using route_t = std::shared_ptr<RouteObjet>;
+  using routes_t = std::vector<std::shared_ptr<RouteObjet>>;
+  using callback_t = std::function<response_t(request_t)>;
 
   void run();
   framework_t add(route_t route);
@@ -37,6 +40,7 @@ public:
   unsigned short port();
   size_t workers();
   std::string root();
+  std::string upload();
   
 private:
 

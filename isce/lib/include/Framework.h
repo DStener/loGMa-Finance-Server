@@ -43,6 +43,7 @@ class Framework : public std::enable_shared_from_this<Framework> {
   unsigned short port();
   size_t workers();
   std::string root();
+  std::string upload();
 
 
   static response_t do_nothing(request_t request) {

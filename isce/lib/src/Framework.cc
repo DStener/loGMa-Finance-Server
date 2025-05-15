@@ -98,3 +98,13 @@ std::string Framework::root() {
 
 	return it->value().as_string().c_str();
 }
+
+std::string Framework::upload() {
+	const auto it = _config.find("upload_path");
+
+	if (it == _config.end()) {
+		throw std::runtime_error("In config file not found 'root'");
+	}
+
+	return it->value().as_string().c_str();
+}

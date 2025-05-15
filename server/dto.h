@@ -36,6 +36,7 @@ struct LoginDTO {
 
 struct RegisterDTO {
   std::string login;
+  std::string avatar;
   std::string name;
   std::string surname;
   std::string patronymic;
@@ -85,3 +86,8 @@ struct GetDTO {
   std::string is_public;
 };
 
+struct FileDTO {
+  std::string name;
+  std::string description;
+  std::string path;
+};

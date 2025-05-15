@@ -7,14 +7,15 @@
 #include "category.h"
 #include "bank.h"
 #include "operation.h"
+#include "file.h"
 
 using namespace isce;
 
 void Route::up() {
 
   Route::prefix("api/auth")->middleware({})->group({
-    Route::get("/login", Auth::login),  
-    Route::get("/reg", Auth::registration),
+    Route::post("/login", Auth::login),  
+    Route::post("/reg", Auth::registration),
     Route::get("/me", Auth::me),
     Route::post("/out", Auth::out),
     Route::post("/out/{id}", Auth::out),
@@ -46,6 +47,10 @@ void Route::up() {
 
   Route::prefix("api/bank")->middleware({})->group({
     Route::post("/get_rate", Bank::get_rate)
+  });
+
+  Route::prefix("api/file")->middleware({})->group({
+    Route::get("/{id}", FileController::get)
   });
 
 }
