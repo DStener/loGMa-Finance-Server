@@ -64,9 +64,9 @@ response_t Auth::out(request_t request) {
   	const auto id = request->input("id");
 
 	if (!id.empty()) {
-		token->delete_(std::format("id_user = {}", id));
+		token->cdelete(std::format("id_user = {}", id));
 	} else {
-		token->delete_(std::format("id_user = {}", login.id));
+		token->cdelete(std::format("id_user = {}", login.id));
 	}
 
 	return response()->json("SUCCES");
