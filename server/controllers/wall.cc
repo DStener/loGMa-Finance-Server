@@ -1,6 +1,8 @@
 #include "wall.h"
 #include <models/Wall.h>
 #include <models/UserAndWall.h>
+#include <models/OperationAndWall.h>
+#include <models/Operation.h>
 #include <models/User.h>
 
 response_t WallController::create(request_t request) {
@@ -54,7 +56,7 @@ response_t WallController::update(request_t request) {
 }
 
 response_t WallController::add_user(request_t request) {
-	UserToWall add = { request->input("id_user"), request->input("id_wall"), request->input("is_admin")};
+	UserToWallDTO add = { request->input("id_user"), request->input("id_wall"), request->input("is_admin")};
 	
 	auto id_user_and_wall = user_and_wall->create({ "id_user", "id_wall", "is_admin" }, {add.id_user, add.id_wall, add.is_admin});
 	
@@ -70,6 +72,8 @@ response_t WallController::add_user(request_t request) {
 
 
 }
+
+
 
 response_t WallController::get_user_wall(request_t request) {
 	// у стены можно запросить стену пользовтеля
@@ -95,7 +99,6 @@ response_t WallController::get_user_wall(request_t request) {
 		json::object obj;
 		for (size_t j = 0; j < find_data[i].size(); j++)
 		{
-			//data += find_data[i][j].first + " " + find_data[i][j].second + ' ';
 			obj[find_data[i][j].first] = find_data[i][j].second;
 
 		}
@@ -106,6 +109,55 @@ response_t WallController::get_user_wall(request_t request) {
 
 
 	return response()->json(json);
+
+}
+
+response_t WallController::get_operation_wall(request_t request) {
+	OperationAndWallDTO get{ request->input("id_wall") };
+	auto id_wall = operation_and_wall->find(std::format("id_wall={}", get.id_wall));
+	std::vector<std::string>operations;
+
+	if (id_wall.size() == 0) {
+		return response()->json("wall not found");
+	}
+	else {
+		for (const auto& wall_group : id_wall)
+		{
+			for (const auto& pair : wall_group)
+			{
+				if (pair.first == "id_operation") {
+					operations.push_back(pair.second);
+					break; 
+				}
+			}
+		}
+
+	}
+
+	json::array json;
+
+	if (operations.size() != 0) {
+		for (size_t i = 0; i < operations.size(); i++)
+		{
+			auto find_operation = operation->find(std::format("id={}", operations[i]));
+			json::object obj;
+			for (size_t i = 0; i < find_operation.size(); i++)
+			{
+				json::object obj;
+				for (size_t j = 0; j < find_operation[i].size(); j++)
+				{
+					obj[find_operation[i][j].first] = find_operation[i][j].second;
+				}
+				json.emplace_back(obj);
+			}
+
+
+		}
+	}
+	
+
+	return response()->json(json);
+
 
 }
 

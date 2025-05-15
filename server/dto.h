@@ -50,9 +50,17 @@ struct TokenDTO {
   std::string time;
 };
 
+// operation and wall
+struct OperationAndWallDTO {
+  std::string id_wall;
+  
+
+};
+
+
 // add user to wall
 
-struct UserToWall {
+struct UserToWallDTO {
   std::string id_user;
   std::string id_wall;
   std::string is_admin;
@@ -61,6 +69,7 @@ struct GetUserWall {
   std::string id_user;
 };
 
+// wall
 struct CreateDTO {
   std::string name;
   std::string is_group;

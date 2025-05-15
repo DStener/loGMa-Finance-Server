@@ -3,8 +3,6 @@
 #include <models/User.h>
 #include <models/OperationAndWall.h>
 
-std::unique_ptr<Model> operation = std::make_unique<Operation>("operation");
-
 response_t OperationController::create(request_t request) {
 	OperationCreateDTO create{
 									request->input("value"),
@@ -12,7 +10,6 @@ response_t OperationController::create(request_t request) {
 									request->input("id_user")};
 
 	const auto id_wall = request->input("id_wall");
-	// если не пуст, то доб в opration_and_wall
 
 	auto user_id = user->find(std::format("id={}", create.id_user));
 
@@ -36,6 +33,7 @@ response_t OperationController::create(request_t request) {
 	}
 
 }
+
 
 response_t OperationController::update(request_t request) {
 	OperationUpdateDTO update{
@@ -64,7 +62,6 @@ response_t OperationController::update(request_t request) {
 	
 }
 
-
 response_t OperationController::get(request_t request){
 	
 	return response()->json("Data");
@@ -85,3 +82,5 @@ response_t OperationController::delete_(request_t request) {
 	
 	
 }
+
+
