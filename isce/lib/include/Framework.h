@@ -45,6 +45,7 @@ class Framework : public std::enable_shared_from_this<Framework> {
   std::string root();
   std::string upload();
 
+  json::object database();
 
   static response_t do_nothing(request_t request) {
     

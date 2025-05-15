@@ -167,8 +167,7 @@ public:
 
   static void init_connection() {
     if (connection == nullptr) {
-      auto config = json_from_file(CONFIG_PATH);
-      std::string conn_str = create_conn_str(config);
+     const auto conn_str = pgconnect();
 
       connection = PQconnectdb(conn_str.c_str());
 
@@ -259,37 +258,30 @@ private:
     std::fstream input(file_name, std::ios::in);
 
     std::stringstream buffer;
-
     buffer << input.rdbuf();
 
     json::object temp = json::parse(buffer.str()).as_object();
 
     return temp.at("database").as_object();
-
-
   }
 
-  static std::string create_conn_str(const json::object& db_config) {
-    std::string conn_str;
+  static std::string pgconnect() {
 
-    if (db_config.contains("host")) {
-      conn_str += "host=" + json::value_to<std::string>(db_config.at("host")) + " ";
-    }
-    if (db_config.contains("dbname")) {
-      conn_str += "dbname=" + json::value_to<std::string>(db_config.at("dbname")) + " ";
-    }
-    if (db_config.contains("user")) {
-      conn_str += "user=" + json::value_to<std::string>(db_config.at("user")) + " ";
-    }
-    if (db_config.contains("password")) {
-      conn_str += "password=" + json::value_to<std::string>(db_config.at("password")) + " ";
+    // If run in docker and has envirement variable
+    if (const char* host_p = std::getenv("POSTGRES_HOST")) {
+      return std::format("host={} dbname={} user={} password={}",
+                          host_p, 
+                          std::getenv("POSTGRES_DB"),
+                          std::getenv("POSTGRES_USER"),
+                          std::getenv("POSTGRES_PASSWORD"));
     }
 
+    const auto database = json_from_file(CONFIG_PATH);
 
-
-    return conn_str;
+    return std::format("host={} dbname={} user={} password={}",
+                        json::value_to<std::string>(database.at("host")),
+                        json::value_to<std::string>(database.at("dbname")),
+                        json::value_to<std::string>(database.at("user")),
+                        json::value_to<std::string>(database.at("password")));
   }
-
-  
-
 };

@@ -87,6 +87,9 @@ response_t Auth::sessions(request_t request) {
 
 response_t Auth::out_all(request_t request) {
 
+	json::array test;
+	test.emplace_back("");
+
 	const auto login = sys::Login(request);
 	LOGIN_CHECK_ERROR(login)
 
