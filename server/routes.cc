@@ -32,6 +32,7 @@ void Route::up() {
     Route::delete_("/del_wall",WallController::delete_),
     Route::post("/get_user_wall", WallController::get_user_wall),
     Route::post("/get_operation_wall", WallController::get_operation_wall),
+    Route::post("/get_category_wall", WallController::get_category_wall),
 
     // category
     Route::post("/category",CategoryController::create),

@@ -53,8 +53,11 @@ struct TokenDTO {
 // operation and wall
 struct OperationAndWallDTO {
   std::string id_wall;
-  
+};
 
+// category and wall
+struct CategoryAndWallDTO {
+  std::string id_wall;
 };
 
 

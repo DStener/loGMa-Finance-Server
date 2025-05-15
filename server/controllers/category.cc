@@ -1,6 +1,7 @@
 #include "category.h"
 #include <models/Category.h>
 #include <models/Wall.h>
+#include <models/CategoryAndWall.h>
 
 response_t CategoryController::create(request_t request) {
 	CreateCategoryDTO create{
@@ -8,13 +9,16 @@ response_t CategoryController::create(request_t request) {
 									request->input("name"),
 									request->input("id_wall") };
 
-	auto id_wall = wall->find(std::format("id={}", create.id_wall));
+	auto find_wall = wall->find(std::format("id={}", create.id_wall));
 
-	if (id_wall.size() == 0) {
+	if (find_wall.size() == 0) {
 		return response()->json("wall not found")->set_status(http::status::not_found);
 	}
 
 	auto id = category->create({ "icon", "name", "id_wall" }, { create.icon, create.name, create.id_wall});
+
+	rule_auto_add->create({ "id_category", "id_wall" }, { std::to_string(id), create.id_wall });
+
 
 	if (id) {
 		return response()->json("created category successfully");

@@ -3,7 +3,10 @@
 #include <models/UserAndWall.h>
 #include <models/OperationAndWall.h>
 #include <models/Operation.h>
+#include <models/Category.h>
+#include <models/CategoryAndWall.h> // rule auto add
 #include <models/User.h>
+
 
 response_t WallController::create(request_t request) {
 	CreateDTO create{
@@ -76,7 +79,6 @@ response_t WallController::add_user(request_t request) {
 
 
 response_t WallController::get_user_wall(request_t request) {
-	// у стены можно запросить стену пользовтеля
 	GetUserWall get = { request->input("id_user") };
 	auto user_id = user->find(std::format("id={}", get.id_user));
 
@@ -155,8 +157,50 @@ response_t WallController::get_operation_wall(request_t request) {
 		}
 	}
 	
+	return response()->json(json);
+
+}
+
+response_t WallController::get_category_wall(request_t request) {
+	CategoryAndWallDTO get{ request->input("id_wall") };
+	auto find_id_wall = rule_auto_add->find(std::format("id_wall={}", get.id_wall));
+	std::vector<std::string>categorys;
+	json::array json;
+
+	if (find_id_wall.size() == 0) {
+		return response()->json("wall not found")->set_status(http::status::not_found);
+	}
+	else {
+		for (const auto& category_group : find_id_wall)
+		{
+			for (const auto& pair : category_group) {
+				if (pair.first == "id_category") {
+					categorys.push_back(pair.second);
+					break;
+				}
+			}
+		}
+	}
+
+	if (categorys.size() != 0) {
+		for (size_t i = 0; i < categorys.size(); i++)
+		{
+			auto find_categorys = category->find(std::format("id={}", categorys[i]));
+			for (size_t i = 0; i < find_categorys.size(); i++)
+			{
+				json::object obj;
+				for (size_t j = 0; j < find_categorys[i].size(); j++)
+				{
+					obj[find_categorys[i][j].first] = find_categorys[i][j].second;
+				}
+				json.emplace_back(obj);
+			}
+
+		}
+	}
 
 	return response()->json(json);
+
 
 
 }
