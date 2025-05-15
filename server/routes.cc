@@ -17,6 +17,7 @@ void Route::up() {
     Route::post("/login", Auth::login),
     Route::post("/reg", Auth::registration),
     Route::get("/me", Auth::me),
+    Route::put("/me", Auth::update),
     Route::post("/out", Auth::out),
     Route::post("/out/{id}", Auth::out),
     Route::post("/out_all", Auth::out_all),

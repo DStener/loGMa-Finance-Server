@@ -9,18 +9,16 @@
 
 
 response_t WallController::create(request_t request) {
-	CreateDTO create{
-									request->input("name"),
-									request->input("is_group"),
-									request->input("is_public") };
+	CreateDTO create{request->input("name"),
+						       request->input("is_group"),
+						       request->input("is_public") };
 
 
-	auto id = wall->create({ "name", "is_group", "is_public" }, { create.name, create.is_group, create.is_public });
+	const auto id = wall->create(create);
 
 	if (id) {
 		return response()->json("created wall is successfully");
-	}
-	else {
+	} else {
 		
 		return response()->json("error")
 											->set_status(http::status::method_not_allowed);

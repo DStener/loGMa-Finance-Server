@@ -1,6 +1,7 @@
 #include "auth.h"
 #include "models/User.h"
 #include "models/Token.h"
+#include <format>
 #include <isce/Utils.h>
 #include "systems/login.h"
 
@@ -42,7 +43,6 @@ response_t Auth::login(request_t request) {
 				           ->cookie(std::format("token={}",dto_token.token));
 }
 
-
 response_t Auth::me(request_t request) {
 	
 	std::cout << "CALL" << std::endl;
@@ -54,6 +54,31 @@ response_t Auth::me(request_t request) {
 	json.erase("password");
 
 	return response()->json(json);
+}
+
+response_t Auth::update(request_t request) {
+
+	std::cout << "THIS" << std::endl;
+	
+	const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)
+
+	RegisterDTO reg{ request->input("login"),
+					 request->input("avatar"),
+					 request->input("name"),
+					 request->input("surname"),
+					 request->input("patronymic"),
+					 request->input("birthday"),
+					 request->input("password") };
+	
+	const auto message = user->update(reg, std::format("id = {}", login.id));
+
+	if(!message.empty()) {
+		return response()->json(message)
+		               	 ->set_status(http::status::range_not_satisfiable);
+	}
+
+	return response()->json("SUCCES");
 }
 
 response_t Auth::out(request_t request) {
