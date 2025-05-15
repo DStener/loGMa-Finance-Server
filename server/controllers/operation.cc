@@ -1,6 +1,7 @@
 #include "operation.h"
 #include <models/Operation.h>
 #include <models/User.h>
+#include <models/OperationAndWall.h>
 
 std::unique_ptr<Model> operation = std::make_unique<Operation>("operation");
 
@@ -10,6 +11,9 @@ response_t OperationController::create(request_t request) {
 									request->input("id_currency"),
 									request->input("id_user")};
 
+	const auto id_wall = request->input("id_wall");
+	// если не пуст, то доб в opration_and_wall
+
 	auto user_id = user->find(std::format("id={}", create.id_user));
 
 	if (user_id.size() == 0) {
@@ -18,9 +22,14 @@ response_t OperationController::create(request_t request) {
 
 	auto id = operation->create({ "value", "id_currency", "id_user" }, { create.value, create.id_currency, create.id_user });
 
+	if (!id_wall.empty()) {
+		operation_and_wall->create({ "id_opreation", "id_wall" }, { std::to_string(id), id_wall });
+	}
+
+	json::object json = { {"id", std::to_string(id)} };
 
 	if (id) {
-		return response()->json("created operation successfully");
+		return response()->json(json);
 	}
 	else {
 		return response()->json("error")->set_status(http::status::method_not_allowed);

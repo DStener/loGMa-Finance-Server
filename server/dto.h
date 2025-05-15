@@ -50,6 +50,16 @@ struct TokenDTO {
   std::string time;
 };
 
+// add user to wall
+
+struct UserToWall {
+  std::string id_user;
+  std::string id_wall;
+  std::string is_admin;
+};
+struct GetUserWall {
+  std::string id_user;
+};
 
 struct CreateDTO {
   std::string name;

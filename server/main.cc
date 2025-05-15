@@ -41,51 +41,51 @@
 
 using namespace isce;
 
-void Migration() {
-
-	// 0 users
-	MigrationUser::up();
-	UserSeeder::run();
-
-	// 1 token
-	MigrationToken::up();
-
-	// 2 file
-	MigrationFiles::up();
-	FileSeeder::run();
-
-	// 3 currency 
-	MigrationСurrency::up();
-	СurrencySeeder::run();
-
-	// 4 operaion 
-	MigrationOperation::up();
-	OperationSeedr::run();
-
-	// 5 wall
-	MigrationWall::up();
-	WallSeeder::run();
-
-	// 6 category
-	MigrationCategory::up();
-	CategorySeeder::run();
-
-	// 7 user and wall migration
-	MigrationUserAndWall::up();
-	UserAndWallSeeder::run();
-
-	// 8 operation_and_wall
-	MigrationOperationAndWall::up();
-	OperationAndWallSeedr::run();
-
-	// 9 operation and category
-	MigrationOperationAndCategory::up();
-	OperationAndCategorySeeder::run();
-
-	// 10 rule_auto_add
-	MigrationRuleAutoAdd::up();
-	RuleAutoAddSeeder::run();
-}
+//void Migration() {
+//
+//	// 0 users
+//	MigrationUser::up();
+//	UserSeeder::run();
+//
+//	// 1 token
+//	MigrationToken::up();
+//
+//	// 2 file
+//	MigrationFiles::up();
+//	FileSeeder::run();
+//
+//	// 3 currency 
+//	MigrationСurrency::up();
+//	СurrencySeeder::run();
+//
+//	// 4 operaion 
+//	MigrationOperation::up();
+//	OperationSeedr::run();
+//
+//	// 5 wall
+//	MigrationWall::up();
+//	WallSeeder::run();
+//
+//	// 6 category
+//	MigrationCategory::up();
+//	CategorySeeder::run();
+//
+//	// 7 user and wall migration
+//	MigrationUserAndWall::up();
+//	UserAndWallSeeder::run();
+//
+//	// 8 operation_and_wall
+//	MigrationOperationAndWall::up();
+//	OperationAndWallSeedr::run();
+//
+//	// 9 operation and category
+//	MigrationOperationAndCategory::up();
+//	OperationAndCategorySeeder::run();
+//
+//	// 10 rule_auto_add
+//	MigrationRuleAutoAdd::up();
+//	RuleAutoAddSeeder::run();
+//}
 
 int main() {
 #ifdef _WIN32
@@ -96,7 +96,7 @@ int main() {
 	app()->config(CONFIG_PATH);
 	app()->default_response(sys::StaticFile::finde);
 
-	Migration();
+	/*Migration();*/
 
 	app()->run();
 
