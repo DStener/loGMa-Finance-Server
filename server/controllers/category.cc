@@ -1,7 +1,9 @@
 #include "category.h"
+#include <boost/json/object.hpp>
 #include <models/Category.h>
 #include <models/Wall.h>
 #include <models/CategoryAndWall.h>
+#include <string>
 
 response_t CategoryController::create(request_t request) {
 
@@ -21,7 +23,8 @@ response_t CategoryController::create(request_t request) {
 	rule_auto_add->create({ "id_category", "id_wall" }, { std::to_string(id), create.id_wall });
 
 	if (id) {
-		return response()->json("created category successfully");
+		json::object json = {{"id", std::to_string(id)}};
+		return response()->json(json);
 	}
 	else {
 		return response()->json("error")->set_status(http::status::method_not_allowed);

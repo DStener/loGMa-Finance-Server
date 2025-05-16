@@ -7,27 +7,36 @@
 #include <models/Category.h>
 #include <models/CategoryAndWall.h> // rule auto add
 #include <models/User.h>
+#include <string>
 
 #include "systems/login.h"
 
 
 response_t WallController::create(request_t request) {
+
+	const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)
+
 	CreateDTO create{request->input("name"),
-						       request->input("is_group"),
-						       request->input("is_public") };
+					 "true",
+					  "false"};
 
+	
 
-	const auto id = wall->create(create);
+	const auto id_wall = wall->create(create);
 
-	if (id) {
-		return response()->json("created wall is successfully");
-	} else {
-		
+	if(!id_wall) {
 		return response()->json("error")
-											->set_status(http::status::method_not_allowed);
-
+						 ->set_status(http::status::method_not_allowed);
 	}
 
+	UserToWallDTO dto_connect { std::to_string(login.id),
+								std::to_string(id_wall),
+								"true"};
+	const auto id = user_and_wall->create(dto_connect);
+
+	json::object json = {{"id", std::to_string(id_wall)}};
+	return response()->json(json);
 }
 
 response_t WallController::update(request_t request) {
