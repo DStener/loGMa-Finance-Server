@@ -13,9 +13,6 @@ using namespace isce;
 
 inline std::string data_parse(std::string_view target, std::string_view&& data) {
 
-  std::string _temp;
-  std::string out;
-
   const auto offset = target.size() + 1;
   const auto target_pos = data.find(std::format("{}=", target));
   const auto ampersand_pos = data.find('&', target_pos);
@@ -30,18 +27,14 @@ inline std::string data_parse(std::string_view target, std::string_view&& data) 
   }
 
   if (!ampersand_found && (!last_ampersand_found || target_pos > last_ampersand_pos)) {
-    _temp = std::string(data.begin() + target_pos + offset, data.end());
-  } else if (ampersand_found) {
-    _temp = std::string(data.begin() + target_pos + offset, data.begin() + ampersand_pos);
+    return std::string(data.begin() + target_pos + offset, data.end());
+  }  
+  
+  if (ampersand_found) {
+    return std::string(data.begin() + target_pos + offset, data.begin() + ampersand_pos);
   }
 
-  std::locale loc;
-  std::remove_copy_if(_temp.begin(), _temp.end(), std::back_inserter(out), 
-      !(boost::bind(&std::isalnum<char>,  boost::placeholders::_1, loc)||
-             boost::bind(&std::isspace<char>,  boost::placeholders::_1, loc)
-  ));
-
-  return out;
+  return {};
 }
 
 // name, data, filename

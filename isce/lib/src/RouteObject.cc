@@ -130,7 +130,6 @@ bool RouteObjet::is_match(uri_t uri, http::verb method) {
     return false;
   }
 
-  //std::cout << "------------------------------------" << std::endl;
   for(;;) {
 
     //std::cout << "===" << std::endl;
@@ -172,7 +171,7 @@ bool RouteObjet::is_match(uri_t uri, http::verb method) {
       if (uri_end == uri.end() && value.find('?') != std::string_view::npos) {
         value = std::string(value.begin(), value.begin() + value.find('?'));
       }
-
+      std::cout << field << ": " << value << std::endl;
       vars.push_back(std::make_pair(field, value));
     }
 

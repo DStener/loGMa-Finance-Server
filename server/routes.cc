@@ -31,8 +31,8 @@ void Route::up() {
     Route::put("/update", WallController::update),
     Route::get("/get", WallController::get),
     Route::delete_("/delete",WallController::delete_),
-    Route::post("/my", WallController::get_user_wall),
-    Route::post("/operations", WallController::get_operation_wall),
+    Route::get("/my", WallController::get_user_wall),
+    Route::get("/operations", WallController::get_operation_wall),
     });
   Route::prefix("api/category")->middleware({})->group({
     // category
@@ -51,7 +51,7 @@ void Route::up() {
     });
 
   Route::prefix("api/bank")->middleware({})->group({
-    Route::post("/get_rate", Bank::get_rate)
+    Route::get("/get_rate", Bank::get_rate)
     });
 
   Route::prefix("api/file")->middleware({})->group({

@@ -7,6 +7,8 @@
 #include <models/CategoryAndWall.h> // rule auto add
 #include <models/User.h>
 
+#include "systems/login.h"
+
 
 response_t WallController::create(request_t request) {
 	CreateDTO create{request->input("name"),
@@ -77,14 +79,11 @@ response_t WallController::add_user(request_t request) {
 
 
 response_t WallController::get_user_wall(request_t request) {
-	GetUserWall get = { request->input("id_user") };
-	auto user_id = user->find(std::format("id={}", get.id_user));
 
-	if (user_id.size() == 0) {
-		return response()->json("user not found");
-	}
+	const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)
 
-	auto find_wall_id = user_and_wall->find(std::format("id_user={}", get.id_user));
+	auto find_wall_id = user_and_wall->find(std::format("id_user={}", login.id));
 	auto wall_id = find_wall_id[0][2].second;
 
 	auto find_data = wall->find(std::format("id={}", wall_id));
@@ -93,23 +92,17 @@ response_t WallController::get_user_wall(request_t request) {
 
 	json::array json;
 
-
 	for (size_t i = 0; i < find_data.size(); i++)
 	{
 		json::object obj;
 		for (size_t j = 0; j < find_data[i].size(); j++)
 		{
 			obj[find_data[i][j].first] = find_data[i][j].second;
-
 		}
-
 		json.emplace_back(std::move(obj));
-
 	}
 
-
 	return response()->json(json);
-
 }
 
 response_t WallController::get_operation_wall(request_t request) {
