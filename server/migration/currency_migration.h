@@ -3,7 +3,7 @@
 
 
 
-class MigrationСurrency : public Migration {
+class MigrationCurrency : public Migration {
 public:
 	static void up() {
 		Schema::create("currency", {

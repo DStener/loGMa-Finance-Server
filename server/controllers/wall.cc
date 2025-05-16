@@ -123,9 +123,6 @@ response_t WallController::get_walls_user(request_t request) {
 		}
 	}
 
-	return response()->json(json);
-	
-
 
 	//auto wall_id = find_wall_id[0][2].second; // id_wall
 
@@ -354,6 +351,23 @@ response_t WallController::get_user_wall(request_t request) {
 
 	// return wall его
 	return response()->json(json);
+
+
+}
+
+response_t WallController::get_currency_list(request_t request) {
+	auto set_wall = request->input("id_wall");
+	auto wall_date = wall->find(std::format("id={}", set_wall));
+
+	if (wall_date.size() == 0) {
+		return response()->json("wall not found")->set_status(http::status::not_found);
+	}
+
+
+
+
+
+	return response()->json("data");
 
 
 }

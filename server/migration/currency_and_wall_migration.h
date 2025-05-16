@@ -1,0 +1,17 @@
+﻿#include <isce/Schema.h>
+#include "Migration.h"
+
+
+
+class MigrationCurrencyAndWall : public Migration {
+public:
+	static void up() {
+		Schema::create("currency_and_wall", {
+			"id_wall INTEGER NOT NULL REFERENCES wall(id)",
+			"id_currency INTEGER NOT NULL REFERENCES currency(id)"
+		});
+	}
+};
+
+
+

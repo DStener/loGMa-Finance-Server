@@ -10,6 +10,7 @@
 #include "seeders/operation_and_category_seeder.h"
 #include "seeders/wall_seeder.h"
 #include "seeders/file_seeder.h"
+//#include "seeders/currency_and_wall_seeder.h"
 
 #define RUN_ALL_SEEDERS AllSeeders::run();
 
@@ -20,7 +21,7 @@ public:
         UserSeeder::run();                  // 0 users
         /* ... */                           // 1 token
         FileSeeder::run();                  // 2 file;
-        СurrencySeeder::run();              // 3 currency 
+        CurrencySeeder::run();              // 3 currency 
         OperationSeedr::run();              // 4 operaion 
         WallSeeder::run();                  // 5 wall
         CategorySeeder::run();              // 6 category
@@ -28,6 +29,8 @@ public:
         OperationAndWallSeedr::run();       // 8 operation_and_wall
         OperationAndCategorySeeder::run();  // 9 operation and category
         RuleAutoAddSeeder::run();           // 10 rule_auto_add
+        /*CurrencyAndWallSeeder::run();*/
+
 
     } 
 };

@@ -12,6 +12,11 @@
 #include "migration/__all__.h"
 #include "seeders/__all__.h"
 
+
+// TEST
+#include "migration/currency_and_wall_migration.h"
+#include "seeders/currency_and_wall_seeder.h"
+
 using namespace isce;
 
 int main() {
@@ -20,12 +25,15 @@ int main() {
 	SetConsoleOutputCP(CP_UTF8);
 #endif
 
-	std::cout << "Starting server" << std::endl;
 	app()->config(CONFIG_PATH);
 	app()->default_response(sys::StaticFile::finde);
 
-	UP_ALL_MIGARTION
-	RUN_ALL_SEEDERS
+
+	/*UP_ALL_MIGARTION
+	RUN_ALL_SEEDERS*/
+	MigrationCurrencyAndWall::up();
+	CurrencyAndWallSeeder::run();
+
 
 	app()->run();
 
