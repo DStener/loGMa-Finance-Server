@@ -32,6 +32,10 @@ using response_vec_t = std::vector<row_t>;
 		throw std::runtime_error(error);																	 \
 	}
 
+#define DB_CHECK_MESSAGE(condition)                                    \
+  if (condition) {                                                     \
+    return PQerrorMessage(Model::get_connection());                    \
+  }
 
 class Model {
 public:
@@ -210,14 +214,14 @@ public:
     std::vector<std::string> values;
 
     DTO::for_each(t, [&](std::string_view&& name, auto& field) {
-      colums.push_back(name.data());
+      colums.push_back(std::string{name});
       values.push_back(DTO::to_string(field));
     });
 
     std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",
-      table_name_,
-      boost::join(colums, ", "),
-      boost::join(values, ", "));
+                                    table_name_,
+                                    boost::join(colums, ", "),
+                                    boost::join(values, ", "));
 
     PGresult* res = PQexec(connection, query.c_str());
     DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
@@ -228,11 +232,35 @@ public:
     return std::stoul(id);
   }
 
+  template <typename T>
+  std::string update(const T& t, std::string condition) {
+    std::vector<std::string> assigs;
+
+    DTO::for_each(t, [&](std::string_view&& name, auto& field) {
+
+      const auto value = DTO::to_string(field);
+
+      if(value.empty()) { return; }
+
+      assigs.push_back(std::format("{} = {}", name.data(), value));
+    });
+
+    std::string query = std::format("UPDATE {} SET {} WHERE {};",
+                                    table_name_,
+                                    boost::join(assigs, ", "),
+                                    condition);
+
+    PGresult* res = PQexec(connection, query.c_str());
+    DB_CHECK_MESSAGE(PQresultStatus(res) != PGRES_COMMAND_OK)
+
+    return {};
+  }
+
   template<typename T>
   resp_vec_t<T> find(std::string condition) {
 
     resp_vec_t<T> out;
-    std::string query = std::format("SELECT * FROM {} WHERE {}",
+    std::string query = std::format("SELECT *, id as id_db FROM {} WHERE {}",
                                     table_name_, condition);
 
     PGresult* res = PQexec(connection, query.c_str());
@@ -249,11 +277,15 @@ public:
         if (index == -1) { return; } // if not found
 
         const auto value = PQgetvalue(res, i, index);
+        // std::cout << 
 
         field = value; // [FIXME]
       });
 
-      out.push_back(std::make_pair(i + 1, std::move(t)));
+      int id_index = PQfnumber(res, "id_db");
+      const auto id = std::stol(PQgetvalue(res, i, id_index));
+      
+      out.push_back(std::make_pair(id, std::move(t)));
     }
 
     return out;

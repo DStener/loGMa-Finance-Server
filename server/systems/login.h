@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/json/serialize.hpp>
 #include <isce/Request.h>
 
 #include "models/User.h"
@@ -50,7 +51,7 @@ public:
     message = "Invalid username or password";
 
     const auto condition = std::format("login = '{}' AND password = '{}'",
-                                       login, password);
+                                                          login, password);
 
     auto user_vec = ::user->find<RegisterDTO>(condition);
 

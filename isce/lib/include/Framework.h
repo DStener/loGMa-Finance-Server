@@ -60,9 +60,6 @@ private:
 
   // HttpServer.cc
   void server_run();
-  net::awaitable<void> server_listen(net::ip::tcp::endpoint endpoint);
-  net::awaitable<void> server_do_session(beast::tcp_stream stream);
-  
 };
 using framework_t = std::shared_ptr<Framework>;
 framework_t app();  

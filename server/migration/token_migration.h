@@ -7,9 +7,9 @@ class MigrationToken : public Migration {
 public:
 	static void up()  {
 		Schema::create("token", { 
-			"token VARCHAR", 
-			"id_user INTEGER", 
-			"time TIMESTAMP" });
+					"token VARCHAR", 
+					"id_user INTEGER", 
+					"time TIMESTAMP" });
 	}
 };
 

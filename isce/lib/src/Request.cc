@@ -3,7 +3,9 @@
 #include <boost/url.hpp>
 #include <iostream>
 #include <boost/tokenizer.hpp>
-
+#include <boost/regex.h>
+#include <boost/algorithm/string/regex.hpp>
+#include <boost/bind/bind.hpp>
 
 namespace urls = boost::urls;
 
@@ -26,8 +28,8 @@ inline std::string data_parse(std::string_view target, std::string_view&& data) 
 
   if (!ampersand_found && (!last_ampersand_found || target_pos > last_ampersand_pos)) {
     return std::string(data.begin() + target_pos + offset, data.end());
-  }
-
+  }  
+  
   if (ampersand_found) {
     return std::string(data.begin() + target_pos + offset, data.begin() + ampersand_pos);
   }
