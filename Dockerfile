@@ -17,14 +17,20 @@ RUN apt-get update && \
         libpq5-17 \
         libpq5-17-devel \
         postgresql17 \ 
-        postgresql17-server
-
-#RUN git clone -b devel https://github.com/DStener/loGMa-Finance-Server.git build
+        postgresql17-server \
+        node \
+        npm
 
 ADD . /app
 
 RUN cmake -DCMAKE_BUILD_TYPE=Release . &&\
     cmake --build . -j $(nproc)
+
+RUN git clone https://github.com/DStener/loGMa-Finance-Client.git &&\
+    cd loGMa-Finance-Client &&\
+    npm install &&\
+    npm run build &&\
+    yes | cp -rf dist/* ../root/
 
 RUN groupadd -r logma && useradd -r -g logma logma
 USER logma
