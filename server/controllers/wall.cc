@@ -9,9 +9,9 @@
 #include <models/CategoryAndWall.h> // rule auto add
 #include <models/User.h>
 #include <string>
-
+#include <models/CurrencyAndWall.h>
 #include "systems/login.h"
-
+#include <models/Currancy.h>
 
 response_t WallController::create(request_t request) {
 
@@ -189,12 +189,12 @@ response_t WallController::get_category_wall(request_t request) {
 		for (size_t i = 0; i < categorys.size(); i++)
 		{
 			auto find_categorys = category->find(std::format("id={}", categorys[i]));
-			for (size_t i = 0; i < find_categorys.size(); i++)
+			for (size_t j = 0; j < find_categorys.size(); j++)
 			{
 				json::object obj;
-				for (size_t j = 0; j < find_categorys[i].size(); j++)
+				for (size_t k = 0; k < find_categorys[j].size(); k++)
 				{
-					obj[find_categorys[i][j].first] = find_categorys[i][j].second;
+					obj[find_categorys[j][k].first] = find_categorys[j][k].second;
 				}
 				json.emplace_back(obj);
 			}
@@ -342,9 +342,42 @@ response_t WallController::get_currency_list(request_t request) {
 	auto wall_date = wall->find(std::format("id={}", set_wall));
 
 	if (wall_date.size() == 0) {
-		return response()->json("wall not found")->set_status(http::status::not_found);
+		return response()->json("wall not found");
+	}
+
+	auto currancy_wall = currency_and_wall->find(std::format("id_wall={}", set_wall));
+	std::vector<std::string> currancys;
+
+
+	for (size_t i = 0; i < currancy_wall.size(); i++)
+	{
+		for (size_t j = 0; j < currancy_wall[i].size(); j++)
+		{
+			if (currancy_wall[i][j].first == "id_currency") {
+				currancys.push_back(currancy_wall[i][j].second);
+			}
+		}
+	}
+	json::array json;
+
+	if (currancys.size() != 0) {
+		for (size_t i = 0; i < currancys.size(); i++)
+		{
+			auto current_currancy = currancy->find(std::format("id={}", currancys[i]));
+			for (size_t j = 0; j < current_currancy.size(); j++)
+			{
+				json::object obj;
+				for (size_t k = 0; k < current_currancy[j].size(); k++)
+				{
+					obj[current_currancy[j][k].first] = current_currancy[j][k].second;
+				}
+				json.emplace_back(obj);
+			}
+		}
+
+		return response()->json(json);
 	}
 
 
-	return response()->json("data");
+	return response()->json("some data");
 }

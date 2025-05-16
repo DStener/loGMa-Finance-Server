@@ -31,8 +31,8 @@ int main() {
 
 	/*UP_ALL_MIGARTION
 	RUN_ALL_SEEDERS*/
-	MigrationCurrencyAndWall::up();
-	CurrencyAndWallSeeder::run();
+	/*MigrationCurrencyAndWall::up();
+	CurrencyAndWallSeeder::run();*/
 
 
 	app()->run();
