@@ -41,6 +41,8 @@ public:
   size_t workers();
   std::string root();
   std::string upload();
+
+  json::object database();
   
 private:
 

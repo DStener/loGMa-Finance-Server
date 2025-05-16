@@ -1,0 +1,36 @@
+services:
+    server:
+        build: .
+        ports:
+            - 80:5555
+        environment:
+            POSTGRES_HOST: pgsql_db
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: 2207
+            POSTGRES_DB: logma
+        depends_on:
+            pgsql_db:
+                condition: service_healthy
+        command: ./server
+        links:
+            - pgsql_db
+
+    pgsql_db:
+        image: postgres:17
+        restart: always
+        shm_size: 128mb
+        ports:
+          - 5432:5432
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: 2207
+            POSTGRES_DB: logma
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+
+    
+    

@@ -14,44 +14,51 @@ using namespace isce;
 void Route::up() {
 
   Route::prefix("api/auth")->middleware({})->group({
-    Route::post("/login", Auth::login),  
+    Route::post("/login", Auth::login),
     Route::post("/reg", Auth::registration),
     Route::get("/me", Auth::me),
+    Route::put("/me", Auth::update),
     Route::post("/out", Auth::out),
     Route::post("/out/{id}", Auth::out),
     Route::post("/out_all", Auth::out_all),
     Route::get("/sessions", Auth::sessions),
 
-  });
+    });
 
-  Route::prefix("api/ref")->middleware({})->group({
+  Route::prefix("api/wall")->middleware({})->group({
 
-    Route::post("/wall", WallController::create),
-    Route::put("/wall", WallController::update),
-    Route::get("/get_wall", WallController::get),
-    Route::delete_("/del_wall",WallController::delete_),
-
+    Route::post("/create", WallController::create),
+    Route::put("/update", WallController::update),
+    Route::get("/get", WallController::get),
+    Route::delete_("/delete",WallController::delete_),
+    Route::get("/my", WallController::get_user_wall),
+    Route::get("/operations", WallController::get_operation_wall),
+    Route::get("/walls", WallController::get_walls_user),
+    });
+  Route::prefix("api/category")->middleware({})->group({
     // category
-    Route::post("/category",CategoryController::create),
-    Route::put("/category",CategoryController::update),
-    Route::get("/get_category",CategoryController::get),
-    Route::delete_("/del_category",CategoryController::delete_),
-    
+    Route::post("/create",CategoryController::create),
+    Route::put("/update",CategoryController::update),
+    Route::get("/get",CategoryController::get),
+    Route::delete_("/delete",CategoryController::delete_),
+    Route::post("/set_l", CategoryController::set_limit),
+    });
+  Route::prefix("api/opreation")->middleware({})->group({
     // opreation
-    Route::post("/opreation", OperationController::create),
-    Route::put("/opreation", OperationController::update),
-    Route::get("/get_opreation", OperationController::get),
-    Route::delete_("/del_opreation", OperationController::delete_)
+    Route::post("/create", OperationController::create),
+    Route::put("/update", OperationController::update),
+    Route::get("/get", OperationController::get),
+    Route::delete_("/delete", OperationController::delete_)
 
     });
 
   Route::prefix("api/bank")->middleware({})->group({
-    Route::post("/get_rate", Bank::get_rate)
-  });
+    Route::get("/get_rate", Bank::get_rate)
+    });
 
   Route::prefix("api/file")->middleware({})->group({
-    Route::get("/{id}", FileController::get)
-  });
+    Route::get("/{id}", FileController::get),
+    Route::post("/", FileController::upload)
+    });
 
 }
-

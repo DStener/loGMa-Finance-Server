@@ -32,6 +32,10 @@ using response_vec_t = std::vector<row_t>;
 		throw std::runtime_error(error);																	 \
 	}
 
+#define DB_CHECK_MESSAGE(condition)                                    \
+  if (condition) {                                                     \
+    return PQerrorMessage(Model::get_connection());                    \
+  }
 
 class Model {
 public:
@@ -115,6 +119,18 @@ public:
     PQclear(res);
     return delete_str > 0;
   }
+  bool cdelete(std::string condition) {
+    std::string query = std::format("DELETE FROM {} WHERE {};",
+                                    table_name_, condition);
+
+    PGresult* res = PQexec(connection, query.c_str());
+    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK)
+
+    auto delete_str = std::stoi(PQcmdTuples(res));
+
+    PQclear(res);
+    return delete_str > 0;
+  }
 
   response_vec_t find(std::string condition) {
     std::string query = "SELECT * FROM " + table_name_ + " WHERE " + condition + ";";
@@ -167,8 +183,7 @@ public:
 
   static void init_connection() {
     if (connection == nullptr) {
-      auto config = json_from_file(CONFIG_PATH);
-      std::string conn_str = create_conn_str(config);
+     const auto conn_str = pgconnect();
 
       connection = PQconnectdb(conn_str.c_str());
 
@@ -199,14 +214,19 @@ public:
     std::vector<std::string> values;
 
     DTO::for_each(t, [&](std::string_view&& name, auto& field) {
-      colums.push_back(name.data());
-      values.push_back(DTO::to_string(field));
+
+      const auto value = DTO::to_string(field);
+
+      if(value == "''") { return; }
+
+      colums.push_back(std::string{name});
+      values.push_back(value);
     });
 
     std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",
-      table_name_,
-      boost::join(colums, ", "),
-      boost::join(values, ", "));
+                                    table_name_,
+                                    boost::join(colums, ", "),
+                                    boost::join(values, ", "));
 
     PGresult* res = PQexec(connection, query.c_str());
     DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
@@ -217,11 +237,35 @@ public:
     return std::stoul(id);
   }
 
+  template <typename T>
+  std::string update(const T& t, std::string condition) {
+    std::vector<std::string> assigs;
+
+    DTO::for_each(t, [&](std::string_view&& name, auto& field) {
+
+      const auto value = DTO::to_string(field);
+
+      if(value.empty()) { return; }
+
+      assigs.push_back(std::format("{} = {}", name.data(), value));
+    });
+
+    std::string query = std::format("UPDATE {} SET {} WHERE {};",
+                                    table_name_,
+                                    boost::join(assigs, ", "),
+                                    condition);
+
+    PGresult* res = PQexec(connection, query.c_str());
+    DB_CHECK_MESSAGE(PQresultStatus(res) != PGRES_COMMAND_OK)
+
+    return {};
+  }
+
   template<typename T>
   resp_vec_t<T> find(std::string condition) {
 
     resp_vec_t<T> out;
-    std::string query = std::format("SELECT * FROM {} WHERE {}",
+    std::string query = std::format("SELECT *, id as id_db FROM {} WHERE {}",
                                     table_name_, condition);
 
     PGresult* res = PQexec(connection, query.c_str());
@@ -238,11 +282,15 @@ public:
         if (index == -1) { return; } // if not found
 
         const auto value = PQgetvalue(res, i, index);
+        // std::cout << 
 
         field = value; // [FIXME]
       });
 
-      out.push_back(std::make_pair(i + 1, std::move(t)));
+      int id_index = PQfnumber(res, "id_db");
+      const auto id = std::stol(PQgetvalue(res, i, id_index));
+      
+      out.push_back(std::make_pair(id, std::move(t)));
     }
 
     return out;
@@ -259,37 +307,30 @@ private:
     std::fstream input(file_name, std::ios::in);
 
     std::stringstream buffer;
-
     buffer << input.rdbuf();
 
     json::object temp = json::parse(buffer.str()).as_object();
 
     return temp.at("database").as_object();
-
-
   }
 
-  static std::string create_conn_str(const json::object& db_config) {
-    std::string conn_str;
+  static std::string pgconnect() {
 
-    if (db_config.contains("host")) {
-      conn_str += "host=" + json::value_to<std::string>(db_config.at("host")) + " ";
-    }
-    if (db_config.contains("dbname")) {
-      conn_str += "dbname=" + json::value_to<std::string>(db_config.at("dbname")) + " ";
-    }
-    if (db_config.contains("user")) {
-      conn_str += "user=" + json::value_to<std::string>(db_config.at("user")) + " ";
-    }
-    if (db_config.contains("password")) {
-      conn_str += "password=" + json::value_to<std::string>(db_config.at("password")) + " ";
+    // If run in docker and has envirement variable
+    if (const char* host_p = std::getenv("POSTGRES_HOST")) {
+      return std::format("host={} dbname={} user={} password={}",
+                          host_p, 
+                          std::getenv("POSTGRES_DB"),
+                          std::getenv("POSTGRES_USER"),
+                          std::getenv("POSTGRES_PASSWORD"));
     }
 
+    const auto database = json_from_file(CONFIG_PATH);
 
-
-    return conn_str;
+    return std::format("host={} dbname={} user={} password={}",
+                        json::value_to<std::string>(database.at("host")),
+                        json::value_to<std::string>(database.at("dbname")),
+                        json::value_to<std::string>(database.at("user")),
+                        json::value_to<std::string>(database.at("password")));
   }
-
-  
-
 };

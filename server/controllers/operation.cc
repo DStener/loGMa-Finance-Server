@@ -1,32 +1,44 @@
 #include "operation.h"
+#include <boost/json/serializer.hpp>
 #include <models/Operation.h>
 #include <models/User.h>
+#include <models/OperationAndWall.h>
 
-std::unique_ptr<Model> operation = std::make_unique<Operation>("operation");
+#include <systems/login.h>
 
 response_t OperationController::create(request_t request) {
-	OperationCreateDTO create{
-									request->input("value"),
-									request->input("id_currency"),
-									request->input("id_user")};
 
-	auto user_id = user->find(std::format("id={}", create.id_user));
+	const auto login = sys::Login(request);
+  	LOGIN_CHECK_ERROR(login)
 
-	if (user_id.size() == 0) {
-		return response()->json("user not found")->set_status(http::status::not_found);
-	}
+	OperationDTO dto_oper {
+		request->input("value"),
+		request->input("description"),
+		request->input("id_currency"),
+		std::to_string(login.id),
+		request->input("time"),
+	};
 
-	auto id = operation->create({ "value", "id_currency", "id_user" }, { create.value, create.id_currency, create.id_user });
+	std::cout << json::serialize(DTO::to_json(dto_oper)) << std::endl; 
 
+	const auto id_wall = request->input("id_wall");
+	const auto id = operation->create(dto_oper);
+
+	// if (!id_wall.empty()) {
+	// 	operation_and_wall->create({ "id_opreation", "id_wall" }, { std::to_string(id), id_wall });
+	// }
+
+	json::object json = { {"id", std::to_string(id)} };
 
 	if (id) {
-		return response()->json("created operation successfully");
+		return response()->json(json);
 	}
 	else {
 		return response()->json("error")->set_status(http::status::method_not_allowed);
 	}
 
 }
+
 
 response_t OperationController::update(request_t request) {
 	OperationUpdateDTO update{
@@ -55,7 +67,6 @@ response_t OperationController::update(request_t request) {
 	
 }
 
-
 response_t OperationController::get(request_t request){
 	
 	return response()->json("Data");
@@ -76,3 +87,5 @@ response_t OperationController::delete_(request_t request) {
 	
 	
 }
+
+

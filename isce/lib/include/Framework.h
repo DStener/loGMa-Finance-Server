@@ -45,6 +45,7 @@ class Framework : public std::enable_shared_from_this<Framework> {
   std::string root();
   std::string upload();
 
+  json::object database();
 
   static response_t do_nothing(request_t request) {
     
@@ -59,9 +60,6 @@ private:
 
   // HttpServer.cc
   void server_run();
-  net::awaitable<void> server_listen(net::ip::tcp::endpoint endpoint);
-  net::awaitable<void> server_do_session(beast::tcp_stream stream);
-  
 };
 using framework_t = std::shared_ptr<Framework>;
 framework_t app();  

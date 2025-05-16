@@ -30,9 +30,6 @@ public:
       std::cout << "Table " << table_name << " created successfully.\n";
     }
     
-
     PQclear(res);
-
-   
   }
 };

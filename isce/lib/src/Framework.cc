@@ -108,3 +108,13 @@ std::string Framework::upload() {
 
 	return it->value().as_string().c_str();
 }
+
+json::object Framework::database() {
+	const auto it = _config.find("database");
+
+	if (it == _config.end()) {
+		throw std::runtime_error("In config file not found 'database'");
+	}
+
+	return it->value().as_object();
+}

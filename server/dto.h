@@ -14,6 +14,14 @@ struct OperationCreateDTO {
   std::string id_user;
 };
 
+struct OperationDTO {
+  std::string value;
+  std::string description;
+  std::string id_currency;
+  std::string id_user;
+  std::string time;
+};
+
 // bank
 
 struct BankRequestDTO {
@@ -50,7 +58,29 @@ struct TokenDTO {
   std::string time;
 };
 
+// operation and wall
+struct OperationAndWallDTO {
+  std::string id_wall;
+};
 
+// category and wall
+struct CategoryAndWallDTO {
+  std::string id_wall;
+};
+
+
+// add user to wall
+
+struct UserToWallDTO {
+  std::string id_user;
+  std::string id_wall;
+  std::string is_admin;
+};
+struct GetUserWall {
+  std::string id_user;
+};
+
+// wall
 struct CreateDTO {
   std::string name;
   std::string is_group;
@@ -61,6 +91,11 @@ struct CreateCategoryDTO {
   std::string icon;
   std::string name;
   std::string id_wall;
+};
+
+struct UpdateCategoryLimitsDTO {
+  std::string id_category;
+  std::string new_limit;
 };
 
 struct UpdateCategoryDTO {
