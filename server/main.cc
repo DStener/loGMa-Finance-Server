@@ -20,6 +20,7 @@ int main() {
 	SetConsoleOutputCP(CP_UTF8);
 #endif
 
+	std::cout << "Starting server" << std::endl;
 	app()->config(CONFIG_PATH);
 	app()->default_response(sys::StaticFile::finde);
 
