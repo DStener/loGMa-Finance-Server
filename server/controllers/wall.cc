@@ -300,14 +300,14 @@ response_t WallController::delete_(request_t request) {
 
 response_t WallController::get_walls_user(request_t request) {
 
-	/*const auto login = sys::Login(request);
-	LOGIN_CHECK_ERROR(login)*/
+	const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)
 
-	auto r = request->input("id_user");
+	// auto r = request->input("id_user");
 
 	json::array json;
 
-	const auto vec_user_walls = user_and_wall->find<UserToWallDTO>(std::format("id_user = {}", r));
+	const auto vec_user_walls = user_and_wall->find<UserToWallDTO>(std::format("id_user = {}", login.id));
 	
 	if (vec_user_walls.size() == 0) {
 		return response()->json("wall not found")

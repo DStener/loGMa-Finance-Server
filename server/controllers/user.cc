@@ -6,7 +6,7 @@ response_t UserCNT::avatar(request_t request) {
 	std::string id_user = request->input("id_user");
 
 	// If not parmetr, get current user id
-	if(id_user.empty()) {
+	if(id_user.empty() || id_user == "0") {
 
 		const auto login = sys::Login(request);
 		LOGIN_CHECK_ERROR(login)
