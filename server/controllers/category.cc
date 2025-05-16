@@ -4,6 +4,7 @@
 #include <models/CategoryAndWall.h>
 
 response_t CategoryController::create(request_t request) {
+
 	CreateCategoryDTO create{
 									request->input("icon"),
 									request->input("name"),
@@ -18,7 +19,6 @@ response_t CategoryController::create(request_t request) {
 	auto id = category->create({ "icon", "name", "id_wall" }, { create.icon, create.name, create.id_wall});
 
 	rule_auto_add->create({ "id_category", "id_wall" }, { std::to_string(id), create.id_wall });
-
 
 	if (id) {
 		return response()->json("created category successfully");

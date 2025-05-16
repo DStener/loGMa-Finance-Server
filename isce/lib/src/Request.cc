@@ -22,6 +22,8 @@ inline std::string data_parse(std::string_view target, std::string_view&& data) 
   const bool ampersand_found = (ampersand_pos != std::string_view::npos);
   const bool last_ampersand_found = (last_ampersand_pos != std::string_view::npos);
 
+  std::cout << target << " - " << data << std::endl;
+
   if (!target_found) { 
     return {}; 
   }

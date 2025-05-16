@@ -14,6 +14,14 @@ struct OperationCreateDTO {
   std::string id_user;
 };
 
+struct OperationDTO {
+  std::string value;
+  std::string description;
+  std::string id_currency;
+  std::string id_user;
+  std::string time;
+};
+
 // bank
 
 struct BankRequestDTO {

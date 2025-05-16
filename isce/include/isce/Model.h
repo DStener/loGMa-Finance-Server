@@ -214,8 +214,13 @@ public:
     std::vector<std::string> values;
 
     DTO::for_each(t, [&](std::string_view&& name, auto& field) {
+
+      const auto value = DTO::to_string(field);
+
+      if(value == "''") { return; }
+
       colums.push_back(std::string{name});
-      values.push_back(DTO::to_string(field));
+      values.push_back(value);
     });
 
     std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",

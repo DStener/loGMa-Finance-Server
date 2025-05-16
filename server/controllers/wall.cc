@@ -1,4 +1,5 @@
 #include "wall.h"
+#include <boost/beast/http/status.hpp>
 #include <models/Wall.h>
 #include <models/UserAndWall.h>
 #include <models/OperationAndWall.h>
@@ -110,7 +111,8 @@ response_t WallController::get_operation_wall(request_t request) {
 	std::vector<std::string>operations;
 
 	if (id_wall.size() == 0) {
-		return response()->json("wall not found");
+		return response()->json("wall not found")
+						 ->set_status(http::status::not_found);
 	}
 	else {
 		for (const auto& wall_group : id_wall)
@@ -158,7 +160,8 @@ response_t WallController::get_category_wall(request_t request) {
 	json::array json;
 
 	if (find_id_wall.size() == 0) {
-		return response()->json("wall not found")->set_status(http::status::not_found);
+		return response()->json("wall not found")
+						 ->set_status(http::status::not_found);
 	}
 	else {
 		for (const auto& category_group : find_id_wall)
