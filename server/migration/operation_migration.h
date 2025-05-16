@@ -7,7 +7,7 @@ class MigrationOperation : public Migration {
 public:
 	static void up() {
 		Schema::create("operation", {
-			"value BIGINT NULL",
+			"value BIGINT NOT NULL",
 			"description VARCHAR NULL",
 			"id_currency INTEGER NULL",
 			"id_user INTEGER NULL",

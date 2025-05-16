@@ -14,8 +14,8 @@
 
 
 // TEST
-#include "migration/currency_and_wall_migration.h"
-#include "seeders/currency_and_wall_seeder.h"
+//#include "migration/currency_and_wall_migration.h"
+//#include "seeders/currency_and_wall_seeder.h"
 
 using namespace isce;
 

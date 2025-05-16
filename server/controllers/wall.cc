@@ -18,10 +18,13 @@ response_t WallController::create(request_t request) {
 	const auto login = sys::Login(request);
 	LOGIN_CHECK_ERROR(login)
 
-	CreateDTO create{request->input("name"),
-					 "true",
-					  "false"};
-
+	CreateDTO create{
+						request->input("name"),
+						request->input("is_group"),
+					  request->input("is_public"),
+						request->input("lim"),
+						request->input("def_currancy"),
+	};
 	
 
 	const auto id_wall = wall->create(create);
@@ -346,7 +349,7 @@ response_t WallController::get_currency_list(request_t request) {
 	}
 
 	auto currancy_wall = currency_and_wall->find(std::format("id_wall={}", set_wall));
-	std::vector<std::string> currancys;
+	std::vector<std::string> currancys; 
 
 
 	for (size_t i = 0; i < currancy_wall.size(); i++)
@@ -360,7 +363,7 @@ response_t WallController::get_currency_list(request_t request) {
 	}
 	json::array json;
 
-	if (currancys.size() != 0) {
+	if (!currancys.empty()) {
 		for (size_t i = 0; i < currancys.size(); i++)
 		{
 			auto current_currancy = currancy->find(std::format("id={}", currancys[i]));
