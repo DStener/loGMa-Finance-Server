@@ -23,7 +23,7 @@ public:
         FileSeeder::run();                  // 2 file;
         CurrencySeeder::run();              // 3 currency 
         OperationSeedr::run();              // 4 operaion 
-        WallSeeder::run();                  // 5 wall
+        // WallSeeder::run();                  // 5 wall
         CategorySeeder::run();              // 6 category
         UserAndWallSeeder::run();           // 7 user and wall migration
         OperationAndWallSeedr::run();       // 8 operation_and_wall

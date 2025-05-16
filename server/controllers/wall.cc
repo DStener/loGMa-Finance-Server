@@ -1,5 +1,6 @@
 #include "wall.h"
 #include <boost/beast/http/status.hpp>
+#include <boost/json/object.hpp>
 #include <models/Wall.h>
 #include <models/UserAndWall.h>
 #include <models/OperationAndWall.h>
@@ -318,6 +319,7 @@ response_t WallController::delete_(request_t request) {
 }
 
 
+<<<<<<< HEAD
 response_t WallController::get_user_wall(request_t request) {
 	auto id_user = request->input("user_id");
 	json::array json;
@@ -329,37 +331,89 @@ response_t WallController::get_user_wall(request_t request) {
 	}
 	else {
 		auto user_walls = user_and_wall->find(std::format("id_user={}", id_user));
+=======
+// response_t WallController::get_walls_user(request_t request) {
+// 	auto id_user = request->input("user_id");
+// 	json::array json;
+// 	std::vector<std::string> walls;
+
+// 	if (id_user.size() == 0) {
+// 		return response()->json("user not found");
+// 	}
+// 	else {
+// 		auto user_walls = user_and_wall->find(std::format("id_user={}", id_user));
+>>>>>>> eb1fc07 (New change of wall)
 		
-		for (const auto& wall : user_walls) 
-		{
-			for (const auto& pair : wall)
-			{
-				if (pair.first == "id_wall") {
-					walls.push_back(pair.second);
-					break;
-				}
-			}
-		}
+// 		for (const auto& wall : user_walls) 
+// 		{
+// 			for (const auto& pair : wall)
+// 			{
+// 				if (pair.first == "id_wall") {
+// 					walls.push_back(pair.second);
+// 					break;
+// 				}
+// 			}
+// 		}
+// 	}
+
+// 	if (walls.size() != 0) {
+// 		for (size_t i = 0; i < walls.size(); i++)
+// 		{
+// 			auto temp = wall->find(std::format("id={}", walls[i]));
+// 			for (size_t i = 0; i < temp.size(); i++)
+// 			{
+// 				json::object obj;
+// 				for (size_t j = 0; j < temp[i].size(); j++)
+// 				{
+// 					obj[temp[i][j].first] = temp[i][j].second;
+// 				}
+// 				json.emplace_back(obj);
+// 			}
+// 		}
+// 	}
+
+// 	return response()->json(json);
+
+
+// }
+
+response_t WallController::get_walls_user(request_t request) {
+
+	const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)
+
+	json::array json;
+
+	const auto vec_user_walls = user_and_wall->find<UserToWallDTO>(std::format("id_user = {}", login.id));
+	
+	if (vec_user_walls.size() == 0) {
+		return response()->json("wall not found")
+						 ->set_status(http::status::not_found);
 	}
 
-	if (walls.size() != 0) {
-		for (size_t i = 0; i < walls.size(); i++)
-		{
-			auto temp = wall->find(std::format("id={}", walls[i]));
-			for (size_t i = 0; i < temp.size(); i++)
-			{
-				json::object obj;
-				for (size_t j = 0; j < temp[i].size(); j++)
-				{
-					obj[temp[i][j].first] = temp[i][j].second;
-				}
-				json.emplace_back(obj);
-			}
+	for(const auto& user_wall: vec_user_walls) {
+
+		const auto vec_wall = wall->find<CreateDTO>(std::format("id = {}", user_wall.second.id_wall));
+		if(vec_wall.empty() || vec_wall[0].second.is_group.starts_with('f')) { continue; }
+
+		// Convert wall dto to json
+		json::object obj_wall = DTO::to_json(vec_wall[0]);
+
+		// Get another users of wall
+		const auto vec_another_user = user_and_wall->find<UserToWallDTO>(std::format("id_wall = {}", user_wall.second.id_wall));
+		
+		json::array all_group_users;
+		for(const auto& another_user: vec_another_user) {
+			all_group_users.emplace_back(another_user.second.id_user);
 		}
+		
+		obj_wall["users"] = std::move(all_group_users);
+		json.emplace_back(obj_wall);
 	}
 
 	// return wall его
 	return response()->json(json);
+<<<<<<< HEAD
 
 
 }
@@ -379,4 +433,6 @@ response_t WallController::get_currency_list(request_t request) {
 	return response()->json("data");
 
 
+=======
+>>>>>>> eb1fc07 (New change of wall)
 }
