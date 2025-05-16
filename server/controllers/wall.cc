@@ -12,6 +12,8 @@
 #include <models/CurrencyAndWall.h>
 #include "systems/login.h"
 #include <models/Currancy.h>
+#include <math.h>
+#include <numeric>
 
 response_t WallController::create(request_t request) {
 
@@ -383,4 +385,64 @@ response_t WallController::get_currency_list(request_t request) {
 
 
 	return response()->json("some data");
+}
+
+
+response_t WallController::get_sum_operation_wall(request_t request){
+	auto id_wall = request->input("id_wall");
+
+	auto wall_id = wall->find(std::format("id={}", id_wall));
+
+	if (wall_id.size() == 0) {
+		return response()->json("wall not found")->set_status(http::status::not_found);
+	}
+
+	auto operation_wall = operation_and_wall->find(std::format("id_wall={}", id_wall));
+
+	std::vector<std::string> operations;
+
+	for (const auto& operation : operation_wall)
+	{
+		for (const auto& pair : operation)
+		{
+			if (pair.first == "id_operation") {
+				operations.push_back(pair.second);
+				break;
+			}
+		}
+	}
+	std::vector<int>sum;
+
+	if (operations.size() != 0) {
+		for (size_t i = 0; i < operations.size(); i++)
+		{
+			auto temp = operation->find(std::format("id={}", operations[i]));
+			for (const auto& value : temp)
+			{
+				for (const auto& pair : value)
+				{
+					if (pair.first == "value") {
+						sum.push_back(std::stoi(pair.second));
+						break;
+					}
+				}
+			}
+		}
+		int s = std::reduce(sum.begin(), sum.end(), 0);
+
+		for (size_t i = 0; i < sum.size(); i++)
+		{
+			std::cout << sum[i] << std::endl;
+		}
+
+		json::object obj;
+		obj["sum"] = std::to_string(s);
+
+		return response()->json(obj);
+
+	}
+
+
+	return response()->json("some data");
+
 }

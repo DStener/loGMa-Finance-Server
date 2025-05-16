@@ -40,6 +40,7 @@ void Route::up() {
     Route::get("/walls", WallController::get_walls_user),
     Route::get("/c_wall", WallController::get_category_wall),
     Route::get("/c", WallController::get_currency_list),
+    Route::get("/sum", WallController::get_sum_operation_wall),
     });
   Route::prefix("api/category")->middleware({})->group({
     // category

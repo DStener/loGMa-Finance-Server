@@ -29,8 +29,8 @@ int main() {
 	app()->default_response(sys::StaticFile::finde);
 
 
-	UP_ALL_MIGARTION
-	RUN_ALL_SEEDERS
+	/*UP_ALL_MIGARTION
+	RUN_ALL_SEEDERS*/
 	// MigrationCurrencyAndWall::up();
 	// CurrencyAndWallSeeder::run();
 
