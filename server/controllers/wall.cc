@@ -77,7 +77,6 @@ response_t WallController::add_user(request_t request) {
 }
 
 
-
 response_t WallController::get_user_wall(request_t request) {
 
 	const auto login = sys::Login(request);
@@ -197,6 +196,8 @@ response_t WallController::get_category_wall(request_t request) {
 }
 
 
+
+
 response_t WallController::get(request_t request){
 	auto wall_id = request->input("wall_id");
 
@@ -236,5 +237,50 @@ response_t WallController::delete_(request_t request) {
 		wall->delete_(condition.id);
 		return response()->json("wall deleted successfully")->set_status(http::status::ok);
 	}	 
+
+}
+
+
+response_t WallController::get_walls_user(request_t request) {
+	auto id_user = request->input("user_id");
+	json::array json;
+	std::vector<std::string> walls;
+
+	if (id_user.size() == 0) {
+		return response()->json("user not found");
+	}
+	else {
+		auto user_walls = user_and_wall->find(std::format("id_user={}", id_user));
+		
+		for (const auto& wall : user_walls) 
+		{
+			for (const auto& pair : wall)
+			{
+				if (pair.first == "id_wall") {
+					walls.push_back(pair.second);
+					break;
+				}
+			}
+		}
+	}
+
+	if (walls.size() != 0) {
+		for (size_t i = 0; i < walls.size(); i++)
+		{
+			auto temp = wall->find(std::format("id={}", walls[i]));
+			for (size_t i = 0; i < temp.size(); i++)
+			{
+				json::object obj;
+				for (size_t j = 0; j < temp[i].size(); j++)
+				{
+					obj[temp[i][j].first] = temp[i][j].second;
+				}
+				json.emplace_back(obj);
+			}
+		}
+	}
+
+	return response()->json(json);
+
 
 }

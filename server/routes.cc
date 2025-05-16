@@ -33,6 +33,7 @@ void Route::up() {
     Route::delete_("/delete",WallController::delete_),
     Route::get("/my", WallController::get_user_wall),
     Route::get("/operations", WallController::get_operation_wall),
+    Route::get("/walls", WallController::get_walls_user),
     });
   Route::prefix("api/category")->middleware({})->group({
     // category

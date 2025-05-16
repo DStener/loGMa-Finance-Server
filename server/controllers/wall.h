@@ -18,5 +18,6 @@ public:
 	static response_t get_user_wall(request_t request);
 	static response_t get_operation_wall(request_t request);
 	static response_t get_category_wall(request_t request);
+	static response_t get_walls_user(request_t request);
 
 };
