@@ -214,7 +214,7 @@ public:
     std::vector<std::string> values;
 
     DTO::for_each(t, [&](std::string_view&& name, auto& field) {
-      colums.push_back(name.data());
+      colums.push_back(std::string{name});
       values.push_back(DTO::to_string(field));
     });
 
@@ -260,7 +260,7 @@ public:
   resp_vec_t<T> find(std::string condition) {
 
     resp_vec_t<T> out;
-    std::string query = std::format("SELECT * FROM {} WHERE {}",
+    std::string query = std::format("SELECT *, id as id_db FROM {} WHERE {}",
                                     table_name_, condition);
 
     PGresult* res = PQexec(connection, query.c_str());
@@ -277,11 +277,15 @@ public:
         if (index == -1) { return; } // if not found
 
         const auto value = PQgetvalue(res, i, index);
+        // std::cout << 
 
         field = value; // [FIXME]
       });
 
-      out.push_back(std::make_pair(i + 1, std::move(t)));
+      int id_index = PQfnumber(res, "id_db");
+      const auto id = std::stol(PQgetvalue(res, i, id_index));
+      
+      out.push_back(std::make_pair(id, std::move(t)));
     }
 
     return out;
