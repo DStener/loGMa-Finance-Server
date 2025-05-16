@@ -24,10 +24,10 @@ void Route::up() {
     Route::get("/sessions", Auth::sessions),
   });
 
-  // Route::prefix("api/user")->middleware({})->group({
-  //   Route::get("/avatar", UserCNT::avatar),
-  //   Route::put("/update", UserCNT::update),
-  // });
+  Route::prefix("api/user")->middleware({})->group({
+    Route::get("/avatar", UserCNT::avatar),
+    Route::put("/update", UserCNT::update),
+  });
 
   Route::prefix("api/wall")->middleware({})->group({
 
