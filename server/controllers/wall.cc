@@ -300,12 +300,14 @@ response_t WallController::delete_(request_t request) {
 
 response_t WallController::get_walls_user(request_t request) {
 
-	const auto login = sys::Login(request);
-	LOGIN_CHECK_ERROR(login)
+	/*const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)*/
+
+	auto r = request->input("id_user");
 
 	json::array json;
 
-	const auto vec_user_walls = user_and_wall->find<UserToWallDTO>(std::format("id_user = {}", login.id));
+	const auto vec_user_walls = user_and_wall->find<UserToWallDTO>(std::format("id_user = {}", r));
 	
 	if (vec_user_walls.size() == 0) {
 		return response()->json("wall not found")
@@ -333,4 +335,16 @@ response_t WallController::get_walls_user(request_t request) {
 	}
 
 	return response()->json(json);
+}
+
+response_t WallController::get_currency_list(request_t request) {
+	auto set_wall = request->input("id_wall");
+	auto wall_date = wall->find(std::format("id={}", set_wall));
+
+	if (wall_date.size() == 0) {
+		return response()->json("wall not found")->set_status(http::status::not_found);
+	}
+
+
+	return response()->json("data");
 }
