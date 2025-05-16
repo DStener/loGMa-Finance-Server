@@ -88,95 +88,33 @@ response_t WallController::add_user(request_t request) {
 }
 
 
-response_t WallController::get_walls_user(request_t request) {
+response_t WallController::get_user_wall(request_t request) {
 
-	/*const auto login = sys::Login(request)*/;
-	//LOGIN_CHECK_ERROR(login)
+	const auto login = sys::Login(request);
+	LOGIN_CHECK_ERROR(login)
 
-	// возврощаем все стены пользователя is_group == true
+	auto find_wall_id = user_and_wall->find(std::format("id_user={}", login.id));
+	auto wall_id = find_wall_id[0][2].second;
 
-	auto t = request->input("id_user");
-	auto is_group_true = wall->find(std::format("id_user={} AND is_group=true", t));
-	
-	std::vector<std::string>walls; // index_walls 
+	auto find_data = wall->find(std::format("id={}", wall_id));
+
+	std::string data;
 
 	json::array json;
 
-	// 
-	for (const auto& row : is_group_true)
+	for (size_t i = 0; i < find_data.size(); i++)
 	{
-		std::string wall_id;
-		for (const auto& pair : row)
+		json::object obj;
+		for (size_t j = 0; j < find_data[i].size(); j++)
 		{
-			if (pair.first == "id") {
-				wall_id = pair.second;
-				break;
-			}
+			obj[find_data[i][j].first] = find_data[i][j].second;
 		}
-
-		if (!wall_id.empty()) {
-			// Ищем записи в user_and_wall по wall_id
-			auto temp = user_and_wall->find(std::format("id_user={}", wall_id));
-			for (size_t k = 0; k < temp.size(); k++) {
-				json::object obj;
-
-				for (size_t j = 0; j < temp[k].size(); j++) {
-					if (temp[k][j].first == "id_user" && temp[k][j].second == t) {
-						obj[temp[k][j].first] = temp[k][j].second;
-					}
-				}
-
-				if (!obj.empty()) {
-					json.emplace_back(obj);
-				}
-			}
-		}
+		json.emplace_back(std::move(obj));
 	}
 
-
-	//auto wall_id = find_wall_id[0][2].second; // id_wall
-
-	//auto find_data = wall->find(std::format("id={}", wall_id)); // wall 
-	//auto ig = user_and_wall->find(std::format("id_wall={}", wall_id)); // все wall с этим id
-
-	//std::vector<std::string>walls; // все id в user_and_wall
-	//
-
-	//for (size_t i = 0; i < ig.size(); i++)
-	//{
-	//	for (size_t j = 0; j < ig[i].size(); j++)
-	//	{
-	//		auto temp = user_and_wall->find("id_user={}")
-	//	}
-
-	//}
-	//auto temp = wall->find(std::format("id={} AND is_group={}", ig[i][j].second, "true"));
-	//auto temp = wall->find(std::format("id={}")) // поиск всех wall с таким id
-	
-	
-	/*std::string data;
-	json::array json;
-
-	if (is_group.size() > 0) {
-		for (size_t i = 0; i < is_group.size(); i++)
-		{
-			json::object obj;
-			for (size_t j = 0; j < is_group[i].size(); j++)
-			{
-				obj[is_group[i][j].first] = is_group[i][j].second;
-			}
-			json.emplace_back(std::move(obj));
-		}
-
-		return response()->json(json);
-	}*/
-
-
-	return response()->json("some error");
-
+	return response()->json(json);
 }
 
-// all operation wall
 response_t WallController::get_operation_wall(request_t request) {
 	OperationAndWallDTO get{ request->input("id_wall") };
 	auto id_wall = operation_and_wall->find(std::format("id_wall={}", get.id_wall));
@@ -193,13 +131,12 @@ response_t WallController::get_operation_wall(request_t request) {
 			{
 				if (pair.first == "id_operation") {
 					operations.push_back(pair.second);
-					break;
+					break; 
 				}
 			}
 		}
 
 	}
-
 
 	json::array json;
 
@@ -231,8 +168,6 @@ response_t WallController::get_category_wall(request_t request) {
 	auto find_id_wall = rule_auto_add->find(std::format("id_wall={}", get.id_wall));
 	std::vector<std::string>categorys;
 	json::array json;
-
-	
 
 	if (find_id_wall.size() == 0) {
 		return response()->json("wall not found")
@@ -319,19 +254,6 @@ response_t WallController::delete_(request_t request) {
 }
 
 
-<<<<<<< HEAD
-response_t WallController::get_user_wall(request_t request) {
-	auto id_user = request->input("user_id");
-	json::array json;
-	std::vector<std::string> walls;
-	
-	// if flag is_group == false return obj json возврощает его стену
-	if (id_user.size() == 0) {
-		return response()->json("user not found");
-	}
-	else {
-		auto user_walls = user_and_wall->find(std::format("id_user={}", id_user));
-=======
 // response_t WallController::get_walls_user(request_t request) {
 // 	auto id_user = request->input("user_id");
 // 	json::array json;
@@ -342,7 +264,6 @@ response_t WallController::get_user_wall(request_t request) {
 // 	}
 // 	else {
 // 		auto user_walls = user_and_wall->find(std::format("id_user={}", id_user));
->>>>>>> eb1fc07 (New change of wall)
 		
 // 		for (const auto& wall : user_walls) 
 // 		{
@@ -411,28 +332,5 @@ response_t WallController::get_walls_user(request_t request) {
 		json.emplace_back(obj_wall);
 	}
 
-	// return wall его
 	return response()->json(json);
-<<<<<<< HEAD
-
-
-}
-
-response_t WallController::get_currency_list(request_t request) {
-	auto set_wall = request->input("id_wall");
-	auto wall_date = wall->find(std::format("id={}", set_wall));
-
-	if (wall_date.size() == 0) {
-		return response()->json("wall not found")->set_status(http::status::not_found);
-	}
-
-
-
-
-
-	return response()->json("data");
-
-
-=======
->>>>>>> eb1fc07 (New change of wall)
 }
