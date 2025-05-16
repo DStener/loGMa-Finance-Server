@@ -10,6 +10,7 @@ public:
 			"icon INTEGER",
 			"name VARCHAR(255) NOT NULL",
 			"id_wall INTEGER NOT NULL REFERENCES wall(id)",
+			"limits BIGINT NOT NULL",
 			});
 	}
 };

@@ -207,8 +207,30 @@ response_t WallController::get_category_wall(request_t request) {
 
 
 response_t WallController::get(request_t request){
-	
-	return response()->json("Data");
+	auto wall_id = request->input("wall_id");
+
+	auto size_wall = wall->find(std::format("id={}", wall_id));
+	json::array json;
+
+
+	if (size_wall.size() == 0) {
+		return response()->json("wall not found!");
+	}
+	else {
+		for (size_t i = 0; i < size_wall.size(); i++)
+		{
+			json::object obj;
+			for (size_t j = 0; j < size_wall[i].size(); j++)
+			{
+				obj[size_wall[i][j].first] = size_wall[i][j].second;
+			}
+			json.emplace_back(obj);
+
+		}
+	}
+
+	return response()->json(json);
+
 }
 
 response_t WallController::delete_(request_t request) {

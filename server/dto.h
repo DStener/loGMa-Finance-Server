@@ -85,6 +85,11 @@ struct CreateCategoryDTO {
   std::string id_wall;
 };
 
+struct UpdateCategoryLimitsDTO {
+  std::string id_category;
+  std::string new_limit;
+};
+
 struct UpdateCategoryDTO {
   std::string icon;
   std::string name;

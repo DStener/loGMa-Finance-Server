@@ -41,7 +41,7 @@
 
 using namespace isce;
 
-//void Migration() {
+void Migration() {
 //
 //	// 0 users
 //	MigrationUser::up();
@@ -67,8 +67,8 @@ using namespace isce;
 //	WallSeeder::run();
 //
 //	// 6 category
-//	MigrationCategory::up();
-//	CategorySeeder::run();
+		MigrationCategory::up();
+		CategorySeeder::run();
 //
 //	// 7 user and wall migration
 //	MigrationUserAndWall::up();
@@ -85,7 +85,7 @@ using namespace isce;
 //	// 10 rule_auto_add
 //	MigrationRuleAutoAdd::up();
 //	RuleAutoAddSeeder::run();
-//}
+}
 
 int main() {
 #ifdef _WIN32
@@ -96,7 +96,7 @@ int main() {
 	app()->config(CONFIG_PATH);
 	app()->default_response(sys::StaticFile::finde);
 
-	/*Migration();*/
+	//Migration();
 
 	app()->run();
 

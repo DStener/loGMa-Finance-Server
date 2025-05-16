@@ -39,6 +39,7 @@ void Route::up() {
     Route::put("/",CategoryController::update),
     Route::get("/",CategoryController::get),
     Route::delete_("/delete",CategoryController::delete_),
+    Route::post("/set_l", CategoryController::set_limit),
     });
   Route::prefix("api/opreation")->middleware({})->group({
     // opreation
