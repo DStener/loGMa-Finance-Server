@@ -14,7 +14,7 @@ response_t OperationController::create(request_t request) {
 	OperationDTO dto_oper {
 		request->input("value"),
 		request->input("description"),
-		request->input("id_currency"),
+		request->input("iso_currency"),
 		std::to_string(login.id),
 		request->input("time"),
 	};
@@ -43,7 +43,7 @@ response_t OperationController::create(request_t request) {
 response_t OperationController::update(request_t request) {
 	OperationUpdateDTO update{
 									request->input("value_new"),
-									request->input("id_currency_new"),
+									request->input("iso_currency_new"),
 									request->input("id_user_new")};
 
 	conditionsDTO condition = { request->input("id") };
@@ -51,7 +51,7 @@ response_t OperationController::update(request_t request) {
 	auto temp = operation->update(
 		{
 			std::format("value={}", update.value),
-			std::format("id_currency={}", update.id_currency),
+			std::format("iso_currency={}", update.iso_currency),
 			std::format("id_user={}",update.id_user)
 		},
 	{

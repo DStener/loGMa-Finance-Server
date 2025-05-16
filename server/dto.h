@@ -32,7 +32,7 @@ struct BankRequestDTO {
 
 struct OperationUpdateDTO {
   std::string value;
-  std::string id_currency;
+  std::string iso_currency;
   std::string id_user;
 };
 

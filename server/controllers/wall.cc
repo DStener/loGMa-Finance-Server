@@ -461,15 +461,66 @@ response_t WallController::get_sum_operation_wall(request_t request) {
 
 	}
 
-// sum(currancy) convert sum 
+response_t WallController::get_summ_anothers_curr(request_t request) {
+	auto id_wall = request->input("id_wall");
 
-//response_t WallController::get_sum_operation_convert_default_curr(request_t request) {
-//	auto id_wall = request->input("id_wall");
-//
-//	auto wall_id = wall->find(std::format("id={}", id_wall));
-//
-//	if (wall_id.size() == 0) {
-//		return response()->json("wall not found")->set_status(http::status::not_found);
-//	}
-//
-//}
+	auto wall_id = wall->find(std::format("id={}", id_wall));
+
+	if (wall_id.size() == 0) {
+		return response()->json("wall not found")->set_status(http::status::not_found);
+	}
+	auto default_curr = wall_id[0][5].second;
+
+	if (default_curr != "rub") {
+		auto operation_wall = operation_and_wall->find(std::format("id_wall={}", id_wall));
+		json::array json;
+
+		std::vector<std::string> operations;
+
+		for (const auto& operation : operation_wall)
+		{
+			for (const auto& pair : operation)
+			{
+				if (pair.first == "id_operation") {
+					operations.push_back(pair.second);
+					break;
+				}
+			}
+		}
+
+		std::vector<int>value;
+
+		if (operations.size() != 0) {
+			for (size_t i = 0; i < operations.size(); i++)
+			{
+				auto operation_value = operation->find(std::format("id={}", operations[i]));
+				for (const auto& o : operation_value) {
+					for (const auto& pair : o)
+					{
+						if (pair.first == "value") {
+							value.push_back(std::stoi(pair.second));
+						}
+					}
+				}
+			}
+		}
+		
+		/*for (size_t i = 0; i < value.size(); i++)
+		{
+			json::object obj;
+			if (value[i] > 0) {
+				obj["deposit"] = value[i];
+			}
+			else if(value[i] < 0) {
+				obj
+			}
+		}
+		*/
+
+	}
+	else {
+		return response()->json("some data");
+	}
+
+
+}
