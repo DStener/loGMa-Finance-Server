@@ -12,7 +12,6 @@ public:
 			"iso_currency VARCHAR(3) NOT NULL",
 			"id_user INTEGER NULL",
 			"time TIMESTAMP DEFAULT NOW()"
-			"currancy"
 			});
 	}
 };

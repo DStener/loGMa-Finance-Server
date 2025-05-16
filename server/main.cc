@@ -13,10 +13,6 @@
 #include "seeders/__all__.h"
 
 
-// TEST
-//#include "migration/currency_and_wall_migration.h"
-//#include "seeders/currency_and_wall_seeder.h"
-
 using namespace isce;
 
 int main() {
@@ -29,10 +25,9 @@ int main() {
 	app()->default_response(sys::StaticFile::finde);
 
 
-	/*UP_ALL_MIGARTION
-	RUN_ALL_SEEDERS*/
-	// MigrationCurrencyAndWall::up();
-	// CurrencyAndWallSeeder::run();
+	UP_ALL_MIGARTION
+	RUN_ALL_SEEDERS
+	
 
 
 	app()->run();
