@@ -14,6 +14,8 @@
 #include <models/Currancy.h>
 #include <math.h>
 #include <numeric>
+#include "bank.h"
+#include "cbank.h"
 
 response_t WallController::create(request_t request) {
 
@@ -388,7 +390,7 @@ response_t WallController::get_currency_list(request_t request) {
 }
 
 
-response_t WallController::get_sum_operation_wall(request_t request){
+response_t WallController::get_sum_operation_wall(request_t request) {
 	auto id_wall = request->input("id_wall");
 
 	auto wall_id = wall->find(std::format("id={}", id_wall));
@@ -428,21 +430,46 @@ response_t WallController::get_sum_operation_wall(request_t request){
 				}
 			}
 		}
-		int s = std::reduce(sum.begin(), sum.end(), 0);
 
-		for (size_t i = 0; i < sum.size(); i++)
-		{
-			std::cout << sum[i] << std::endl;
-		}
+	auto default_curr = wall_id[0][5].second;
 
-		json::object obj;
+	std::cout << default_curr << std::endl; 
+	int s = std::reduce(sum.begin(), sum.end(), 0);
+
+	json::object obj;
+
+	if (default_curr == "rub") {
 		obj["sum"] = std::to_string(s);
-
 		return response()->json(obj);
+		}
+		else {
+			BankRequestDTO rate = { default_curr, "17.05.2025" };
+			std::unique_ptr<sys::CBank>bank = std::make_unique<sys::CBank>(rate.date);
+			bank->start_work();
+			std::string currancy = bank->get_currency(rate.iso);
+			int currancy_sum = s * std::stof(currancy);
 
+			obj["sum"] = std::to_string(currancy_sum);
+
+			return response()->json(obj);
+
+		}
 	}
 
 
-	return response()->json("some data");
+		return response()->json("some data");
 
-}
+	}
+
+// sum(currancy) convert sum 
+
+//response_t WallController::get_sum_operation_convert_default_curr(request_t request) {
+//	auto id_wall = request->input("id_wall");
+//
+//	auto wall_id = wall->find(std::format("id={}", id_wall));
+//
+//	if (wall_id.size() == 0) {
+//		return response()->json("wall not found")->set_status(http::status::not_found);
+//	}
+//
+//}

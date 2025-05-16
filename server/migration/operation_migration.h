@@ -12,6 +12,7 @@ public:
 			"id_currency INTEGER NULL",
 			"id_user INTEGER NULL",
 			"time TIMESTAMP DEFAULT NOW()"
+			"currancy"
 			});
 	}
 };

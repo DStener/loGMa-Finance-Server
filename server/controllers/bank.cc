@@ -6,6 +6,8 @@
 #include "systems/cbank.h"
 
 
+
+
 response_t Bank::get_rate(request_t request) {
 	
 	BankRequestDTO req = { request->input("ISO"), request->input("date")};
@@ -23,3 +25,4 @@ response_t Bank::get_rate(request_t request) {
 
 	return response()->json(currancy);
 }
+

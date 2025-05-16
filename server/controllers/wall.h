@@ -21,4 +21,6 @@ public:
 	static response_t get_walls_user(request_t request);
 	static response_t get_currency_list(request_t request);
 	static response_t get_sum_operation_wall(request_t request);
+	static response_t get_sum_operation_convert_default_curr(request_t request);
+
 };
