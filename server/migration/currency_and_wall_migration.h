@@ -1,7 +1,7 @@
-﻿#include <isce/Schema.h>
+﻿#pragma once
+
+#include <isce/Schema.h>
 #include "Migration.h"
-
-
 
 class MigrationCurrencyAndWall : public Migration {
 public:

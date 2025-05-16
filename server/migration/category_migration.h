@@ -1,7 +1,7 @@
+#pragma once
+
 #include <isce/Schema.h>
 #include "Migration.h"
-
-
 
 class MigrationCategory : public Migration {
 public:
