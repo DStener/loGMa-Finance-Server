@@ -11,7 +11,7 @@
 #include "migration/operation_and_category_migration.h"
 #include "migration/wall_migraion.h"
 #include "migration/file_migration.h"
-//#include "migration/currency_and_wall_migration.h"
+#include "migration/currency_and_wall_migration.h"
 
 #define UP_ALL_MIGARTION AllMigration::up();
 
@@ -30,6 +30,6 @@ public:
         MigrationOperationAndWall::up();        // 8 operation_and_wall
         MigrationOperationAndCategory::up();    // 9 operation and category
         MigrationRuleAutoAdd::up();             // 10 rule_auto_add
-        /*MigrationCurrencyAndWall::up(); */        // 11 currency_and_wall
+        MigrationCurrencyAndWall::up();         // 11 currency_and_wall
     }
 };

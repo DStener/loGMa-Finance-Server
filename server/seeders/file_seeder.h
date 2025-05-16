@@ -1,11 +1,9 @@
-﻿#include "isce/Model.h"
+﻿#pragma once
+
+#include "isce/Model.h"
 #include "seeder.h"
 #include <libpq-fe.h>
 #include <isce/Framework.h>
-
-
-
-
 
 class FileSeeder : public Seeder{
 public:

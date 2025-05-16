@@ -1,7 +1,8 @@
+#pragma once
+
 #include "isce/Model.h"
 #include "seeder.h"
 #include <libpq-fe.h>
-
 
 class CategorySeeder : public Seeder{
 public:
