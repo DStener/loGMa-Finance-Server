@@ -54,3 +54,4 @@ void Route::up() {
   });
 
 }
+

@@ -56,7 +56,7 @@ void Migration() {
 	FileSeeder::run();
 
 	// 3 currency 
-	MigrationСurrency::up();
+	MigrationCurrency::up();
 	СurrencySeeder::run();
 
 	// 4 operaion 
