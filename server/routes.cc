@@ -27,25 +27,25 @@ void Route::up() {
 
   Route::prefix("api/wall")->middleware({})->group({
 
-    Route::post("/", WallController::create),
-    Route::put("/", WallController::update),
-    Route::get("/", WallController::get),
+    Route::post("/create", WallController::create),
+    Route::put("/update", WallController::update),
+    Route::get("/get", WallController::get),
     Route::delete_("/delete",WallController::delete_),
     Route::post("/my", WallController::get_user_wall),
     Route::post("/operations", WallController::get_operation_wall),
     });
   Route::prefix("api/category")->middleware({})->group({
     // category
-    Route::post("/",CategoryController::create),
-    Route::put("/",CategoryController::update),
-    Route::get("/",CategoryController::get),
+    Route::post("/create",CategoryController::create),
+    Route::put("/update",CategoryController::update),
+    Route::get("/get",CategoryController::get),
     Route::delete_("/delete",CategoryController::delete_),
     });
   Route::prefix("api/opreation")->middleware({})->group({
     // opreation
-    Route::post("/", OperationController::create),
-    Route::put("/", OperationController::update),
-    Route::get("/", OperationController::get),
+    Route::post("/create", OperationController::create),
+    Route::put("/update", OperationController::update),
+    Route::get("/get", OperationController::get),
     Route::delete_("/delete", OperationController::delete_)
 
     });
