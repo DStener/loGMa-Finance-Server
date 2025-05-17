@@ -94,7 +94,7 @@ response_t CategoryController::set_limit(request_t request) {
 		return response()->json("category not found");
 	}
 	else {
-		 /*current limit*/
+		 
 		for (const auto& current_limit : id_category)
 		{
 			for (const auto& pair : current_limit) {
