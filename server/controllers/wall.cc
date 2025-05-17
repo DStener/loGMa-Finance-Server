@@ -522,5 +522,5 @@ response_t WallController::get_summ_anothers_curr(request_t request) {
 		return response()->json("some data");
 	}
 
-
+	return response()->json("some data");
 }
