@@ -123,16 +123,19 @@ response_t WallController::get_user_wall(request_t request) {
 }
 
 response_t WallController::get_operation_wall(request_t request) {
-	OperationAndWallDTO get{ request->input("id_wall") };
-	auto id_wall = operation_and_wall->find(std::format("id_wall={}", get.id_wall));
+	const auto id_wall = request->input("id_wall");
+	
+	std::cout << id_wall << std::endl;
+
+	auto vec_oper_wall = operation_and_wall->find(std::format("id_wall={}", id_wall));
 	std::vector<std::string>operations;
 
-	if (id_wall.size() == 0) {
+	if (vec_oper_wall.size() == 0) {
 		return response()->json("wall not found")
 						 ->set_status(http::status::not_found);
 	}
 	else {
-		for (const auto& wall_group : id_wall)
+		for (const auto& wall_group : vec_oper_wall)
 		{
 			for (const auto& pair : wall_group)
 			{
@@ -142,7 +145,6 @@ response_t WallController::get_operation_wall(request_t request) {
 				}
 			}
 		}
-
 	}
 
 	json::array json;
