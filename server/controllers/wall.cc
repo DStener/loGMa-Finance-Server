@@ -100,28 +100,26 @@ response_t WallController::get_user_wall(request_t request) {
 	const auto login = sys::Login(request);
 	LOGIN_CHECK_ERROR(login)
 
-	auto find_wall_id = user_and_wall->find<UserToWallDTO>(std::format("id_user={}", login.id));
-	if(find_wall_id.empty()) { return response()->json("json"); }
+	auto find_wall_id = user_and_wall->find(std::format("id_user={}", login.id));
+	auto wall_id = find_wall_id[0][2].second;
 
-	// auto wall_id = find_wall_id[0][2].second;
+	auto find_data = wall->find(std::format("id={}", wall_id));
 
-	// auto find_data = wall->find(std::format("id={}", wall_id));
+	std::string data;
 
-	// std::string data;
+	json::array json;
 
-	// json::array json;
+	for (size_t i = 0; i < find_data.size(); i++)
+	{
+		json::object obj;
+		for (size_t j = 0; j < find_data[i].size(); j++)
+		{
+			obj[find_data[i][j].first] = find_data[i][j].second;
+		}
+		json.emplace_back(std::move(obj));
+	}
 
-	// for (size_t i = 0; i < find_data.size(); i++)
-	// {
-	// 	json::object obj;
-	// 	for (size_t j = 0; j < find_data[i].size(); j++)
-	// 	{
-	// 		obj[find_data[i][j].first] = find_data[i][j].second;
-	// 	}
-	// 	json.emplace_back(std::move(obj));
-	// }
-
-	return response()->json("json");
+	return response()->json(json);
 }
 
 response_t WallController::get_operation_wall(request_t request) {

@@ -24,9 +24,9 @@ response_t OperationController::create(request_t request) {
 	const auto id_wall = request->input("id_wall");
 	const auto id = operation->create(dto_oper);
 
-	// if (!id_wall.empty()) {
-	// 	operation_and_wall->create({ "id_opreation", "id_wall" }, { std::to_string(id), id_wall });
-	// }
+	if (!id_wall.empty()) {
+		operation_and_wall->create({ "id_operation", "id_wall" }, { std::to_string(id), id_wall });
+	}
 
 	json::object json = { {"id", std::to_string(id)} };
 
