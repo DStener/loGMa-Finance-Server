@@ -17,7 +17,7 @@ struct OperationCreateDTO {
 struct OperationDTO {
   std::string value;
   std::string description;
-  std::string id_currency;
+  std::string iso_currency;
   std::string id_user;
   std::string time;
 };
@@ -115,7 +115,6 @@ struct UpdateDTO {
 struct conditionsDTO {
   std::string id;
 };
-
 
 struct GetDTO {
   std::string name;
