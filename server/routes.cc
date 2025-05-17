@@ -8,6 +8,7 @@
 #include "bank.h"
 #include "operation.h"
 #include "file.h"
+#include "controllers/user_.h"
 
 using namespace isce;
 
@@ -17,13 +18,16 @@ void Route::up() {
     Route::post("/login", Auth::login),
     Route::post("/reg", Auth::registration),
     Route::get("/me", Auth::me),
-    Route::put("/me", Auth::update),
     Route::post("/out", Auth::out),
     Route::post("/out/{id}", Auth::out),
     Route::post("/out_all", Auth::out_all),
     Route::get("/sessions", Auth::sessions),
+  });
 
-    });
+  Route::prefix("api/user")->middleware({})->group({
+    Route::get("/avatar", UserCNT::avatar),
+    Route::put("/update", UserCNT::update),
+  });
 
   Route::prefix("api/wall")->middleware({})->group({
 
@@ -34,6 +38,10 @@ void Route::up() {
     Route::get("/my", WallController::get_user_wall),
     Route::get("/operations", WallController::get_operation_wall),
     Route::get("/walls", WallController::get_walls_user),
+    Route::get("/c_wall", WallController::get_category_wall),
+    Route::get("/c", WallController::get_currency_list),
+    Route::get("/sum", WallController::get_sum_operation_wall),
+    Route::get("/g_curr", WallController::get_currency),
     });
   Route::prefix("api/category")->middleware({})->group({
     // category

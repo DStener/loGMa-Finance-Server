@@ -12,6 +12,7 @@
 #include "migration/__all__.h"
 #include "seeders/__all__.h"
 
+
 using namespace isce;
 
 int main() {
@@ -23,8 +24,11 @@ int main() {
 	app()->config(CONFIG_PATH);
 	app()->default_response(sys::StaticFile::finde);
 
+
 	UP_ALL_MIGARTION
 	RUN_ALL_SEEDERS
+	
+
 
 	app()->run();
 

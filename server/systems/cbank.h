@@ -64,6 +64,31 @@ public:
 
     return "";
   }
+
+  std::vector<std::string> get_all_iso_codes() {
+    std::vector<std::string> iso_codes;
+
+    try {
+      for (const auto& v : currencies.get_child("ValCurs")) {
+        if (v.first != "Valute") {
+          continue;
+        }
+
+        const auto& value = v.second;
+        std::string code_iso = value.get<std::string>("CharCode");
+
+        if (!code_iso.empty()) {
+          iso_codes.push_back(code_iso);
+        }
+      }
+    }
+    catch (const std::exception& e) {
+      std::cerr << "error: " << e.what() << std::endl;
+    }
+
+    return iso_codes;
+  }
+
   
   CBank(std::string date) {
     this->date = date;

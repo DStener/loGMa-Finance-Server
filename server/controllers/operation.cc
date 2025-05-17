@@ -14,7 +14,7 @@ response_t OperationController::create(request_t request) {
 	OperationDTO dto_oper {
 		request->input("value"),
 		request->input("description"),
-		request->input("id_currency"),
+		request->input("iso_currency").substr(0,3),
 		std::to_string(login.id),
 		request->input("time"),
 	};
@@ -24,9 +24,9 @@ response_t OperationController::create(request_t request) {
 	const auto id_wall = request->input("id_wall");
 	const auto id = operation->create(dto_oper);
 
-	// if (!id_wall.empty()) {
-	// 	operation_and_wall->create({ "id_opreation", "id_wall" }, { std::to_string(id), id_wall });
-	// }
+	if (!id_wall.empty()) {
+		operation_and_wall->create({ "id_operation", "id_wall" }, { std::to_string(id), id_wall });
+	}
 
 	json::object json = { {"id", std::to_string(id)} };
 
@@ -43,7 +43,7 @@ response_t OperationController::create(request_t request) {
 response_t OperationController::update(request_t request) {
 	OperationUpdateDTO update{
 									request->input("value_new"),
-									request->input("id_currency_new"),
+									request->input("iso_currency_new"),
 									request->input("id_user_new")};
 
 	conditionsDTO condition = { request->input("id") };
@@ -51,7 +51,7 @@ response_t OperationController::update(request_t request) {
 	auto temp = operation->update(
 		{
 			std::format("value={}", update.value),
-			std::format("id_currency={}", update.id_currency),
+			std::format("iso_currency={}", update.iso_currency),
 			std::format("id_user={}",update.id_user)
 		},
 	{

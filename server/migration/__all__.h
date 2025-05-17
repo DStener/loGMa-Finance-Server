@@ -11,7 +11,7 @@
 #include "migration/operation_and_category_migration.h"
 #include "migration/wall_migraion.h"
 #include "migration/file_migration.h"
-
+#include "migration/currency_and_wall_migration.h"
 
 #define UP_ALL_MIGARTION AllMigration::up();
 
@@ -22,7 +22,7 @@ public:
         MigrationUser::up();                    // 0 users
         MigrationToken::up();                   // 1 token
         MigrationFiles::up();                   // 2 file
-        MigrationСurrency::up();                // 3 currency 
+        MigrationCurrency::up();                // 3 currency 
         MigrationOperation::up();               // 4 operaion 
         MigrationWall::up();                    // 5 wall
         MigrationCategory::up();                // 6 category
@@ -30,6 +30,6 @@ public:
         MigrationOperationAndWall::up();        // 8 operation_and_wall
         MigrationOperationAndCategory::up();    // 9 operation and category
         MigrationRuleAutoAdd::up();             // 10 rule_auto_add
-        
+        MigrationCurrencyAndWall::up();         // 11 currency_and_wall
     }
 };

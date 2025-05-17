@@ -17,7 +17,7 @@ struct OperationCreateDTO {
 struct OperationDTO {
   std::string value;
   std::string description;
-  std::string id_currency;
+  std::string iso_currency;
   std::string id_user;
   std::string time;
 };
@@ -32,7 +32,7 @@ struct BankRequestDTO {
 
 struct OperationUpdateDTO {
   std::string value;
-  std::string id_currency;
+  std::string iso_currency;
   std::string id_user;
 };
 
@@ -85,6 +85,8 @@ struct CreateDTO {
   std::string name;
   std::string is_group;
   std::string is_public;
+  std::string lim;
+  std::string default_currancy;
 };
 
 struct CreateCategoryDTO {
@@ -113,7 +115,6 @@ struct UpdateDTO {
 struct conditionsDTO {
   std::string id;
 };
-
 
 struct GetDTO {
   std::string name;

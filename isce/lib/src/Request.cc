@@ -126,6 +126,9 @@ std::string Request::input(std::string_view&& data) {
   
 
   // [ 1 VARIANT ] : Finde in target path as regex var. Like "/test/{id}"
+  for(const auto test: _vars) {
+    
+  }
   auto it = std::find_if(_vars.begin(), _vars.end(), [&](const var_t& var) {
     return var.first == data; });
   if (it != _vars.end()) { return std::get<1>(*it); }

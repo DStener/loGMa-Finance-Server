@@ -15,4 +15,6 @@ public:
 	static response_t get(request_t request);
 	static response_t delete_(request_t request);
 	static response_t set_limit(request_t request);
+	static response_t sum_all_operation(request_t request);
+
 };

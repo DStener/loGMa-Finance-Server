@@ -29,7 +29,7 @@ using response_vec_t = std::vector<row_t>;
 		std::string error = std::format("{}, func {}(), line {}: {}", 		 \
 																		__FILE__, __FUNCTION__, __LINE__,  \
 																		PQerrorMessage(Model::get_connection()));\
-		throw std::runtime_error(error);																	 \
+		std::cerr << error << std::endl;													 \
 	}
 
 #define DB_CHECK_MESSAGE(condition)                                    \
@@ -51,116 +51,155 @@ public:
   }
 
   size_t create(std::vector<std::string>columns, std::vector<std::string>parameters) {
-
-    if (columns.size() != parameters.size()) {
-      std::cerr << "Error number of columns and parameters must match" << std::endl;
-      return 1;
-    }
-
-    std::string query = std::format("INSERT INTO {} ({}) VALUES ('{}') RETURNING id",
-                                    table_name_,
-                                    boost::join(columns, ", "),
-                                    boost::join(parameters, "', '"));
-
-
-    PGresult* res = PQexec(connection, query.c_str());
-    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
-
-    auto id = PQgetvalue(res, 0, 0);
-
     try {
-      return std::stoul(id);
-    }
-    catch (const std::invalid_argument& e) {
-      PQclear(res);
+      if (columns.size() != parameters.size()) {
+        std::cerr << "Error number of columns and parameters must match" << std::endl;
+        return 1;
+      }
 
-      std::cerr << "error" << e.what() << std::endl;
-      throw std::runtime_error("Invalid id format returned");
-    }
+      std::string query = std::format("INSERT INTO {} ({}) VALUES ('{}') RETURNING id",
+        table_name_,
+        boost::join(columns, ", "),
+        boost::join(parameters, "', '"));
 
+
+      PGresult* res = PQexec(connection, query.c_str());
+      DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
+
+        auto id = PQgetvalue(res, 0, 0);
+
+      try {
+        return std::stoul(id);
+      }
+      catch (const std::invalid_argument& e) {
+        PQclear(res);
+
+        std::cerr << "error" << e.what() << std::endl;
+        throw std::runtime_error("Invalid id format returned");
+      }
+
+    
+    }
+    catch (std::exception e) {
+      std::cerr << "error: " << e.what() << std::endl;
+      return {};
+
+    }
+    
   }
 
   bool update(std::vector<std::string> new_values, std::vector<std::string> conditions) {
-    std::string query = "UPDATE " + table_name_ + " SET ";
+    try {
 
-    for (size_t i = 0; i < new_values.size(); ++i) {
-      query += new_values[i];
-      if (i != new_values.size() - 1)
-        query += ", ";
+      std::string query = "UPDATE " + table_name_ + " SET ";
+
+      for (size_t i = 0; i < new_values.size(); ++i) {
+        query += new_values[i];
+        if (i != new_values.size() - 1)
+          query += ", ";
+      }
+
+      query += " WHERE ";
+
+      for (size_t i = 0; i < conditions.size(); ++i) {
+        query += conditions[i];
+        if (i != conditions.size() - 1)
+          query += " AND ";
+      }
+
+      query += ";";
+
+      PGresult* res = PQexec(connection, query.c_str());
+      DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK)
+
+        auto update_str = std::stoi(PQcmdTuples(res));
+
+      PQclear(res);
+      return update_str > 0;
     }
+    catch (std::exception e) {
+      std::cerr << "error: " << e.what() << std::endl;
+      return {};
 
-    query += " WHERE ";
-
-    for (size_t i = 0; i < conditions.size(); ++i) {
-      query += conditions[i];
-      if (i != conditions.size() - 1)
-        query += " AND ";
     }
-
-    query += ";";
-
-    PGresult* res = PQexec(connection, query.c_str());
-    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK)
-
-    auto update_str = std::stoi(PQcmdTuples(res));
-
-    PQclear(res);
-    return update_str > 0;
   }
 
   bool delete_(std::string condition) {
-    std::string query = "DELETE FROM " + table_name_ + " WHERE id=" + condition + ';'; 
+    try {
+      std::string query = "DELETE FROM " + table_name_ + " WHERE id=" + condition + ';';
 
-    PGresult* res = PQexec(connection, query.c_str());
-    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK)
+      PGresult* res = PQexec(connection, query.c_str());
+      DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK)
 
-    auto delete_str = std::stoi(PQcmdTuples(res));
+        auto delete_str = std::stoi(PQcmdTuples(res));
 
-    PQclear(res);
-    return delete_str > 0;
+      PQclear(res);
+      return delete_str > 0;
+    }
+    catch (std::exception e) {
+      std::cerr << "error: " << e.what() << std::endl;
+      return {};
+
+    }
   }
   bool cdelete(std::string condition) {
-    std::string query = std::format("DELETE FROM {} WHERE {};",
-                                    table_name_, condition);
+    try {
 
-    PGresult* res = PQexec(connection, query.c_str());
-    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK)
+      std::string query = std::format("DELETE FROM {} WHERE {};",
+        table_name_, condition);
 
-    auto delete_str = std::stoi(PQcmdTuples(res));
+      PGresult* res = PQexec(connection, query.c_str());
+      DB_CHECK_ERROR(PQresultStatus(res) != PGRES_COMMAND_OK)
 
-    PQclear(res);
-    return delete_str > 0;
+        auto delete_str = std::stoi(PQcmdTuples(res));
+
+      PQclear(res);
+      return delete_str > 0;
+    }
+    catch (std::exception e) {
+      std::cerr << "error: " << e.what() << std::endl;
+      return {};
+
+    }
   }
 
   response_vec_t find(std::string condition) {
-    std::string query = "SELECT * FROM " + table_name_ + " WHERE " + condition + ";";
+    try {
 
-    PGresult* res = PQexec(connection, query.c_str());
-    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
+      std::string query = "SELECT * FROM " + table_name_ + " WHERE " + condition + ";";
 
-    response_vec_t vec;
+      PGresult* res = PQexec(connection, query.c_str());
+      DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
+
+        response_vec_t vec;
 
 
-    int rows = PQntuples(res);
-    int cols = PQnfields(res);
+      int rows = PQntuples(res);
+      int cols = PQnfields(res);
 
-    for (size_t i = 0; i < rows; i++)
-    {
-      row_t row; 
-      for (size_t j = 0; j < cols; j++)
+      for (size_t i = 0; i < rows; i++)
       {
-        auto value = PQgetvalue(res, i, j);
-        auto field = PQfname(res, j);
+        row_t row;
+        for (size_t j = 0; j < cols; j++)
+        {
+          auto value = PQgetvalue(res, i, j);
+          auto field = PQfname(res, j);
 
-        row.push_back(std::make_pair(field, value));
+          row.push_back(std::make_pair(field, value));
+        }
+
+        vec.push_back(row);
+
       }
 
-      vec.push_back(row);
+      PQclear(res);
+      return vec;
+    }
+    catch (std::exception e) {
+      std::cerr << "some error" << e.what() << std::endl;
+      return {};
 
     }
-
-    PQclear(res);
-    return vec;
   }
 
   bool where_(std::string column, std::string parameter) {
@@ -171,7 +210,7 @@ public:
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
       std::cout << PQerrorMessage(Model::get_connection()) << std::endl;
       PQclear(res);
-      throw std::runtime_error("user not found");
+      throw std::runtime_error("error");
     }
 
     int rows = PQntuples(res);
@@ -209,91 +248,115 @@ public:
 
   template <typename T>
   size_t create(const T& t) {
+    try {
 
-    std::vector<std::string> colums;
-    std::vector<std::string> values;
 
-    DTO::for_each(t, [&](std::string_view&& name, auto& field) {
+      std::vector<std::string> colums;
+      std::vector<std::string> values;
 
-      const auto value = DTO::to_string(field);
+      DTO::for_each(t, [&](std::string_view&& name, auto& field) {
 
-      if(value == "''") { return; }
+        const auto value = DTO::to_string(field);
 
-      colums.push_back(std::string{name});
-      values.push_back(value);
-    });
+        if (value == "''") { return; }
 
-    std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",
-                                    table_name_,
-                                    boost::join(colums, ", "),
-                                    boost::join(values, ", "));
+        colums.push_back(std::string{ name });
+        values.push_back(value);
+        });
 
-    PGresult* res = PQexec(connection, query.c_str());
-    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
+      std::string query = std::format("INSERT INTO {} ({}) VALUES ({}) RETURNING id",
+        table_name_,
+        boost::join(colums, ", "),
+        boost::join(values, ", "));
 
-    auto id = PQgetvalue(res, 0, 0);
+      PGresult* res = PQexec(connection, query.c_str());
+      DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
 
-    PQclear(res);
-    return std::stoul(id);
+        auto id = PQgetvalue(res, 0, 0);
+
+      PQclear(res);
+      return std::stoul(id);
+    }
+    catch (std::exception e) {
+      std::cerr << "error: " << e.what() << std::endl;
+      return {};
+
+    }
   }
 
   template <typename T>
   std::string update(const T& t, std::string condition) {
-    std::vector<std::string> assigs;
+    try {
 
-    DTO::for_each(t, [&](std::string_view&& name, auto& field) {
+      std::vector<std::string> assigs;
 
-      const auto value = DTO::to_string(field);
+      DTO::for_each(t, [&](std::string_view&& name, auto& field) {
 
-      if(value.empty()) { return; }
+        const auto value = DTO::to_string(field);
 
-      assigs.push_back(std::format("{} = {}", name.data(), value));
-    });
+        if (value.empty()) { return; }
 
-    std::string query = std::format("UPDATE {} SET {} WHERE {};",
-                                    table_name_,
-                                    boost::join(assigs, ", "),
-                                    condition);
+        assigs.push_back(std::format("{} = {}", name.data(), value));
+        });
 
-    PGresult* res = PQexec(connection, query.c_str());
-    DB_CHECK_MESSAGE(PQresultStatus(res) != PGRES_COMMAND_OK)
+      std::string query = std::format("UPDATE {} SET {} WHERE {};",
+        table_name_,
+        boost::join(assigs, ", "),
+        condition);
 
-    return {};
+      PGresult* res = PQexec(connection, query.c_str());
+      DB_CHECK_MESSAGE(PQresultStatus(res) != PGRES_COMMAND_OK)
+
+        return {};
+    }
+    catch (std::exception e) {
+      std::cerr << "error: " << e.what() << std::endl;
+      return {};
+
+    }
   }
 
   template<typename T>
   resp_vec_t<T> find(std::string condition) {
+    try {
 
-    resp_vec_t<T> out;
-    std::string query = std::format("SELECT *, id as id_db FROM {} WHERE {}",
-                                    table_name_, condition);
 
-    PGresult* res = PQexec(connection, query.c_str());
-    DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
+      resp_vec_t<T> out;
+      std::string query = std::format("SELECT *, id as id_db FROM {} WHERE {}",
+        table_name_, condition);
 
-    int rows = PQntuples(res);
-    int cols = PQnfields(res);
+      PGresult* res = PQexec(connection, query.c_str());
+      DB_CHECK_ERROR(PQresultStatus(res) != PGRES_TUPLES_OK)
 
-    for (int i = 0; i < rows; ++i) {
-      T t;
+        int rows = PQntuples(res);
+      int cols = PQnfields(res);
 
-      DTO::for_each(t, [&](std::string_view&& name, auto& field) {
-        int index = PQfnumber(res, name.data());
-        if (index == -1) { return; } // if not found
+      for (int i = 0; i < rows; ++i) {
+        T t;
 
-        const auto value = PQgetvalue(res, i, index);
-        // std::cout << 
+        DTO::for_each(t, [&](std::string_view&& name, auto& field) {
+          int index = PQfnumber(res, name.data());
+          if (index == -1) { return; } // if not found
 
-        field = value; // [FIXME]
-      });
+          const auto value = PQgetvalue(res, i, index);
+          // std::cout << 
 
-      int id_index = PQfnumber(res, "id_db");
-      const auto id = std::stol(PQgetvalue(res, i, id_index));
-      
-      out.push_back(std::make_pair(id, std::move(t)));
+          field = value; // [FIXME]
+          });
+
+        int id_index = PQfnumber(res, "id_db");
+        const auto id = std::stol(PQgetvalue(res, i, id_index));
+
+        out.push_back(std::make_pair(id, std::move(t)));
+      }
+
+      return out;
     }
+    catch (std::exception e) {
+      std::cerr << "error: " << e.what() << std::endl;
+      return {};
 
-    return out;
+    }
   }
 
 

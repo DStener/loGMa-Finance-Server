@@ -1,15 +1,15 @@
-﻿#include <isce/Schema.h>
+﻿#pragma once
+
+#include <isce/Schema.h>
 #include "Migration.h"
 
-
-
-class MigrationСurrency : public Migration {
+class MigrationCurrency : public Migration {
 public:
 	static void up() {
-		Schema::create("currency", {
-			"name VARCHAR(255) NOT NULL",
-			"sign CHAR NOT NULL UNIQUE",
-			});
+		// Schema::create("currency", {
+		// 	"name VARCHAR(255) NOT NULL",
+		// 	"sign CHAR NOT NULL UNIQUE",
+		// 	});
 	}
 };
 
