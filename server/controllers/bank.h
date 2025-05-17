@@ -10,5 +10,5 @@ using namespace isce;
 
 class Bank : public Controller {
 public:
-	static response_t get_rate(request_t request);
+	static response_t get_rate(request_t request); 
 };

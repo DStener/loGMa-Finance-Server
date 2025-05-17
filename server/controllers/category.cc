@@ -4,6 +4,7 @@
 #include <models/Wall.h>
 #include <models/CategoryAndWall.h>
 #include <string>
+#include <models/Operation.h>
 
 response_t CategoryController::create(request_t request) {
 
@@ -115,4 +116,12 @@ response_t CategoryController::set_limit(request_t request) {
 	}
 	return response()->json("error updated")->set_status(http::status::method_not_allowed);
 
+}
+
+// сумма всех операций с данной категорий
+
+response_t CategoryController::sum_all_operation(request_t request) {
+	
+
+	return response()->json("some data");
 }

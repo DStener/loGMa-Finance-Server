@@ -7,7 +7,6 @@
 
 
 
-
 response_t Bank::get_rate(request_t request) {
 	
 	BankRequestDTO req = { request->input("ISO"), request->input("date")};
