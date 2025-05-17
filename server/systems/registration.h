@@ -34,7 +34,9 @@ public:
         
         CreateDTO create{std::format("Wall of user {}", reg.login),
 						 "false",
-						 "false" };
+						 "false",
+                         "20000",
+                         "RUB"};
 
 
         const auto id_user = user->create(reg);
