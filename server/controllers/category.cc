@@ -5,6 +5,7 @@
 #include <models/CategoryAndWall.h>
 #include <string>
 #include <models/Operation.h>
+#include <models/CategoryAndOperation.h>
 
 response_t CategoryController::create(request_t request) {
 
@@ -121,7 +122,45 @@ response_t CategoryController::set_limit(request_t request) {
 // сумма всех операций с данной категорий
 
 response_t CategoryController::sum_all_operation(request_t request) {
-	
+	const auto id_category = request->input("id_category");
+	auto vec_category = category->find(std::format("id={}", id_category));
 
-	return response()->json("some data");
+	auto operations_vec = operation_and_category->find(std::format("id_category={}", id_category));
+
+	std::vector<std::string> id_operations;
+
+	for (size_t i = 0; i < operations_vec.size(); i++)
+	{
+		for (size_t j = 0; j < operations_vec[i].size(); j++)
+		{
+			if (operations_vec[i][j].first == "id_operation") {
+				id_operations.push_back(operations_vec[i][j].second);
+			}
+		}
+	}
+
+	json::array json;
+	if (id_operations.size() != 0) {
+		for (size_t i = 0; i < id_operations.size(); i++)
+		{
+			auto operations = operation->find(id_operations[i]);
+			for (size_t j = 0; j < operations.size(); j++)
+			{
+				json::object obj;
+				for (size_t k = 0; k < operations[j].size(); k++)
+				{
+					obj[operations[j][k].first] = operations[j][k].second;
+				}
+				json.emplace_back(obj);
+
+			}
+		}
+
+		return response()->json(json);
+
+	}
+
+
+
+	return response()->json("error");
 }
