@@ -85,8 +85,8 @@ struct CreateDTO {
   std::string name;
   std::string is_group;
   std::string is_public;
-  std::string limit;
-  std::string def_currancy;
+  std::string lim;
+  std::string default_currancy;
 };
 
 struct CreateCategoryDTO {
