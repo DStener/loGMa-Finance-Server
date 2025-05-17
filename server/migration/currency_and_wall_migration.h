@@ -6,10 +6,10 @@
 class MigrationCurrencyAndWall : public Migration {
 public:
 	static void up() {
-		Schema::create("currency_and_wall", {
-			"id_wall INTEGER NOT NULL REFERENCES wall(id)",
-			"iso_currency VARCHAR(3) NOT NULL",
-		});
+		// Schema::create("currency_and_wall", {
+		// 	"id_wall INTEGER NOT NULL REFERENCES wall(id)",
+		// 	"iso_currency VARCHAR(3) NOT NULL",
+		// });
 	}
 };
 
