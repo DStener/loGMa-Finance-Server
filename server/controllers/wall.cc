@@ -25,7 +25,7 @@ response_t WallController::create(request_t request) {
 	CreateDTO create{
 						request->input("name"),
 						request->input("is_group"),
-					  request->input("is_public"),
+					  	request->input("is_public"),
 						request->input("lim"),
 						request->input("def_currancy"),
 	};

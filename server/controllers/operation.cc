@@ -14,7 +14,7 @@ response_t OperationController::create(request_t request) {
 	OperationDTO dto_oper {
 		request->input("value"),
 		request->input("description"),
-		request->input("iso_currency"),
+		request->input("iso_currency").substr(0,3),
 		std::to_string(login.id),
 		request->input("time"),
 	};

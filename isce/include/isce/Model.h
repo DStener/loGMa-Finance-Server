@@ -29,7 +29,7 @@ using response_vec_t = std::vector<row_t>;
 		std::string error = std::format("{}, func {}(), line {}: {}", 		 \
 																		__FILE__, __FUNCTION__, __LINE__,  \
 																		PQerrorMessage(Model::get_connection()));\
-		throw std::runtime_error(error);																	 \
+		std::cerr << error << std::endl;													 \
 	}
 
 #define DB_CHECK_MESSAGE(condition)                                    \
