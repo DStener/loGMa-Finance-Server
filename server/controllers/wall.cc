@@ -147,6 +147,21 @@ response_t WallController::get_operation_wall(request_t request) {
 		}
 	}
 
+	auto category_data = category->find(std::format("id_wall={}", id_wall));
+	json::array js_arr;
+
+	for (size_t i = 0; i < category_data.size(); i++)
+	{
+		json::object o;
+		for (size_t j = 0; j < category_data[i].size(); j++)
+		{
+			o[category_data[i][j].first] = category_data[i][j].second;
+		}
+		js_arr.emplace_back(o);
+	}
+
+
+
 	json::array json;
 
 	if (operations.size() != 0) {
@@ -167,7 +182,7 @@ response_t WallController::get_operation_wall(request_t request) {
 
 		}
 	}
-	
+	json.emplace_back(js_arr);
 	return response()->json(json);
 
 }
