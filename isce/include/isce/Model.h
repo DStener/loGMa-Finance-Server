@@ -210,7 +210,7 @@ public:
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
       std::cout << PQerrorMessage(Model::get_connection()) << std::endl;
       PQclear(res);
-      throw std::runtime_error("user not found");
+      throw std::runtime_error("error");
     }
 
     int rows = PQntuples(res);

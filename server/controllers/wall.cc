@@ -541,3 +541,28 @@ response_t WallController::get_summ_anothers_curr(request_t request) {
 
 	return response()->json("some data");
 }
+
+response_t WallController::get_currency(request_t request) {
+	auto vac_currancy = currancy->find(std::format("id != 0"));
+	
+	if (vac_currancy.size() == 0) {
+		return response()->json("currancy is empty!");
+	}
+	
+	json::array json;
+
+	for (size_t i = 0; i < vac_currancy.size(); i++)
+	{
+		json::object obj;
+		for (size_t j = 0; j < vac_currancy[i].size(); j++)
+		{
+			obj[vac_currancy[i][j].first] = vac_currancy[i][j].second;
+		}
+		json.emplace_back(obj);
+	}
+
+	return response()->json(json);
+
+
+	
+}
